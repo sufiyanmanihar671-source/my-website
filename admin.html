@@ -131,8 +131,6 @@ tr:hover td{background:rgba(51,51,51,0.02);}
 .gate-msg{font-size:12.5px;padding:10px 12px;border-radius:var(--radius-s);margin-bottom:14px;}
 .gate-msg.err{background:var(--danger-bg);color:var(--danger);}
 .gate-msg.info{background:var(--parchment-2);color:var(--graphite);}
-
-.enq-items{border:1px solid var(--line);border-radius:var(--radius-m);padding:10px;margin-bottom:14px;}
 .enq-item-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--line);}
 .enq-item-row:last-child{border-bottom:none;}
 
@@ -160,26 +158,10 @@ tr:hover td{background:rgba(51,51,51,0.02);}
 <div id="gate">
   <div class="gate-box">
     <h1>Nisha Art Jewellery</h1>
-    <p class="sub">Admin Dashboard — staff sign-in only</p>
+    <p class="sub">Admin Dashboard</p>
     <div id="gate-msg-wrap"></div>
-    <div class="gate-tabs" style="display:flex;gap:0;margin-bottom:16px;border:1px solid var(--line-strong);border-radius:6px;overflow:hidden;">
-      <button class="gate-tab active" data-gate-tab="password" style="flex:1;padding:9px;font-size:12.5px;background:var(--wine-deep);color:#fff;">Email &amp; Password</button>
-      <button class="gate-tab" data-gate-tab="phone" style="flex:1;padding:9px;font-size:12.5px;background:#fff;color:var(--text);">Phone OTP</button>
-    </div>
-    <div id="gate-pane-password">
-      <div class="field"><label>Email</label><input type="email" id="gate-email" placeholder="you@company.com"></div>
-      <div class="field"><label>Password</label><input type="password" id="gate-password" placeholder="••••••••"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-password-btn">Sign In</button>
-    </div>
-    <div id="gate-pane-phone" style="display:none;">
-      <div class="field"><label>Mobile Number</label><input type="tel" id="gate-phone" placeholder="+91 98765 43210"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-send-btn">Send OTP</button>
-    </div>
-    <div id="gate-pane-otp" style="display:none;">
-      <div class="field"><label>Enter OTP</label><input type="text" id="gate-otp" maxlength="6" placeholder="6-digit code"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-verify-btn">Verify & Sign In</button>
-      <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;margin-top:8px;" id="gate-resend-btn">Resend OTP</button>
-    </div>
+    <div class="field"><label>Password</label><input type="password" id="gate-pin" placeholder="Enter password" autofocus></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-pin-btn">Enter Dashboard</button>
   </div>
 </div>
 
@@ -470,97 +452,31 @@ var normalizePhone = function(v){
 /* ======================================================================
    AUTH GATE
    ====================================================================== */
-var currentProfile = null;
-var pendingGatePhone = null;
-var gateOtpSent = false;
+var currentProfile = {first_name:"Admin", role:"admin"};
+var ADMIN_PIN = "nisha2024";
 
 function gateMessage(msg, kind){
   qs("#gate-msg-wrap").innerHTML = msg ? '<div class="gate-msg '+(kind||"info")+'">'+esc(msg)+'</div>' : "";
 }
 
-qsa("[data-gate-tab]").forEach(function(btn){
-  btn.addEventListener("click", function(){
-    qsa("[data-gate-tab]").forEach(function(b){
-      b.classList.toggle("active", b===btn);
-      b.style.background = (b===btn) ? "var(--wine-deep)" : "#fff";
-      b.style.color = (b===btn) ? "#fff" : "var(--text)";
-    });
-    var tab = btn.dataset.gateTab;
-    qs("#gate-pane-password").style.display = tab==="password" ? "block" : "none";
-    qs("#gate-pane-phone").style.display = tab==="phone" ? "block" : "none";
-    qs("#gate-pane-otp").style.display = "none";
-    gateMessage("");
-  });
-});
-
-qs("#gate-password-btn").addEventListener("click", function(){
-  var email = qs("#gate-email").value.trim();
-  var password = qs("#gate-password").value;
-  if(!email || !password){ gateMessage("Enter your email and password.", "err"); return; }
-  this.disabled = true;
-  var btn = this;
-  sb.auth.signInWithPassword({ email: email, password: password }).then(function(res){
-    btn.disabled = false;
-    if(res.error){ gateMessage(res.error.message || "Invalid email or password.", "err"); return; }
-    checkStaffAndEnter();
-  });
-});
-
-qs("#gate-send-btn").addEventListener("click", function(){
-  var phone = normalizePhone(qs("#gate-phone").value.trim());
-  if(!phone){ gateMessage("Enter a valid mobile number with country code.", "err"); return; }
-  this.disabled = true;
-  var btn = this;
-  sb.auth.signInWithOtp({ phone: phone }).then(function(res){
-    btn.disabled = false;
-    if(res.error){ gateMessage(res.error.message || "Could not send OTP.", "err"); return; }
-    pendingGatePhone = phone; gateOtpSent = true;
-    qs("#gate-pane-phone").style.display = "none";
-    qs("#gate-pane-otp").style.display = "block";
-    gateMessage("OTP sent to "+phone+".", "info");
-  });
-});
-qs("#gate-resend-btn").addEventListener("click", function(){
-  if(!pendingGatePhone) return;
-  sb.auth.signInWithOtp({ phone: pendingGatePhone }).then(function(res){
-    gateMessage(res.error ? (res.error.message||"Could not resend.") : "OTP resent.", res.error?"err":"info");
-  });
-});
-qs("#gate-verify-btn").addEventListener("click", function(){
-  var code = qs("#gate-otp").value.trim();
-  if(!code){ gateMessage("Enter the OTP.", "err"); return; }
-  this.disabled = true;
-  var btn = this;
-  sb.auth.verifyOtp({ phone: pendingGatePhone, token: code, type: "sms" }).then(function(res){
-    btn.disabled = false;
-    if(res.error){ gateMessage(res.error.message || "Invalid OTP.", "err"); return; }
-    checkStaffAndEnter();
-  });
-});
-
-async function checkStaffAndEnter(){
-  var sessionRes = await sb.auth.getSession();
-  var session = sessionRes.data && sessionRes.data.session;
-  if(!session){ return; }
-  var profRes = await sb.from("profiles").select("*").eq("id", session.user.id).single();
-  if(profRes.error || !profRes.data){
-    gateMessage("No admin profile found for this account.", "err");
-    await sb.auth.signOut();
-    return;
+function tryPinEntry(){
+  var pin = qs("#gate-pin").value;
+  if(pin === ADMIN_PIN){
+    enterApp();
+  } else {
+    gateMessage("Galat password. Dobara try karo.", "err");
+    qs("#gate-pin").value = "";
+    qs("#gate-pin").focus();
   }
-  if(!["admin","manager"].includes(profRes.data.role) || !profRes.data.is_active){
-    gateMessage("This account does not have admin/manager access.", "err");
-    await sb.auth.signOut();
-    return;
-  }
-  currentProfile = profRes.data;
-  enterApp();
 }
+
+qs("#gate-pin-btn").addEventListener("click", tryPinEntry);
+qs("#gate-pin").addEventListener("keydown", function(e){ if(e.key==="Enter") tryPinEntry(); });
 
 async function enterApp(){
   qs("#gate").style.display = "none";
   qs("#app").classList.add("ready");
-  qs("#who-label").textContent = (currentProfile.first_name||"") + " (" + currentProfile.role + ")";
+  qs("#who-label").textContent = "Admin";
   await Promise.all([loadCategories(), loadCurrencies(), loadProfiles()]);
   await loadOverview();
   populateCategorySelects();
@@ -568,17 +484,9 @@ async function enterApp(){
   showSection("overview");
 }
 
-qs("#signout-btn").addEventListener("click", async function(){
-  await sb.auth.signOut();
+qs("#signout-btn").addEventListener("click", function(){
   location.reload();
 });
-
-(async function boot(){
-  var sessionRes = await sb.auth.getSession();
-  if(sessionRes.data && sessionRes.data.session){
-    await checkStaffAndEnter();
-  }
-})();
 
 /* ======================================================================
    NAV
