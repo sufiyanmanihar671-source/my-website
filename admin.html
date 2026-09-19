@@ -159,6 +159,10 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
 .quick-chip i{display:inline-block;width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.18);}
 .quick-chip:hover{border-color:var(--accent);}
 .spinner-note{color:var(--text-muted);font-size:12.5px;padding:8px 0 14px;}
+.gate-hint{font-size:12px;color:var(--text-muted);margin:-2px 0 14px;}
+.img-thumb .mk-btn{position:absolute;left:0;right:0;bottom:0;background:rgba(51,51,51,0.82);color:#fff;font-size:9px;line-height:1.5;padding:2px 0;text-align:center;opacity:0;transition:opacity .15s;}
+.img-thumb:hover .mk-btn,.img-thumb .mk-btn:focus-visible{opacity:1;}
+@media (hover:none){.img-thumb .mk-btn{opacity:1;}}
 @media (max-width:900px){.field-row3,.field-row4{grid-template-columns:1fr 1fr;}}
 @media (max-width:520px){.field-row3,.field-row4{grid-template-columns:1fr;} .color-row-head{flex-wrap:wrap;}}
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
@@ -204,6 +208,12 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
     <div id="gate-pane-pin">
       <div class="field"><label>Password</label><input type="password" id="gate-pin" placeholder="Enter password" autofocus></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-pin-btn">Enter Dashboard</button>
+    </div>
+    <div id="gate-pane-staff" style="display:none;">
+      <p class="gate-hint">Sign in with your staff account. This is what allows the dashboard to save changes to the database.</p>
+      <div class="field"><label>Staff Email</label><input type="email" id="gate-email" placeholder="you@company.com" autocomplete="username"></div>
+      <div class="field"><label>Staff Password</label><input type="password" id="gate-password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-staff-btn">Sign In</button>
     </div>
   </div>
 </div>
@@ -546,7 +556,7 @@ function gateMessage(msg, kind){
 function tryPinEntry(){
   var pin = qs("#gate-pin").value;
   if(pin === ADMIN_PIN){
-    enterApp();
+    afterPinAccepted();
   } else {
     gateMessage("Galat password. Dobara try karo.", "err");
     qs("#gate-pin").value = "";
@@ -557,10 +567,89 @@ function tryPinEntry(){
 qs("#gate-pin-btn").addEventListener("click", tryPinEntry);
 qs("#gate-pin").addEventListener("keydown", function(e){ if(e.key==="Enter") tryPinEntry(); });
 
+/* The password above only opens this page. Every save goes through Supabase Row Level
+   Security, which requires a real signed-in staff account (admin / manager). */
+async function verifyStaffSession(session){
+  var r = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+  if(r.error || !r.data){
+    gateMessage("No admin profile found for this account.", "err");
+    await sb.auth.signOut();
+    return false;
+  }
+  if(["admin","manager"].indexOf(r.data.role) === -1 || !r.data.is_active){
+    gateMessage("This account does not have admin/manager access.", "err");
+    await sb.auth.signOut();
+    return false;
+  }
+  currentProfile = r.data;
+  return true;
+}
+function showStaffSignIn(message, kind){
+  qs("#gate").style.display = "flex";
+  qs("#gate-pane-pin").style.display = "none";
+  qs("#gate-pane-staff").style.display = "block";
+  gateMessage(message || "", kind || "info");
+  qs("#gate-email").focus();
+}
+async function afterPinAccepted(){
+  var session = null;
+  try{
+    var sr = await sb.auth.getSession();
+    session = sr.data && sr.data.session;
+  }catch(e){ session = null; }
+  if(session && await verifyStaffSession(session)){ enterApp(); return; }
+  showStaffSignIn("Password accepted. Now sign in with your staff account.", "info");
+}
+/* Called before every database write: if the staff session is gone, ask for sign-in again. */
+async function ensureStaffSession(){
+  try{
+    var sr = await sb.auth.getSession();
+    if(sr.data && sr.data.session) return true;
+  }catch(e){ /* fall through */ }
+  toast("Your staff session has expired. Please sign in again.");
+  showStaffSignIn("Your staff session has expired. Please sign in again.", "err");
+  return false;
+}
+async function trySignIn(){
+  var email = qs("#gate-email").value.trim();
+  var password = qs("#gate-password").value;
+  if(!email || !password){ gateMessage("Enter your staff email and password.", "err"); return; }
+  var btn = qs("#gate-staff-btn");
+  btn.disabled = true; btn.textContent = "Signing in…";
+  try{
+    var res = await sb.auth.signInWithPassword({ email: email, password: password });
+    if(res.error){ gateMessage(res.error.message || "Invalid email or password.", "err"); return; }
+    var sr = await sb.auth.getSession();
+    var session = sr.data && sr.data.session;
+    if(!(session && await verifyStaffSession(session))) return;
+    qs("#gate-password").value = "";
+    if(qs("#app").classList.contains("ready")){        /* re-login while working: just carry on */
+      qs("#gate").style.display = "none";
+      qs("#who-label").textContent = (currentProfile.first_name || "Admin") + " (" + (currentProfile.role || "admin") + ")";
+      toast("Signed in. You can continue.");
+    } else {
+      enterApp();
+    }
+  }catch(e){
+    gateMessage("Could not sign in. Check your connection and try again.", "err");
+  }finally{
+    btn.disabled = false; btn.textContent = "Sign In";
+  }
+}
+qs("#gate-staff-btn").addEventListener("click", trySignIn);
+qs("#gate-password").addEventListener("keydown", function(e){ if(e.key==="Enter") trySignIn(); });
+qs("#gate-email").addEventListener("keydown", function(e){ if(e.key==="Enter") trySignIn(); });
+sb.auth.onAuthStateChange(function(event){
+  /* only when the user is working (gate hidden); never overwrite a sign-in error already on screen */
+  if(event === "SIGNED_OUT" && qs("#app").classList.contains("ready") && qs("#gate").style.display === "none"){
+    showStaffSignIn("You have been signed out. Sign in again to continue.", "err");
+  }
+});
+
 async function enterApp(){
   qs("#gate").style.display = "none";
   qs("#app").classList.add("ready");
-  qs("#who-label").textContent = "Admin";
+  qs("#who-label").textContent = (currentProfile.first_name || "Admin") + " (" + (currentProfile.role || "admin") + ")";
   await Promise.all([loadCategories(), loadCurrencies(), loadProfiles()]);
   await loadOverview();
   populateCategorySelects();
@@ -568,7 +657,8 @@ async function enterApp(){
   showSection("overview");
 }
 
-qs("#signout-btn").addEventListener("click", function(){
+qs("#signout-btn").addEventListener("click", async function(){
+  try{ await sb.auth.signOut(); }catch(e){ /* reload anyway */ }
   location.reload();
 });
 
@@ -686,7 +776,8 @@ function parseCount(str, label){
 function friendlyError(err, fallback){
   if(!err) return fallback || "Something went wrong.";
   var msg = String(err.message || ""), code = err.code || "";
-  if(code === "42501" || /row-level security|permission denied|JWT/i.test(msg)) return "Not allowed by database security (RLS): saving needs a signed-in staff session.";
+  if(/Only an active admin|Only staff|cannot change your own|cannot deactivate your own/i.test(msg)) return msg;
+  if(code === "42501" || /row-level security|permission denied|JWT/i.test(msg)) return "Not allowed. Your staff session may have expired — sign out and sign in again.";
   if(code === "23505") return "That already exists (duplicate colour name for this product).";
   if(code === "23503") return "Invalid reference — the product may no longer exist.";
   if(code === "23514"){
@@ -697,7 +788,7 @@ function friendlyError(err, fallback){
     if(/nonneg/.test(msg))             return "Stock numbers cannot be negative.";
     return "One of the values is not allowed.";
   }
-  return (fallback || "Error") + ": " + msg;
+  return fallback ? (fallback + ": " + msg) : (msg || "Something went wrong.");
 }
 function stockRowOf(p){ var r = p && p.product_stock; if(Array.isArray(r)) r = r[0]; return r || null; }
 function stockKeyOf(p){
@@ -797,40 +888,83 @@ function renderProductImageThumbs(){
   var wrap = qs("#pf-images-row");
   if(currentProductImages.length===0){ wrap.innerHTML = '<span style="font-size:12px;color:var(--text-muted);">No images yet.</span>'; return; }
   wrap.innerHTML = currentProductImages.map(function(im){
-    return '<div class="img-thumb"><img src="'+im.url+'">' +
-      (im.is_primary?'<span class="primary-tag">Primary</span>':'') +
-      '<button class="del-btn" data-del-image="'+im.id+'">&times;</button></div>';
+    return '<div class="img-thumb"><img src="'+esc(im.url)+'" alt="Product image">' +
+      (im.is_primary ? '<span class="primary-tag">Primary</span>'
+                     : '<button type="button" class="mk-btn" data-make-primary="'+esc(im.id)+'" title="Use this as the main photo">Make primary</button>') +
+      '<button type="button" class="del-btn" data-del-image="'+esc(im.id)+'" aria-label="Delete image">&times;</button></div>';
   }).join("");
 }
-document.body.addEventListener("click", function(e){
+document.body.addEventListener("click", async function(e){
   var delImg = e.target.closest("[data-del-image]");
   if(delImg){
+    if(!(await ensureStaffSession())) return;
     var imgId = delImg.dataset.delImage;
-    sb.from("product_images").delete().eq("id", imgId).then(function(res){
-      if(res.error){ toast("Could not delete image."); return; }
-      currentProductImages = currentProductImages.filter(function(im){ return im.id!==imgId; });
-      renderProductImageThumbs();
-      loadProducts();
-    });
+    var im = currentProductImages.find(function(x){ return x.id===imgId; });
+    var res = await sb.from("product_images").delete().eq("id", imgId);
+    if(res.error){ toast("Could not delete image: " + friendlyError(res.error)); return; }
+    if(im) removeStoredImage(im.url);                       /* tidy the file too (best effort) */
+    currentProductImages = currentProductImages.filter(function(x){ return x.id!==imgId; });
+    /* keep one primary image: promote the first remaining one if the primary was removed */
+    if(im && im.is_primary && currentProductImages.length){
+      var first = currentProductImages[0];
+      var up = await sb.from("product_images").update({ is_primary:true }).eq("id", first.id);
+      if(!up.error) first.is_primary = true;
+    }
+    renderProductImageThumbs();
+    loadProducts();
+    return;
+  }
+  var mk = e.target.closest("[data-make-primary]");
+  if(mk){
+    if(!(await ensureStaffSession())) return;
+    var newId = mk.dataset.makePrimary, pid = qs("#pf-id").value;
+    var prev = currentProductImages.find(function(x){ return x.is_primary; });
+    var r1 = await sb.from("product_images").update({ is_primary:false }).eq("product_id", pid);
+    if(r1.error){ toast("Could not change the main photo: " + friendlyError(r1.error)); return; }
+    var r2 = await sb.from("product_images").update({ is_primary:true }).eq("id", newId);
+    if(r2.error){
+      if(prev) await sb.from("product_images").update({ is_primary:true }).eq("id", prev.id);   /* put it back */
+      toast("Could not change the main photo: " + friendlyError(r2.error));
+      return;
+    }
+    currentProductImages.forEach(function(x){ x.is_primary = (x.id === newId); });
+    renderProductImageThumbs();
+    loadProducts();
+    toast("Main photo updated.");
   }
 });
 qs("#pf-image-upload").addEventListener("change", async function(e){
+  var input = this;
   var pid = qs("#pf-id").value;
-  if(!pid){ toast("Save the product first, then upload images."); this.value=""; return; }
+  if(!pid){ toast("Save the product first, then upload images."); input.value=""; return; }
   var files = Array.prototype.slice.call(e.target.files);
+  if(!files.length) return;
+  if(!(await ensureStaffSession())){ input.value=""; return; }
+  input.disabled = true;
+  var okCount = 0;
   for(var i=0;i<files.length;i++){
     var file = files[i];
+    if(!file.type || file.type.indexOf("image/") !== 0){ toast(file.name + ": please choose an image file."); continue; }
+    if(file.size > 5 * 1024 * 1024){ toast(file.name + ": image must be 5 MB or smaller."); continue; }
     var path = pid + "/" + Date.now() + "_" + i + "_" + file.name.replace(/[^a-zA-Z0-9_.-]/g,"_");
-    var up = await sb.storage.from("product-images").upload(path, file, { upsert:true });
-    if(up.error){ toast("Upload failed: "+up.error.message); continue; }
+    var up = await sb.storage.from("product-images").upload(path, file, { upsert:false, contentType:file.type });
+    if(up.error){ toast("Upload failed: " + friendlyError(up.error)); continue; }
     var pub = sb.storage.from("product-images").getPublicUrl(path);
-    var isPrimary = currentProductImages.length===0 && i===0;
+    var isPrimary = currentProductImages.length===0;
     var ins = await sb.from("product_images").insert({ product_id: pid, url: pub.data.publicUrl, sort_order: currentProductImages.length, is_primary: isPrimary }).select().single();
-    if(!ins.error) currentProductImages.push(ins.data);
+    if(ins.error){
+      toast("Image uploaded but could not be saved to the product: " + friendlyError(ins.error));
+      sb.storage.from("product-images").remove([path]).then(function(){}, function(){});   /* don't leave an orphan file */
+      continue;
+    }
+    currentProductImages.push(ins.data);
+    okCount++;
   }
+  input.disabled = false;
+  input.value = "";
   renderProductImageThumbs();
   loadProducts();
-  this.value = "";
+  if(okCount) toast(okCount === 1 ? "Image uploaded." : okCount + " images uploaded.");
 });
 /* ======================================================================
    STOCK DETAILS (product level)
@@ -918,6 +1052,7 @@ qs("#pf-stock").addEventListener("change", updateStockPreview);
 
 qs("#pf-save-btn").addEventListener("click", async function(){
   var btn = this, id = qs("#pf-id").value;
+  if(!(await ensureStaffSession())) return;
   var payload = {
     name: qs("#pf-name").value.trim(),
     code: qs("#pf-code").value.trim(),
@@ -984,6 +1119,7 @@ qs("#pf-save-btn").addEventListener("click", async function(){
   }
 });
 async function deleteProduct(id){
+  if(!(await ensureStaffSession())) return;
   if(!confirm("Delete this product permanently? This also removes its stock details and colour options.")) return;
   var res = await sb.from("products").delete().eq("id", id);
   if(res.error){ toast("Could not delete: "+res.error.message); return; }
@@ -1109,6 +1245,7 @@ function setRowBusy(r, busy, text){
   var m = qs(".cr-msg", el); if(m){ m.textContent = text || ""; m.className = "cr-msg"; }
 }
 async function saveColor(r){
+  if(!(await ensureStaffSession())) return false;
   r.error = "";
   var v = validateColorRow(r);
   if(v.error){ r.error = v.error; r.msg = ""; renderColorRows(); return false; }
@@ -1130,6 +1267,7 @@ async function saveColor(r){
   return true;
 }
 async function deleteColor(r){
+  if(r.id && !(await ensureStaffSession())) return;
   if(!r.id){ currentColors = currentColors.filter(function(x){ return x !== r; }); renderColorRows(); return; }
   if(!confirm('Delete the colour "' + r.name + '"? This cannot be undone.')) return;
   setRowBusy(r, true, "Deleting…");
@@ -1142,7 +1280,8 @@ async function deleteColor(r){
   toast("Colour deleted.");
 }
 function storagePathFromUrl(url){
-  var m = /\/storage\/v1\/object\/public\/product-images\/(colors\/[^?#]+)/.exec(url || "");
+  /* only paths this admin creates: "<product-uuid>/..." or "colors/<product-uuid>/..." */
+  var m = /\/storage\/v1\/object\/public\/product-images\/((?:colors\/)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[^?#]+)/i.exec(url || "");
   return m ? decodeURIComponent(m[1]) : null;
 }
 function removeStoredImage(url){            /* best effort housekeeping; never blocks the UI */
@@ -1150,6 +1289,7 @@ function removeStoredImage(url){            /* best effort housekeeping; never b
   if(path) sb.storage.from("product-images").remove([path]).then(function(){}, function(){});
 }
 async function uploadColorImage(r, file){
+  if(!(await ensureStaffSession())) return;
   var pid = qs("#pf-id").value;
   if(!UUID_RE.test(pid)){ r.error = "Save the product first."; renderColorRows(); return; }
   if(!file.type || file.type.indexOf("image/") !== 0){ r.error = "Please choose an image file."; renderColorRows(); return; }
