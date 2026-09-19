@@ -314,15 +314,13 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .hero-copy p{font-size:17px;line-height:1.7;max-width:46ch;margin-bottom:38px;color:var(--text-body);}
 .hero-copy p.eyebrow{font-size:11px;max-width:none;margin-bottom:26px;color:var(--eyebrow);}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap;}
-.hero-copy p.hero-trustline{
-  font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;line-height:1.9;max-width:none;
-  color:var(--text-muted);margin:28px 0 0;
+.hero-points{list-style:none;display:flex;gap:0;margin:44px 0 0;padding:0;border-top:1px solid var(--line-strong);}
+.hero-point{
+  flex:1;display:flex;align-items:flex-start;gap:12px;padding:24px 20px 0 0;
+  font-size:11px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;line-height:1.7;color:var(--heading);
 }
-.hero-stats{display:flex;gap:0;margin-top:44px;padding-top:0;border-top:1px solid var(--line-strong);}
-.hero-stat{flex:1;padding:26px 24px 0 0;}
-.hero-stat + .hero-stat{padding-left:28px;border-left:1px solid var(--line);}
-.hero-stat b{display:block;font-family:var(--font-display);font-size:clamp(32px,4vw,46px);font-weight:400;line-height:1;color:var(--emerald);font-variant-numeric:lining-nums;margin-bottom:10px;}
-.hero-stat span{font-size:10.5px;letter-spacing:0.18em;color:var(--text-muted);text-transform:uppercase;line-height:1.5;display:block;}
+.hero-point + .hero-point{padding-left:24px;border-left:1px solid var(--line);}
+.hero-point-mark{flex-shrink:0;width:7px;height:7px;margin-top:8px;background:var(--champagne);transform:rotate(45deg);}
 
 .hero-art{position:relative;display:flex;align-items:center;justify-content:center;}
 .hero-photo-frame{
@@ -390,10 +388,9 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero-copy h1{font-size:clamp(40px,11.4vw,54px);max-width:12ch;}
   .hero-copy p{font-size:16px;margin-bottom:30px;}
   .hero-actions .btn{width:100%;}
-  .hero-stats{margin-top:40px;}
-  .hero-stat{padding:22px 10px 0 0;}
-  .hero-stat + .hero-stat{padding-left:16px;}
-  .hero-stat span{font-size:9.5px;letter-spacing:0.14em;}
+  .hero-points{margin-top:40px;}
+  .hero-point{padding:22px 10px 0 0;font-size:10px;letter-spacing:0.14em;}
+  .hero-point + .hero-point{padding-left:16px;}
 }
 
 /* Neutral vignette on photographs: grounds the image, never recolours it */
@@ -475,8 +472,10 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero-copy h1{font-size:clamp(34px,10vw,42px);}
   .hero-copy p{font-size:15px;margin-bottom:24px;}
   .hero-copy p.eyebrow{margin-bottom:18px;}
-  .hero-copy p.hero-trustline{margin-top:22px;}
-  .hero-stats{margin-top:28px;}
+  .hero-points{flex-direction:column;margin-top:28px;}
+  .hero-point{padding:16px 0;font-size:11px;letter-spacing:0.18em;border-bottom:1px solid var(--line);}
+  .hero-point + .hero-point{padding-left:0;border-left:none;}
+  .hero-point:last-child{border-bottom:none;padding-bottom:0;}
 }
 
 /* ============ PRODUCT GRID / CARDS ============ */
@@ -1056,12 +1055,11 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
         <div class="hero-actions">
           <button class="btn btn-primary" data-nav="discover">Explore Categories</button>
         </div>
-        <p class="hero-trustline">Manufacturer &amp; B2B Supplier • Worldwide Shipping • Bulk Orders Welcome</p>
-        <div class="hero-stats">
-          <div class="hero-stat"><b>18</b><span>Categories</span></div>
-          <div class="hero-stat"><b>500+</b><span>Wholesale Designs</span></div>
-          <div class="hero-stat"><b>1,200+</b><span>Retail Partners</span></div>
-        </div>
+        <ul class="hero-points" aria-label="Business highlights">
+          <li class="hero-point"><span class="hero-point-mark" aria-hidden="true"></span><span>Manufacturer &amp; B2B Supplier</span></li>
+          <li class="hero-point"><span class="hero-point-mark" aria-hidden="true"></span><span>Bulk Orders Welcome</span></li>
+          <li class="hero-point"><span class="hero-point-mark" aria-hidden="true"></span><span>Worldwide Shipping</span></li>
+        </ul>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="hero-photo-glow"></div>
