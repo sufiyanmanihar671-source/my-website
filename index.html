@@ -316,11 +316,14 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap;}
 .hero-points{list-style:none;display:flex;gap:0;margin:44px 0 0;padding:0;border-top:1px solid var(--line-strong);}
 .hero-point{
-  flex:1;display:flex;align-items:flex-start;gap:12px;padding:24px 20px 0 0;
+  flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:24px 20px 0;
   font-size:11px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;line-height:1.7;color:var(--heading);
 }
-.hero-point + .hero-point{padding-left:24px;border-left:1px solid var(--line);}
-.hero-point-mark{flex-shrink:0;width:7px;height:7px;margin-top:8px;background:var(--champagne);transform:rotate(45deg);}
+.hero-point + .hero-point{border-left:1px solid var(--line);}
+.hero-point-icon{
+  flex-shrink:0;width:34px;height:34px;color:var(--accent);
+  fill:none;stroke:currentColor;stroke-width:0.9;stroke-linecap:round;stroke-linejoin:round;
+}
 
 .hero-art{position:relative;display:flex;align-items:center;justify-content:center;}
 .hero-photo-frame{
@@ -389,8 +392,7 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero-copy p{font-size:16px;margin-bottom:30px;}
   .hero-actions .btn{width:100%;}
   .hero-points{margin-top:40px;}
-  .hero-point{padding:22px 10px 0 0;font-size:10px;letter-spacing:0.14em;}
-  .hero-point + .hero-point{padding-left:16px;}
+  .hero-point{padding:22px 10px 0;font-size:10px;letter-spacing:0.14em;}
 }
 
 /* Neutral vignette on photographs: grounds the image, never recolours it */
@@ -473,9 +475,10 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero-copy p{font-size:15px;margin-bottom:24px;}
   .hero-copy p.eyebrow{margin-bottom:18px;}
   .hero-points{flex-direction:column;margin-top:28px;}
-  .hero-point{padding:16px 0;font-size:11px;letter-spacing:0.18em;border-bottom:1px solid var(--line);}
-  .hero-point + .hero-point{padding-left:0;border-left:none;}
+  .hero-point{padding:18px 0;gap:10px;font-size:11px;letter-spacing:0.18em;border-bottom:1px solid var(--line);}
+  .hero-point + .hero-point{border-left:none;}
   .hero-point:last-child{border-bottom:none;padding-bottom:0;}
+  .hero-point-icon{width:30px;height:30px;}
 }
 
 /* ============ PRODUCT GRID / CARDS ============ */
@@ -1056,9 +1059,9 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
           <button class="btn btn-primary" data-nav="discover">Explore Categories</button>
         </div>
         <ul class="hero-points" aria-label="Business highlights">
-          <li class="hero-point"><span class="hero-point-mark" aria-hidden="true"></span><span>Manufacturer &amp; B2B Supplier</span></li>
-          <li class="hero-point"><span class="hero-point-mark" aria-hidden="true"></span><span>Bulk Orders Welcome</span></li>
-          <li class="hero-point"><span class="hero-point-mark" aria-hidden="true"></span><span>Worldwide Shipping</span></li>
+          <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.2 3.5h11.6L22 9.2 12 21 2 9.2Z"/><path d="M2 9.2h20"/><path d="m8.6 3.5 3.4 5.7 3.4-5.7"/><path d="M7.4 9.2 12 21l4.6-11.8"/></svg><span>Manufacturer &amp; B2B Supplier</span></li>
+          <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="3.5" width="8" height="7.5" rx="0.8"/><rect x="2.5" y="13" width="8" height="7.5" rx="0.8"/><rect x="13.5" y="13" width="8" height="7.5" rx="0.8"/><path d="M8 6.5h8M2.5 16h8M13.5 16h8"/></svg><span>Bulk Orders Welcome</span></li>
+          <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="14" r="7.5"/><ellipse cx="10" cy="14" rx="3" ry="7.5"/><path d="M2.5 14h15"/><path d="M23 1 20 9.5 16.8 5.7 14.5 3Z"/><path d="M23 1 16.8 5.7"/></svg><span>Worldwide Shipping</span></li>
         </ul>
       </div>
       <div class="hero-art" aria-hidden="true">
