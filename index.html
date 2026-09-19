@@ -720,6 +720,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .pd-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0;}
 @media(max-width:480px){.pd-actions{grid-template-columns:1fr;}}
 .pd-actions .btn{width:100%;min-height:54px;}
+.pd-actions .pd-enquiry-btn{grid-column:1/-1;}
+.chip-label{align-self:center;font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-right:2px;flex:0 0 auto;}
+.chip-dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px;vertical-align:-1px;box-shadow:inset 0 0 0 1px rgba(34,34,34,0.22);}
+.chip.active .chip-dot{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.7);}
 .pd-info > .link-cta{margin-top:28px !important;}
 .pd-note{display:flex;gap:12px;align-items:center;margin-top:26px;padding:0;background:none;font-size:12px;letter-spacing:0.04em;color:var(--text-muted);}
 .pd-note .icon{width:15px;height:15px;color:var(--champagne);flex-shrink:0;}
@@ -1234,10 +1238,11 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <h2 id="discover-cat-title" style="margin-bottom:6px;"></h2>
       <p id="discover-cat-desc" style="margin-bottom:20px;"></p>
       <div class="chip-row" id="discover-sub-chips"></div>
+      <div class="chip-row" id="discover-extra-filters" style="margin-top:-14px;"></div>
       <div class="product-grid" id="discover-product-grid"></div>
       <div class="empty-state" id="discover-empty" style="display:none;">
         <svg class="icon"><use href="#i-search"/></svg>
-        <p>No pieces found in this selection yet. Try another sub-category.</p>
+        <p>No pieces match this selection yet. Try another sub-category or filter.</p>
       </div>
     </div>
   </div>
@@ -1714,7 +1719,10 @@ var state = {
   inquiries:[],
   watchlist:[],
   pendingLoginTab:"login",
-  selectedColorId:null
+  selectedColorId:null,
+  discoverColor:null,
+  discoverStock:null,
+  inquiryColors:{}
 };
 
 function safeGet(key, fallback){
@@ -1730,6 +1738,9 @@ function safeSet(key, value){
 async function loadState(){
   state.currency = safeGet("naj_currency", "INR") || "INR";
   state.inquiries = safeGet("naj_inquiries", []) || [];
+  if(!Array.isArray(state.inquiries)) state.inquiries = [];
+  state.inquiryColors = safeGet("naj_inquiry_colors", {}) || {};
+  if(typeof state.inquiryColors !== "object" || Array.isArray(state.inquiryColors)) state.inquiryColors = {};
   try{
     var sessionRes = await sb.auth.getSession();
     var session = sessionRes.data && sessionRes.data.session;
@@ -1747,9 +1758,17 @@ async function loadState(){
     state.isLoggedIn = false; state.userId = null; state.watchlist = [];
   }
 }
+function pruneInquiries(){
+  if(!PRODUCTS.length) return;                      /* catalogue failed to load: never wipe the user's list */
+  var before = state.inquiries.length;
+  state.inquiries = state.inquiries.filter(function(id){ return !!productById(id); });
+  Object.keys(state.inquiryColors).forEach(function(id){ if(state.inquiries.indexOf(id) === -1) delete state.inquiryColors[id]; });
+  if(state.inquiries.length !== before) persist();
+}
 function persist(){
   safeSet("naj_currency", state.currency);
   safeSet("naj_inquiries", state.inquiries);
+  safeSet("naj_inquiry_colors", state.inquiryColors);
 }
 
 /* ======================================================================
@@ -1796,6 +1815,13 @@ function openExternal(url){
   window.open(url, "_blank", "noopener");
 }
 
+function enquiryErrorText(err){
+  var m = String((err && err.message) || "");
+  if(/wait a few seconds|no longer available|must contain between|sign in|not active/i.test(m)) return m;
+  if(/failed to fetch|network|load failed/i.test(m)) return "Could not reach the server. Check your connection and try again.";
+  if(err && (err.code==="42501" || /permission denied|row-level security/i.test(m))) return "Please sign in again to send your enquiry.";
+  return "Could not send enquiry. Please try again.";
+}
 function updateCounts(){
   var iEl = qs("#mnav-inquiry-count"), wEl = qs("#mnav-watchlist-count");
   if(iEl){
@@ -1947,9 +1973,34 @@ function renderDiscover(){
   }).join("");
   qs("#discover-sub-chips").innerHTML = chipsHtml;
 
-  var list = PRODUCTS.filter(function(p){
+  var base = PRODUCTS.filter(function(p){
     if(p.cat!==c.id) return false;
     if(state.discoverSub && p.sub!==state.discoverSub) return false;
+    return true;
+  });
+
+  /* extra filters: only colours that customers can actually order, and the four availability labels */
+  var colourMap = {};
+  base.forEach(function(p){ (p.colors||[]).forEach(function(cl){ if(colorAvailable(cl)){ var k = cl.name.toLowerCase(); if(!colourMap[k]) colourMap[k] = { name:cl.name, hex:cl.hex }; } }); });
+  var colourKeys = Object.keys(colourMap).sort();
+  if(state.discoverColor && !colourMap[state.discoverColor]) state.discoverColor = null;
+  var fx = "";
+  if(colourKeys.length){
+    fx += '<span class="chip-label">Colour</span><button class="chip'+(!state.discoverColor?" active":"")+'" data-action="set-color" data-color="">All</button>';
+    fx += colourKeys.map(function(k){
+      return '<button class="chip'+(state.discoverColor===k?" active":"")+'" data-action="set-color" data-color="'+esc(k)+'"><i class="chip-dot" style="background:'+colourMap[k].hex+'"></i>'+esc(colourMap[k].name)+'</button>';
+    }).join("");
+  }
+  if(base.length){
+    fx += '<span class="chip-label">Availability</span>' + [["","All"],["in_stock","In Stock"],["few_pieces_left","Few Pieces Left"],["made_to_order","Made to Order"]].map(function(o){
+      return '<button class="chip'+((state.discoverStock||"")===o[0]?" active":"")+'" data-action="set-stock" data-stock="'+o[0]+'">'+o[1]+'</button>';
+    }).join("");
+  }
+  qs("#discover-extra-filters").innerHTML = fx;
+
+  var list = base.filter(function(p){
+    if(state.discoverColor && !(p.colors||[]).some(function(cl){ return colorAvailable(cl) && cl.name.toLowerCase()===state.discoverColor; })) return false;
+    if(state.discoverStock && effectiveStockKey(p)!==state.discoverStock) return false;
     return true;
   });
   var grid = qs("#discover-product-grid");
@@ -2014,6 +2065,15 @@ function selectColor(id){
   swapProductImage(c.image || state.pdDefaultPhoto);
 }
 
+function enquiryButtonHtml(p){
+  var inList = state.inquiries.indexOf(p.id) > -1;
+  return '<button class="btn btn-outline pd-enquiry-btn" id="pd-enquiry-btn" ' +
+    (inList ? 'data-nav="inquiries"' : 'data-action="enquire-product" data-id="'+p.id+'"') + '>' +
+    '<svg class="icon" style="width:14px;height:14px;"><use href="#i-message"/></svg> ' +
+    (inList ? 'In your enquiry list — View' : 'Add to Enquiry List') + '</button>';
+}
+function refreshEnquiryButton(p){ var b = qs("#pd-enquiry-btn"); if(b) b.outerHTML = enquiryButtonHtml(p); }
+
 function renderProductDetail(p){
   var c = cat(p.cat);
   qs("#pd-breadcrumb").innerHTML =
@@ -2064,6 +2124,7 @@ function renderProductDetail(p){
     '<div class="pd-actions">' +
       '<button class="btn btn-primary" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon" style="width:14px;height:14px;"><use href="#i-whatsapp"/></svg> Chat With Us</button>' +
       '<button class="btn btn-outline" data-action="call-us"><svg class="icon" style="width:14px;height:14px;"><use href="#i-phone"/></svg> Call Us</button>' +
+      enquiryButtonHtml(p) +
     '</div>' +
     '<button class="link-cta" style="margin-top:22px;" data-nav="contact"><svg class="icon"><use href="#i-phone"/></svg> Contact Us</button>' +
   '</div>';
@@ -2080,7 +2141,7 @@ function listItemHtml(p, kind){
     '<div class="list-item-media">'+imgTag(productPhoto(p,160),p.name,160)+'<span class="media-tint"></span></div>' +
     '<div class="list-item-info">' +
       '<div class="card-name">'+esc(p.name)+'</div>' +
-      '<div class="card-code">'+esc(p.code)+'</div>' +
+      '<div class="card-code">'+esc(p.code)+(kind==="inquiry" && state.inquiryColors[p.id] ? ' · '+esc(state.inquiryColors[p.id]) : '')+'</div>' +
     '</div>' +
     '<div class="list-item-actions">' +
       '<button class="icon-text-btn" data-action="view-product" data-id="'+p.id+'">View Details <svg class="icon"><use href="#i-chevron-right"/></svg></button>' +
@@ -2240,6 +2301,8 @@ function goHome(){ showView("home"); }
 function goDiscover(catId, sub){
   state.discoverCat = catId || null;
   state.discoverSub = sub || null;
+  state.discoverColor = null;
+  state.discoverStock = null;
   showView("discover");
 }
 function viewProduct(id){
@@ -2359,6 +2422,8 @@ document.body.addEventListener("click", function(e){
       case "go-category": goDiscover(actionBtn.dataset.cat, null); break;
       case "view-product": if(id) viewProduct(id); break;
       case "set-sub": state.discoverSub = actionBtn.dataset.sub || null; renderDiscover(); break;
+      case "set-color": state.discoverColor = actionBtn.dataset.color || null; renderDiscover(); break;
+      case "set-stock": state.discoverStock = actionBtn.dataset.stock || null; renderDiscover(); break;
 
       case "open-login":
         if(state.isLoggedIn){
@@ -2421,6 +2486,8 @@ document.body.addEventListener("click", function(e){
           var regPhone = normalizePhone(qs("#reg-phone").value.trim());
           if(!regPhone){ toast("Enter a valid phone number with country code."); break; }
           if(!qs("#reg-first-name").value.trim() || !qs("#reg-company").value.trim()){ toast("Please fill in your name and company."); break; }
+          var regEmailCheck = qs("#reg-email").value.trim();
+          if(regEmailCheck && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(regEmailCheck)){ toast("Enter a valid email address or leave it blank."); break; }
           (function(){
             actionBtn.disabled = true;
             sb.auth.signInWithOtp({ phone: regPhone, options:{ shouldCreateUser: true } }).then(function(res){
@@ -2480,7 +2547,19 @@ document.body.addEventListener("click", function(e){
       case "confirm-videocall":
         var vcName = qs("#vc-name").value.trim();
         var vcWa = qs("#vc-whatsapp").value.trim();
+        var vcEmail = qs("#vc-email").value.trim();
+        var vcDate = qs("#vc-date").value, vcTime = qs("#vc-time").value;
         if(!vcName || !vcWa){ toast("Please add your name and WhatsApp number."); break; }
+        if(vcName.length > 120){ toast("Please shorten your name (120 characters at most)."); break; }
+        if(!/^\+?[0-9 ()-]{6,20}$/.test(vcWa)){ toast("Enter a valid WhatsApp number with country code, e.g. +91 98765 43210."); break; }
+        if(vcEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(vcEmail)){ toast("Enter a valid email address or leave it blank."); break; }
+        if(vcDate){
+          var nowD = new Date(), todayIso = nowD.getFullYear() + "-" + String(nowD.getMonth()+1).padStart(2,"0") + "-" + String(nowD.getDate()).padStart(2,"0");
+          var maxD = new Date(nowD.getTime() + 365*86400000), maxIso = maxD.getFullYear() + "-" + String(maxD.getMonth()+1).padStart(2,"0") + "-" + String(maxD.getDate()).padStart(2,"0");
+          if(vcDate < todayIso){ toast("Please choose today or a future date."); break; }
+          if(vcDate > maxIso){ toast("Please choose a date within the next year."); break; }
+        }
+        if(vcTime && !/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(vcTime)){ toast("Please choose a valid time."); break; }
         (function(){
           actionBtn.disabled = true;
           sb.from("video_call_requests").insert({
@@ -2488,15 +2567,21 @@ document.body.addEventListener("click", function(e){
             full_name: vcName,
             business_name: qs("#vc-business").value.trim(),
             whatsapp_number: vcWa,
-            email: qs("#vc-email").value.trim(),
+            email: vcEmail,
             country: qs("#vc-country").value.trim(),
             collection: qs("#vc-collection").value.trim(),
-            preferred_date: qs("#vc-date").value || null,
-            preferred_time: qs("#vc-time").value || null,
+            preferred_date: vcDate || null,
+            preferred_time: vcTime || null,
             message: qs("#vc-message").value.trim()
           }).then(function(res){
             actionBtn.disabled = false;
-            if(res.error){ toast("Could not submit request. Please try again."); return; }
+            if(res.error){
+              var em = String(res.error.message || "");
+              toast(/Preferred date/.test(em) ? "Please choose a date within the next year."
+                  : /failed to fetch|network|load failed/i.test(em) ? "Could not reach the server. Check your connection and try again."
+                  : "Could not submit request. Please try again.");
+              return;
+            }
             qs("#videocall-form-pane").style.display = "none";
             qs("#videocall-confirm-pane").style.display = "block";
           });
@@ -2521,10 +2606,17 @@ document.body.addEventListener("click", function(e){
       case "close-mobile-search": qs("#mobile-search-panel").classList.remove("open"); break;
 
       case "enquire-product":
-        if(id && state.inquiries.indexOf(id)===-1){
-          state.inquiries.push(id); persist(); updateCounts();
-          toast("Added to your B2B inquiries.");
-        } else if(id){ toast("Already in your inquiries."); }
+        (function(){
+          var ep = id ? productById(id) : null;
+          if(!ep) return;
+          /* remember the colour the customer picked (name only) */
+          var col = (ep.colors && ep.colors.length && state.currentProductId===ep.id) ? selectedColor(ep) : null;
+          var already = state.inquiries.indexOf(id) > -1;
+          if(!already) state.inquiries.push(id);
+          if(col) state.inquiryColors[id] = col.name; else if(!already) delete state.inquiryColors[id];
+          persist(); updateCounts(); refreshEnquiryButton(ep);
+          toast(already ? "Updated in your enquiry list." : "Added to your enquiry list.");
+        })();
         break;
       case "whatsapp-product":
         var pp = productById(id);
@@ -2559,6 +2651,7 @@ document.body.addEventListener("click", function(e){
         break;
       case "remove-inquiry":
         state.inquiries = state.inquiries.filter(function(x){ return x!==id; });
+        delete state.inquiryColors[id];
         persist(); renderInquiries(); updateCounts();
         break;
       case "remove-watchlist":
@@ -2574,21 +2667,18 @@ document.body.addEventListener("click", function(e){
           actionBtn.disabled = true; actionBtn.textContent = "Sending...";
           (async function(){
             try{
-              var insEnq = await sb.from("enquiries").insert({ user_id: state.userId }).select().single();
-              if(insEnq.error) throw insEnq.error;
-              var items = state.inquiries.map(function(pid){
-                var p = productById(pid);
-                return { enquiry_id: insEnq.data.id, product_id: pid, product_name: p?p.name:null, product_code: p?p.code:null };
-              });
-              var insItems = await sb.from("enquiry_items").insert(items);
-              if(insItems.error) throw insItems.error;
+              var ids = state.inquiries.filter(function(pid){ return !!productById(pid); });      /* skip products that no longer exist */
+              if(ids.length===0) throw { message:"The products in your list are no longer available." };
+              /* one call, one transaction: the database validates every product and colour */
+              var rpc = await sb.rpc("submit_enquiry", { p_items: ids.map(function(pid){ return { product_id: pid, color_name: state.inquiryColors[pid] || null }; }) });
+              if(rpc.error) throw rpc.error;
               var waMsg = "Hello Nisha Art Jewellery, I would like to enquire about: " +
-                state.inquiries.map(function(pid){ var p=productById(pid); return p ? (p.name+" ("+p.code+")") : ""; }).filter(Boolean).join(", ");
+                ids.map(function(pid){ var p=productById(pid), c=state.inquiryColors[pid]; return p.name+" ("+p.code+")"+(c ? ", Colour: "+c : ""); }).join("; ");
               openExternal(waLink(waMsg));
-              state.inquiries = []; persist(); renderInquiries(); updateCounts();
+              state.inquiries = []; state.inquiryColors = {}; persist(); renderInquiries(); updateCounts();
               toast("Enquiry sent — our team will reach out shortly.");
             }catch(err){
-              toast("Could not send enquiry. Please try again.");
+              toast(enquiryErrorText(err));
             } finally {
               actionBtn.disabled = false; actionBtn.innerHTML = originalText;
             }
@@ -2663,6 +2753,7 @@ async function init(){
     await loadCatalog();
   }catch(e){ toast("Could not load catalogue. Please refresh."); }
   await loadState();
+  pruneInquiries();
   renderCategoryRails();
   renderNewArrivals();
   updateCounts();
