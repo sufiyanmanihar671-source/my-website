@@ -549,10 +549,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   font-weight:500;line-height:1;padding:7px 10px;border-radius:0;
 }
 .pill-new{background:var(--emerald);color:var(--ivory);}
-.pill-stock-in,.pill-stock-out{background:rgba(250,248,243,0.94);border:1px solid rgba(231,226,216,0.9);}
+.pill-stock-in,.pill-stock-few,.pill-stock-mto,.pill-stock-out{background:rgba(250,248,243,0.94);border:1px solid rgba(231,226,216,0.9);}
 .pill-stock-in{color:var(--forest);}
+.pill-stock-few{color:#8A6420;}
+.pill-stock-mto{color:var(--emerald);}
 .pill-stock-out{color:var(--warm-gray);}
-.pill-stock-in::before,.pill-stock-out::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.pill-stock-in::before,.pill-stock-few::before,.pill-stock-mto::before,.pill-stock-out::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.pill-stock-mto::before{background:transparent;box-shadow:inset 0 0 0 1px currentColor;}
 .card-body{padding:20px 20px 20px;display:flex;flex-direction:column;gap:4px;flex:1;}
 .card-name{font-family:var(--font-display);font-size:clamp(20px,1.7vw,23px);font-weight:500;line-height:1.15;color:var(--text);transition:color .4s var(--ease);}
 .card-code{font-size:10.5px;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-top:2px;}
@@ -656,7 +659,53 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .pd-save-btn.saved .icon-line{display:none;}
 
 .pd-eyebrow{display:flex;gap:8px;align-items:center;margin-bottom:22px;flex-wrap:wrap;}
-.pd-eyebrow .pill-stock-in,.pd-eyebrow .pill-stock-out{background:var(--surface-card);}
+.pd-eyebrow .pill-stock-in,.pd-eyebrow .pill-stock-few,.pd-eyebrow .pill-stock-mto,.pd-eyebrow .pill-stock-out,
+.pd-color-avail .pill{background:var(--surface-card);}
+.pd-photo{transition:transform .9s var(--ease),opacity .35s var(--ease);}
+.pd-photo.is-swapping{opacity:0.0;}
+
+/* ---- colour options ---- */
+.pd-colors{padding:26px 0 28px;margin:0;border-bottom:1px solid var(--line);}
+.pd-colors-head{display:flex;align-items:baseline;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+.pd-colors-label,.pd-avail-label{font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);}
+.pd-colors-current{font-family:var(--font-display);font-size:24px;line-height:1.1;color:var(--heading);}
+.pd-swatches{display:flex;flex-wrap:wrap;gap:6px 10px;margin:0 -4px;}
+.pd-swatch{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:9px;min-width:68px;padding:8px 6px 6px;
+  border-radius:2px;color:var(--text-muted);cursor:pointer;
+  transition:color .35s var(--ease),transform .35s var(--ease);
+}
+.pd-swatch-dot{
+  position:relative;display:block;width:40px;height:40px;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 30% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 46%), var(--swatch,#ccc);
+  box-shadow:inset 0 0 0 1px rgba(34,34,34,0.16), 0 0 0 3px var(--surface), 0 0 0 4px transparent;
+  transition:box-shadow .45s var(--ease),transform .45s var(--ease);
+}
+@media (hover:hover){
+  .pd-swatch:not(.is-unavailable):not(.is-selected):hover .pd-swatch-dot{transform:scale(1.07);box-shadow:inset 0 0 0 1px rgba(34,34,34,0.16), 0 0 0 3px var(--surface), 0 0 0 4px var(--line-strong);}
+  .pd-swatch:not(.is-unavailable):hover{color:var(--text);}
+}
+.pd-swatch.is-selected{color:var(--heading);}
+.pd-swatch.is-selected .pd-swatch-dot{box-shadow:inset 0 0 0 1px rgba(34,34,34,0.16), 0 0 0 3px var(--surface), 0 0 0 4.5px var(--emerald);}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .pd-swatch.is-selected .pd-swatch-dot{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.2), 0 0 0 3px var(--surface), 0 0 0 4.5px var(--champagne-soft);}
+}
+.pd-swatch-name{font-size:11.5px;letter-spacing:0.06em;line-height:1.25;text-align:center;max-width:84px;overflow-wrap:anywhere;}
+.pd-swatch.is-selected .pd-swatch-name{font-weight:500;}
+.pd-swatch-note{margin-top:-4px;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);}
+.pd-swatch.is-unavailable{cursor:not-allowed;}
+.pd-swatch.is-unavailable .pd-swatch-dot{opacity:0.45;}
+.pd-swatch.is-unavailable .pd-swatch-name{opacity:0.6;}
+.pd-swatch.is-unavailable .pd-swatch-dot::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top right, transparent calc(50% - 0.75px), rgba(34,34,34,0.7) 50%, transparent calc(50% + 0.75px));
+}
+.pd-color-avail{display:flex;align-items:center;gap:14px;margin-top:18px;flex-wrap:wrap;}
+@media(max-width:480px){
+  .pd-swatch{min-width:60px;}
+  .pd-swatch-dot{width:38px;height:38px;}
+  .pd-colors-current{font-size:22px;}
+}
 .pd-info h1{font-size:clamp(38px,4.6vw,62px);line-height:1.02;letter-spacing:-0.015em;margin-bottom:14px;}
 .pd-code{font-size:11px;letter-spacing:0.24em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0;display:flex;align-items:center;gap:16px;}
 .pd-code::after{content:'';flex:0 0 44px;height:1px;background:var(--champagne);}
@@ -1544,7 +1593,7 @@ async function loadCategories(){
 
 async function loadProducts(){
   var res = await sb.from("products")
-    .select("id,code,name,category_id,subcategory_id,material,description,price,stock_status,is_new,motif,tint,subcategories(name),product_images(url,sort_order,is_primary)")
+    .select("id,code,name,category_id,subcategory_id,material,description,price,stock_status,stock_state,is_new,motif,tint,subcategories(name),product_images(url,sort_order,is_primary)")
     .eq("active", true);
   var rows = res.data || [];
   PRODUCTS.length = 0;
@@ -1557,7 +1606,8 @@ async function loadProducts(){
       id: p.id, code: p.code, name: p.name, cat: p.category_id,
       sub: p.subcategories ? p.subcategories.name : null,
       material: p.material, desc: p.description, price: Number(p.price),
-      stock: !!p.stock_status, badge: p.is_new ? "NEW" : "",
+      stock: !!p.stock_status, stockState: normalizeStockKey(p.stock_state, !!p.stock_status),
+      colors: [], badge: p.is_new ? "NEW" : "",
       motif: p.motif, tint: p.tint || TINTS[i % TINTS.length], images: imgs
     });
   });
@@ -1581,6 +1631,29 @@ async function loadCurrencies(){
 
 async function loadCatalog(){
   await Promise.all([loadCategories(), loadCurrencies(), loadProducts()]);
+  await loadColors();
+}
+
+/* Colour options. Reads the storefront view, which never contains quantities.
+   Any failure just means "no colour options" — products keep working. */
+async function loadColors(){
+  var byProduct = {};
+  try{
+    var res = await sb.from("product_colors_public")
+      .select("id,product_id,color_name,color_hex,image_url,stock_status,sort_order")
+      .order("sort_order");
+    if(res.error) throw res.error;
+    (res.data || []).forEach(function(c){
+      var hex = HEX_RE.test(c.color_hex||"") ? c.color_hex.toUpperCase() : null;
+      if(!hex || !c.color_name) return;
+      (byProduct[c.product_id] = byProduct[c.product_id] || []).push({
+        id: c.id, name: String(c.color_name), hex: hex,
+        image: /^https?:\/\//i.test(c.image_url||"") ? c.image_url : null,
+        status: normalizeStockKey(c.stock_status, true)
+      });
+    });
+  }catch(e){ byProduct = {}; }
+  PRODUCTS.forEach(function(p){ p.colors = byProduct[p.id] || []; });
 }
 
 function currencyByCode(code){ for(var i=0;i<CURRENCIES.length;i++){ if(CURRENCIES[i].code===code) return CURRENCIES[i]; } return CURRENCIES[0]; }
@@ -1640,7 +1713,8 @@ var state = {
   currency:"INR",
   inquiries:[],
   watchlist:[],
-  pendingLoginTab:"login"
+  pendingLoginTab:"login",
+  selectedColorId:null
 };
 
 function safeGet(key, fallback){
@@ -1734,6 +1808,51 @@ function updateCounts(){
   }
 }
 
+/* ======================================================================
+   STOCK STATUS + COLOUR HELPERS
+   The public site only ever shows one of four labels — never a quantity.
+   ====================================================================== */
+var HEX_RE = /^#[0-9A-Fa-f]{6}$/;
+var STOCK_STATES = {
+  in_stock:        { label:"In Stock",        cls:"pill-stock-in"  },
+  few_pieces_left: { label:"Few Pieces Left", cls:"pill-stock-few" },
+  made_to_order:   { label:"Made to Order",   cls:"pill-stock-mto" },
+  out_of_stock:    { label:"Out of Stock",    cls:"pill-stock-out" }
+};
+function normalizeStockKey(key, legacyInStock){
+  if(STOCK_STATES.hasOwnProperty(key)) return key;
+  return legacyInStock ? "in_stock" : "out_of_stock";
+}
+function stockPillHtml(key, id){
+  var s = STOCK_STATES[key] || STOCK_STATES.in_stock;
+  return '<span class="pill '+s.cls+'"'+(id?' id="'+id+'"':"")+'>'+s.label+'</span>';
+}
+function colorById(p, id){
+  var list = (p && p.colors) || [];
+  for(var i=0;i<list.length;i++){ if(list[i].id===id) return list[i]; }
+  return null;
+}
+function colorAvailable(c){ return !!c && c.status !== "out_of_stock"; }
+function defaultColor(p){
+  var list = (p && p.colors) || [];
+  for(var i=0;i<list.length;i++){ if(colorAvailable(list[i])) return list[i]; }
+  return null;
+}
+/* Status shown for the product as a whole (cards): the product's own status,
+   unless it has colour options and every one of them is out of stock. */
+function effectiveStockKey(p){
+  var list = p.colors || [];
+  if(list.length && p.stockState !== "out_of_stock" && !list.some(colorAvailable)) return "out_of_stock";
+  return p.stockState;
+}
+/* Status shown on the detail page: the selected colour's, when there are colours. */
+function detailStockKey(p){
+  if(!(p.colors && p.colors.length)) return p.stockState;
+  var c = colorById(p, state.selectedColorId);
+  return c ? c.status : "out_of_stock";
+}
+function selectedColor(p){ return colorById(p, state.selectedColorId); }
+
 function priceBlockHtml(product, size){
   size = size || "card";
   if(!state.isLoggedIn){
@@ -1766,7 +1885,7 @@ function renderCategoryRails(){
 function productCardHtml(p){
   var badges = '<div class="card-badges">';
   if(p.badge==="NEW") badges += '<span class="pill pill-new">New</span>';
-  badges += p.stock ? '<span class="pill pill-stock-in">In Stock</span>' : '<span class="pill pill-stock-out">Out of Stock</span>';
+  badges += stockPillHtml(effectiveStockKey(p));
   badges += '</div>';
   var photo = productPhoto(p, 640);
   return '' +
@@ -1842,6 +1961,59 @@ function renderDiscover(){
 /* ======================================================================
    RENDER: PRODUCT DETAIL
    ====================================================================== */
+/* Colour swatches — hex is validated on load and only ever used to paint a dot;
+   it is never printed. No quantities exist client-side to print either. */
+function swatchHtml(c, selectedId){
+  var on = c.id === selectedId, off = !colorAvailable(c);
+  var label = c.name + " — " + STOCK_STATES[c.status].label;
+  return '<button type="button" class="pd-swatch'+(on?" is-selected":"")+(off?" is-unavailable":"")+'" role="radio" aria-checked="'+(on?"true":"false")+'"'+(off?" disabled":"")+
+    ' data-action="select-color" data-color="'+esc(c.id)+'" aria-label="'+esc(label)+'" title="'+esc(label)+'">' +
+      '<span class="pd-swatch-dot" style="--swatch:'+c.hex+'"></span>' +
+      '<span class="pd-swatch-name">'+esc(c.name)+'</span>' +
+      (off ? '<span class="pd-swatch-note">Out of Stock</span>' : '') +
+    '</button>';
+}
+function colorSelectorHtml(p, initial){
+  if(!(p.colors && p.colors.length)) return "";
+  return '<div class="pd-colors" id="pd-colors">' +
+    '<div class="pd-colors-head"><span class="pd-colors-label">Colour</span><span class="pd-colors-current" id="pd-color-current">'+(initial?esc(initial.name):"")+'</span></div>' +
+    '<div class="pd-swatches" role="radiogroup" aria-label="Colour">' + p.colors.map(function(c){ return swatchHtml(c, initial ? initial.id : null); }).join("") + '</div>' +
+    '<div class="pd-color-avail"><span class="pd-avail-label">Availability</span>' + stockPillHtml(detailStockKey(p), "pd-color-status") + '</div>' +
+  '</div>';
+}
+function swapProductImage(src){
+  var img = qs("#pd-gallery-main img.pd-photo");
+  if(!img || !src || img.getAttribute("src") === src) return;
+  img.classList.add("is-swapping");
+  var done = function(){ img.classList.remove("is-swapping"); };
+  img.onload = done;
+  img.onerror = function(){                       /* colour photo failed: fall back to the product photo */
+    img.onerror = function(){ img.style.visibility = "hidden"; done(); };
+    img.src = state.pdDefaultPhoto;
+  };
+  img.style.visibility = "visible";
+  img.src = src;
+  setTimeout(done, 700);
+}
+function selectColor(id){
+  var p = productById(state.currentProductId);
+  var c = p ? colorById(p, id) : null;
+  if(!c || !colorAvailable(c)) return;            /* out-of-stock colours can never be selected */
+  state.selectedColorId = c.id;
+  qsa(".pd-swatch").forEach(function(sw){
+    var on = sw.dataset.color === c.id;
+    sw.classList.toggle("is-selected", on);
+    sw.setAttribute("aria-checked", on ? "true" : "false");
+  });
+  var nameEl = qs("#pd-color-current"); if(nameEl) nameEl.textContent = c.name;
+  var s = STOCK_STATES[detailStockKey(p)];
+  ["#pd-color-status", "#pd-stock-pill"].forEach(function(sel){
+    var el = qs(sel); if(el){ el.className = "pill "+s.cls; el.textContent = s.label; }
+  });
+  var spec = qs("#pd-spec-stock"); if(spec) spec.textContent = s.label;
+  swapProductImage(c.image || state.pdDefaultPhoto);
+}
+
 function renderProductDetail(p){
   var c = cat(p.cat);
   qs("#pd-breadcrumb").innerHTML =
@@ -1855,6 +2027,11 @@ function renderProductDetail(p){
     : '<button class="price-lock" style="font-size:13px;" data-action="open-login"><svg class="icon"><use href="#i-lock"/></svg> Login to See Price</button>';
 
   var pdPhoto = productPhoto(p, 1000);
+  /* colour options: preselect the first colour that can be ordered */
+  var initialColor = defaultColor(p);
+  state.selectedColorId = initialColor ? initialColor.id : null;
+  state.pdDefaultPhoto = pdPhoto;
+  var mainPhoto = (initialColor && initialColor.image) ? initialColor.image : pdPhoto;
   var hasRealImages = p.images && p.images.length > 0;
   var thumbSrcs = hasRealImages ? p.images.slice(0,3) : [pdPhoto,pdPhoto,pdPhoto];
   var thumbsHtml = thumbSrcs.map(function(url, idx){
@@ -1867,21 +2044,22 @@ function renderProductDetail(p){
       '<button class="pd-save-btn'+(isSaved?" saved":"")+'" id="pd-save-btn" data-action="toggle-watchlist" data-id="'+p.id+'" aria-label="Save to watch list">' +
         '<svg class="icon icon-line"><use href="#i-heart"/></svg><svg class="icon icon-fill"><use href="#i-heart"/></svg>' +
       '</button>' +
-      imgTag(pdPhoto, p.name, 1000, "pd-photo") + '<span class="media-tint"></span>' +
+      imgTag(mainPhoto, p.name, 1000, "pd-photo") + '<span class="media-tint"></span>' +
     '</div>' +
     '<div class="pd-thumbs">' + thumbsHtml + '</div>' +
     '<div class="pd-note"><svg class="icon"><use href="#i-zoom"/></svg> Tap the image to zoom in.</div>' +
   '</div>' +
   '<div class="pd-info">' +
     '<div class="pd-eyebrow"><span class="pill pill-new" style="'+(p.badge==="NEW"?"":"display:none;")+'">New</span>' +
-      '<span class="pill '+(p.stock?"pill-stock-in":"pill-stock-out")+'">'+(p.stock?"In Stock":"Out of Stock")+'</span></div>' +
+      stockPillHtml(detailStockKey(p), "pd-stock-pill") + '</div>' +
     '<h1>'+esc(p.name)+'</h1>' +
     '<div class="pd-code">'+esc(p.code)+'</div>' +
     '<div class="pd-price-block">'+priceHtml+'</div>' +
+    colorSelectorHtml(p, initialColor) +
     '<div class="pd-specs">' +
       '<div class="pd-spec-row"><span>Material</span><span>'+esc(p.material)+'</span></div>' +
       '<div class="pd-spec-row"><span>Product Code</span><span>'+esc(p.code)+'</span></div>' +
-      '<div class="pd-spec-row"><span>Stock Status</span><span>'+(p.stock?"In Stock":"Out of Stock")+'</span></div>' +
+      '<div class="pd-spec-row"><span>Stock Status</span><span id="pd-spec-stock">'+STOCK_STATES[detailStockKey(p)].label+'</span></div>' +
     '</div>' +
     '<div class="pd-actions">' +
       '<button class="btn btn-primary" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon" style="width:14px;height:14px;"><use href="#i-whatsapp"/></svg> Chat With Us</button>' +
@@ -2350,8 +2528,13 @@ document.body.addEventListener("click", function(e){
         break;
       case "whatsapp-product":
         var pp = productById(id);
-        if(pp) openExternal(waLink("Hello Nisha Art Jewellery, I would like to enquire about "+pp.name+" ("+pp.code+")."));
+        if(pp){
+          /* include the chosen colour (name only — never stock numbers) */
+          var wc = (pp.colors && pp.colors.length && state.currentProductId===pp.id) ? selectedColor(pp) : null;
+          openExternal(waLink("Hello Nisha Art Jewellery, I would like to enquire about "+pp.name+" ("+pp.code+")"+(wc ? ", Colour: "+wc.name : "")+"."));
+        }
         break;
+      case "select-color": selectColor(actionBtn.dataset.color); break;
       case "whatsapp-generic":
         openExternal(waLink("Hello Nisha Art Jewellery, I would like to enquire about your jewellery collection."));
         break;

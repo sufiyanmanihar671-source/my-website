@@ -120,6 +120,47 @@ tr:hover td{background:rgba(51,51,51,0.02);}
 .img-thumb .del-btn{position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.55);color:#fff;border-radius:50%;width:16px;height:16px;font-size:11px;line-height:16px;text-align:center;}
 
 .empty-note{color:var(--text-muted);font-size:13px;padding:20px 0;text-align:center;}
+
+/* ---- stock + colour options ---- */
+.section-box{border:1px solid var(--line-strong);border-radius:var(--radius-m);padding:16px 16px 6px;margin:6px 0 18px;background:#FCFBFA;}
+.section-title{font-family:var(--font-display);font-size:19px;font-weight:600;margin-bottom:12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.section-title .muted{font-family:var(--font-body);font-size:12px;font-weight:400;color:var(--text-muted);}
+.hint{font-size:11.5px;color:var(--text-muted);margin:-4px 0 12px;}
+.field-row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.field-row4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.field-error{color:var(--danger);font-size:12px;margin:-6px 0 12px;min-height:0;}
+.field-error:empty{display:none;}
+.field input.invalid,.field select.invalid{border-color:var(--danger);background:var(--danger-bg);}
+.stock-preview{display:flex;align-items:center;min-height:38px;}
+.pill-blue{background:#E8EEF7;color:#2F4F80;}
+.low-warn{display:inline-block;margin-left:6px;font-size:11px;font-weight:600;color:var(--warn);background:var(--warn-bg);border-radius:20px;padding:1px 8px;white-space:nowrap;}
+.sub-note{display:block;font-size:11px;color:var(--text-muted);margin-top:2px;}
+.qty-cell{white-space:nowrap;}
+
+.color-row{border:1px solid var(--line-strong);border-radius:var(--radius-m);background:#fff;padding:14px 14px 4px;margin-bottom:12px;}
+.color-row.is-inactive{opacity:0.75;background:#F6F5F3;}
+.color-row-head{display:flex;gap:14px;align-items:flex-end;margin-bottom:0;}
+.color-row-head .grow{flex:1;min-width:0;}
+.color-pick{flex:none;margin-bottom:14px;}
+.color-pick label{display:block;font-size:12px;font-weight:500;margin-bottom:5px;color:var(--text-muted);}
+input[type=color].cr-hex{-webkit-appearance:none;appearance:none;width:42px;height:42px;padding:0;border:1px solid var(--line-strong);border-radius:50%;background:none;cursor:pointer;overflow:hidden;}
+input[type=color].cr-hex::-webkit-color-swatch-wrapper{padding:0;}
+input[type=color].cr-hex::-webkit-color-swatch{border:none;border-radius:50%;}
+input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
+.cr-status{flex:none;margin-bottom:14px;min-height:38px;display:flex;align-items:center;}
+.color-row-img{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.color-row-img .img-thumb{margin:0;}
+.color-row-img .img-empty{width:76px;height:76px;border:1px dashed var(--line-strong);border-radius:var(--radius-s);display:flex;align-items:center;justify-content:center;font-size:10.5px;color:var(--text-muted);text-align:center;padding:4px;}
+.color-row-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+.cr-msg{font-size:12px;color:var(--text-muted);}
+.cr-msg.err{color:var(--danger);} .cr-msg.ok{color:var(--success);}
+.quick-add{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 12px;font-size:12px;color:var(--text-muted);}
+.quick-chip{border:1px solid var(--line-strong);border-radius:20px;padding:3px 10px 3px 6px;font-size:12px;background:#fff;display:inline-flex;align-items:center;gap:6px;}
+.quick-chip i{display:inline-block;width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.18);}
+.quick-chip:hover{border-color:var(--accent);}
+.spinner-note{color:var(--text-muted);font-size:12.5px;padding:8px 0 14px;}
+@media (max-width:900px){.field-row3,.field-row4{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.field-row3,.field-row4{grid-template-columns:1fr;} .color-row-head{flex-wrap:wrap;}}
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
 .toast{background:var(--wine-deep);color:#fff;padding:11px 16px;border-radius:var(--radius-s);font-size:13px;box-shadow:var(--shadow-pop);}
 
@@ -160,8 +201,10 @@ tr:hover td{background:rgba(51,51,51,0.02);}
     <h1>Nisha Art Jewellery</h1>
     <p class="sub">Admin Dashboard</p>
     <div id="gate-msg-wrap"></div>
-    <div class="field"><label>Password</label><input type="password" id="gate-pin" placeholder="Enter password" autofocus></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-pin-btn">Enter Dashboard</button>
+    <div id="gate-pane-pin">
+      <div class="field"><label>Password</label><input type="password" id="gate-pin" placeholder="Enter password" autofocus></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="gate-pin-btn">Enter Dashboard</button>
+    </div>
   </div>
 </div>
 
@@ -201,7 +244,7 @@ tr:hover td{background:rgba(51,51,51,0.02);}
         <span class="spacer"></span>
       </div>
       <div class="card table-wrap"><table id="products-table"><thead><tr>
-        <th></th><th>Name</th><th>Code</th><th>Category</th><th>Sub</th><th>Price</th><th>Stock</th><th>New</th><th>Active</th><th></th>
+        <th></th><th>Name</th><th>Code</th><th>Category</th><th>Sub</th><th>Price</th><th>Stock Status</th><th>Available Qty</th><th>Colours</th><th>New</th><th>Active</th><th></th>
       </tr></thead><tbody></tbody></table></div>
     </section>
 
@@ -289,15 +332,56 @@ tr:hover td{background:rgba(51,51,51,0.02);}
     </div>
     <div class="field"><label>Description</label><textarea rows="2" id="pf-description"></textarea></div>
     <div class="field-row">
-      <div class="checkbox-row"><input type="checkbox" id="pf-stock"><label for="pf-stock" style="margin:0;">In Stock</label></div>
       <div class="checkbox-row"><input type="checkbox" id="pf-isnew"><label for="pf-isnew" style="margin:0;">Mark as NEW</label></div>
       <div class="checkbox-row"><input type="checkbox" id="pf-active" checked><label for="pf-active" style="margin:0;">Active (visible on site)</label></div>
+    </div>
+
+    <!-- STOCK DETAILS -->
+    <div class="section-box" id="pf-stock-section">
+      <div class="section-title">Stock Details</div>
+      <div class="field-row">
+        <div class="field">
+          <label for="pf-stock-mode">Stock Status</label>
+          <select id="pf-stock-mode">
+            <option value="tracked">Automatic &mdash; In Stock / Few Pieces Left / Out of Stock</option>
+            <option value="made_to_order">Made to Order</option>
+            <option value="simple">Manual &mdash; In Stock / Out of Stock only (no quantities)</option>
+          </select>
+        </div>
+        <div class="field"><label>Shown on the website</label><div class="stock-preview" id="pf-stock-preview"></div></div>
+      </div>
+      <div id="pf-stock-simple" style="display:none;">
+        <div class="checkbox-row"><input type="checkbox" id="pf-stock"><label for="pf-stock" style="margin:0;">In Stock</label></div>
+      </div>
+      <div id="pf-stock-qty">
+        <div class="field-row4">
+          <div class="field"><label for="pf-stock-total">Total Stock Quantity</label><input type="number" id="pf-stock-total" min="0" step="1" inputmode="numeric"></div>
+          <div class="field"><label for="pf-stock-available">Available Stock Quantity</label><input type="number" id="pf-stock-available" min="0" step="1" inputmode="numeric"></div>
+          <div class="field"><label for="pf-stock-reserved">Reserved Stock Quantity</label><input type="number" id="pf-stock-reserved" min="0" step="1" inputmode="numeric" placeholder="0"></div>
+          <div class="field"><label for="pf-stock-threshold">Low Stock Threshold</label><input type="number" id="pf-stock-threshold" min="0" step="1" inputmode="numeric" placeholder="5"></div>
+        </div>
+        <p class="hint">Exact quantities are visible only in this admin panel. The website only ever shows In Stock, Few Pieces Left, Made to Order or Out of Stock.</p>
+      </div>
+      <div class="field-error" id="pf-stock-error"></div>
     </div>
     <div class="field">
       <label>Images</label>
       <div class="img-thumb-row" id="pf-images-row"></div>
       <input type="file" id="pf-image-upload" accept="image/*" multiple>
       <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">First image (or the one marked Primary) is used as the main photo. Save the product before uploading images.</p>
+    </div>
+
+    <!-- COLOUR OPTIONS -->
+    <div class="section-box" id="pf-colors-section">
+      <div class="section-title">Colour Options <span class="muted" id="pf-colors-count"></span></div>
+      <p class="hint" id="pf-colors-locked">Save the product first, then add its colour options here.</p>
+      <div id="pf-colors-body" style="display:none;">
+        <p class="hint">Pick a colour with the colour picker &mdash; the HEX value is saved automatically. Each colour has its own stock and status. Products without colour options keep working as before.</p>
+        <div id="pf-colors-list"></div>
+        <div class="quick-add" id="pf-quick-add"></div>
+        <button type="button" class="btn btn-outline btn-sm" id="pf-add-color-btn">+ Add Colour</button>
+        <div style="height:14px;"></div>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-outline" data-close="modal-product">Cancel</button>
@@ -576,9 +660,56 @@ async function loadOverview(){
 /* ======================================================================
    PRODUCTS
    ====================================================================== */
+/* ---------- stock + colour helpers ---------- */
+var STOCK_LABELS = { in_stock:"In Stock", few_pieces_left:"Few Pieces Left", made_to_order:"Made to Order", out_of_stock:"Out of Stock" };
+var STOCK_PILL   = { in_stock:"pill-green", few_pieces_left:"pill-amber", made_to_order:"pill-blue", out_of_stock:"pill-red" };
+function stockPill(key){ return '<span class="pill '+(STOCK_PILL[key]||"pill-grey")+'">'+esc(STOCK_LABELS[key]||"—")+'</span>'; }
+/* Same rule the database trigger applies (the database stays the source of truth). */
+function computeStatus(available, threshold, madeToOrder){
+  if(madeToOrder) return "made_to_order";
+  if(!(available > 0)) return "out_of_stock";
+  if(available <= threshold) return "few_pieces_left";
+  return "in_stock";
+}
+var HEX_RE  = /^#[0-9A-Fa-f]{6}$/;
+var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/* whole numbers >= 0 only; blank -> {value:null} */
+function parseCount(str, label){
+  var t = String(str == null ? "" : str).trim();
+  if(t === "") return { value:null, error:null };
+  if(/^-/.test(t)) return { value:null, error: label + " cannot be negative." };
+  if(!/^\d+$/.test(t)) return { value:null, error: label + " must be a whole number (0 or more)." };
+  var n = Number(t);
+  if(n > 1000000000) return { value:null, error: label + " is too large." };
+  return { value:n, error:null };
+}
+function friendlyError(err, fallback){
+  if(!err) return fallback || "Something went wrong.";
+  var msg = String(err.message || ""), code = err.code || "";
+  if(code === "42501" || /row-level security|permission denied|JWT/i.test(msg)) return "Not allowed by database security (RLS): saving needs a signed-in staff session.";
+  if(code === "23505") return "That already exists (duplicate colour name for this product).";
+  if(code === "23503") return "Invalid reference — the product may no longer exist.";
+  if(code === "23514"){
+    if(/reserved_le_total/.test(msg))  return "Reserved stock cannot exceed total stock.";
+    if(/available_le_total/.test(msg)) return "Available stock cannot exceed total stock.";
+    if(/hex_chk/.test(msg))            return "Colour value is not valid.";
+    if(/name_chk/.test(msg))           return "Colour name cannot be empty (max 60 characters).";
+    if(/nonneg/.test(msg))             return "Stock numbers cannot be negative.";
+    return "One of the values is not allowed.";
+  }
+  return (fallback || "Error") + ": " + msg;
+}
+function stockRowOf(p){ var r = p && p.product_stock; if(Array.isArray(r)) r = r[0]; return r || null; }
+function stockKeyOf(p){
+  var r = stockRowOf(p);
+  if(r) return r.stock_status;
+  return p.stock_state || (p.stock_status ? "in_stock" : "out_of_stock");
+}
+
 var PRODUCTS_CACHE = [];
 async function loadProducts(){
-  var res = await sb.from("products").select("*, subcategories(name), product_images(id,url,sort_order,is_primary)").order("created_at",{ascending:false});
+  var res = await sb.from("products").select("*, subcategories(name), product_images(id,url,sort_order,is_primary), product_stock(*), product_colors(id,stock_status,is_active)").order("created_at",{ascending:false});
+  if(res.error){ toast("Could not load products: " + friendlyError(res.error)); }
   PRODUCTS_CACHE = res.data || [];
   renderProductsTable();
 }
@@ -591,11 +722,23 @@ function renderProductsTable(){
     return true;
   });
   var tbody = qs("#products-table tbody");
-  if(rows.length===0){ tbody.innerHTML = '<tr><td colspan="10"><div class="empty-note">No products found.</div></td></tr>'; return; }
+  if(rows.length===0){ tbody.innerHTML = '<tr><td colspan="12"><div class="empty-note">No products found.</div></td></tr>'; return; }
   tbody.innerHTML = rows.map(function(p){
     var img = (p.product_images||[]).sort(function(a,b){ return (b.is_primary?1:0)-(a.is_primary?1:0); })[0];
     var thumb = img ? '<img src="'+img.url+'" style="width:36px;height:36px;object-fit:cover;border-radius:4px;">' : '<div style="width:36px;height:36px;background:var(--parchment-2);border-radius:4px;"></div>';
     var cat = categoryById(p.category_id);
+    var sr = stockRowOf(p);
+    var qtyCell = '<span style="color:var(--text-muted);">—</span>';
+    if(sr){
+      var lowStock = sr.stock_status !== "made_to_order" && Number(sr.available_stock) <= Number(sr.low_stock_threshold);
+      qtyCell = '<span class="qty-cell">' + Number(sr.available_stock) +
+        (lowStock ? '<span class="low-warn" title="Available stock has reached the low-stock threshold ('+Number(sr.low_stock_threshold)+')">⚠ Low stock</span>' : '') + '</span>';
+    }
+    var colorList = p.product_colors || [];
+    var lowColors = colorList.filter(function(c){ return c.is_active && (c.stock_status === "few_pieces_left" || c.stock_status === "out_of_stock"); }).length;
+    var colorCell = colorList.length
+      ? '<span class="qty-cell">' + colorList.length + (lowColors ? '<span class="low-warn" title="Colours that are low or out of stock">⚠ '+lowColors+' low</span>' : '') + '</span>'
+      : '<span style="color:var(--text-muted);">—</span>';
     return '<tr>' +
       '<td>'+thumb+'</td>' +
       '<td>'+esc(p.name)+'</td>' +
@@ -603,7 +746,9 @@ function renderProductsTable(){
       '<td>'+esc(cat?cat.name:"—")+'</td>' +
       '<td>'+esc(p.subcategories?p.subcategories.name:"—")+'</td>' +
       '<td>'+fmtMoney(p.price)+'</td>' +
-      '<td>'+(p.stock_status?'<span class="pill pill-green">In Stock</span>':'<span class="pill pill-red">Out</span>')+'</td>' +
+      '<td>'+stockPill(stockKeyOf(p))+'</td>' +
+      '<td>'+qtyCell+'</td>' +
+      '<td>'+colorCell+'</td>' +
       '<td>'+(p.is_new?'<span class="pill pill-amber">NEW</span>':'')+'</td>' +
       '<td>'+(p.active?'<span class="pill pill-green">Active</span>':'<span class="pill pill-grey">Hidden</span>')+'</td>' +
       '<td><button class="icon-btn" data-edit-product="'+p.id+'">Edit</button> <button class="icon-btn danger" data-delete-product="'+p.id+'">Delete</button></td>' +
@@ -633,7 +778,6 @@ function openProductModal(id){
     qs("#pf-material").value = p.material || "";
     qs("#pf-price").value = p.price;
     qs("#pf-description").value = p.description || "";
-    qs("#pf-stock").checked = !!p.stock_status;
     qs("#pf-isnew").checked = !!p.is_new;
     qs("#pf-active").checked = !!p.active;
     currentProductImages = (p.product_images||[]).slice().sort(function(a,b){ return (a.sort_order||0)-(b.sort_order||0); });
@@ -641,11 +785,13 @@ function openProductModal(id){
     qs("#pf-name").value=""; qs("#pf-code").value=""; qs("#pf-category").value = CATS[0]?CATS[0].id:"";
     refreshProductSubcatOptions();
     qs("#pf-material").value=""; qs("#pf-price").value=""; qs("#pf-description").value="";
-    qs("#pf-stock").checked=true; qs("#pf-isnew").checked=false; qs("#pf-active").checked=true;
+    qs("#pf-isnew").checked=false; qs("#pf-active").checked=true;
     currentProductImages = [];
   }
+  initStockForm(id ? PRODUCTS_CACHE.find(function(x){ return x.id===id; }) : null);
   renderProductImageThumbs();
   openModal("modal-product");
+  loadColorsForModal(id || "");
 }
 function renderProductImageThumbs(){
   var wrap = qs("#pf-images-row");
@@ -686,8 +832,92 @@ qs("#pf-image-upload").addEventListener("change", async function(e){
   loadProducts();
   this.value = "";
 });
+/* ======================================================================
+   STOCK DETAILS (product level)
+   ====================================================================== */
+var stockTotalTouched = false;
+function readStockForm(){
+  var mode = qs("#pf-stock-mode").value;
+  var out = { mode: mode, errors: [], fields: {} };
+  if(mode === "simple"){ out.simpleInStock = qs("#pf-stock").checked; return out; }
+  var parsed = {
+    total:     parseCount(qs("#pf-stock-total").value,     "Total stock"),
+    available: parseCount(qs("#pf-stock-available").value, "Available stock"),
+    reserved:  parseCount(qs("#pf-stock-reserved").value,  "Reserved stock"),
+    threshold: parseCount(qs("#pf-stock-threshold").value, "Low stock threshold")
+  };
+  Object.keys(parsed).forEach(function(k){
+    if(parsed[k].error){ out.errors.push(parsed[k].error); out.fields[k] = true; }
+  });
+  if(out.errors.length) return out;
+  if(parsed.available.value === null){
+    out.errors.push("Enter the Available Stock Quantity (use 0 if there is none).");
+    out.fields.available = true;
+    return out;
+  }
+  var reserved  = parsed.reserved.value  === null ? 0 : parsed.reserved.value;
+  var threshold = parsed.threshold.value === null ? 5 : parsed.threshold.value;
+  var total     = parsed.total.value     === null ? parsed.available.value + reserved : parsed.total.value;
+  if(reserved > total){ out.errors.push("Reserved stock cannot exceed total stock."); out.fields.reserved = true; out.fields.total = true; }
+  if(parsed.available.value > total){ out.errors.push("Available stock cannot exceed total stock."); out.fields.available = true; out.fields.total = true; }
+  out.values = { total_stock: total, available_stock: parsed.available.value, reserved_stock: reserved, low_stock_threshold: threshold };
+  return out;
+}
+function showStockErrors(st){
+  ["total","available","reserved","threshold"].forEach(function(k){
+    qs("#pf-stock-" + k).classList.toggle("invalid", !!(st && st.fields && st.fields[k]));
+  });
+  qs("#pf-stock-error").textContent = (st && st.errors && st.errors.length) ? st.errors.join(" ") : "";
+}
+function updateStockPreview(){
+  var st = readStockForm();
+  var key = null;
+  if(st.mode === "simple") key = st.simpleInStock ? "in_stock" : "out_of_stock";
+  else if(!st.errors.length) key = computeStatus(st.values.available_stock, st.values.low_stock_threshold, st.mode === "made_to_order");
+  qs("#pf-stock-preview").innerHTML = key ? stockPill(key) : '<span style="color:var(--text-muted);font-size:12.5px;">Enter quantities to preview</span>';
+}
+function applyStockMode(){
+  var simple = qs("#pf-stock-mode").value === "simple";
+  qs("#pf-stock-simple").style.display = simple ? "block" : "none";
+  qs("#pf-stock-qty").style.display = simple ? "none" : "block";
+  showStockErrors(null);
+  updateStockPreview();
+}
+function initStockForm(p){
+  var sr = p ? stockRowOf(p) : null;
+  stockTotalTouched = false;
+  qs("#pf-stock").checked = p ? !!p.stock_status : true;
+  ["total","available","reserved","threshold"].forEach(function(k){ qs("#pf-stock-" + k).value = ""; });
+  if(sr){
+    qs("#pf-stock-mode").value = sr.stock_status === "made_to_order" ? "made_to_order" : "tracked";
+    qs("#pf-stock-total").value = sr.total_stock;
+    qs("#pf-stock-available").value = sr.available_stock;
+    qs("#pf-stock-reserved").value = sr.reserved_stock;
+    qs("#pf-stock-threshold").value = sr.low_stock_threshold;
+    stockTotalTouched = true;
+  } else if(p){
+    qs("#pf-stock-mode").value = "simple";      /* existing product with no quantity tracking yet */
+  } else {
+    qs("#pf-stock-mode").value = "tracked";
+  }
+  applyStockMode();
+}
+qs("#pf-stock-mode").addEventListener("change", applyStockMode);
+qs("#pf-stock").addEventListener("change", updateStockPreview);
+["total","available","reserved","threshold"].forEach(function(k){
+  qs("#pf-stock-" + k).addEventListener("input", function(){
+    if(k === "total") stockTotalTouched = true;
+    if((k === "available" || k === "reserved") && !stockTotalTouched){
+      var a = parseCount(qs("#pf-stock-available").value, "x"), r = parseCount(qs("#pf-stock-reserved").value, "x");
+      if(a.value !== null && !a.error && !r.error) qs("#pf-stock-total").value = a.value + (r.value || 0);
+    }
+    showStockErrors(null);
+    updateStockPreview();
+  });
+});
+
 qs("#pf-save-btn").addEventListener("click", async function(){
-  var id = qs("#pf-id").value;
+  var btn = this, id = qs("#pf-id").value;
   var payload = {
     name: qs("#pf-name").value.trim(),
     code: qs("#pf-code").value.trim(),
@@ -696,29 +926,315 @@ qs("#pf-save-btn").addEventListener("click", async function(){
     material: qs("#pf-material").value.trim(),
     description: qs("#pf-description").value.trim(),
     price: Number(qs("#pf-price").value)||0,
-    stock_status: qs("#pf-stock").checked,
     is_new: qs("#pf-isnew").checked,
     active: qs("#pf-active").checked
   };
   if(!payload.name || !payload.code){ toast("Name and code are required."); return; }
-  this.disabled = true;
-  var res;
-  if(id){ res = await sb.from("products").update(payload).eq("id", id).select().single(); }
-  else{ res = await sb.from("products").insert(payload).select().single(); }
-  this.disabled = false;
-  if(res.error){ toast("Could not save product: "+res.error.message); return; }
-  if(!id){ qs("#pf-id").value = res.data.id; }
-  toast("Product saved.");
-  await loadProducts();
-  if(!id){ openProductModal(res.data.id); } // reopen so images can be uploaded
+  if(payload.price < 0){ toast("Price cannot be negative."); return; }
+  var stock = readStockForm();
+  if(stock.errors.length){ showStockErrors(stock); toast(stock.errors[0]); return; }
+  showStockErrors(null);
+
+  /* legacy boolean kept in step (the database also keeps it in sync once a stock row exists) */
+  payload.stock_status = stock.mode === "simple"
+    ? stock.simpleInStock
+    : computeStatus(stock.values.available_stock, stock.values.low_stock_threshold, stock.mode === "made_to_order") !== "out_of_stock";
+
+  btn.disabled = true;
+  var label = btn.textContent; btn.textContent = "Saving…";
+  try{
+    var existing = id ? PRODUCTS_CACHE.find(function(x){ return x.id===id; }) : null;
+    /* switching to Manual mode: drop the quantity row first so the In Stock toggle below takes effect */
+    if(stock.mode === "simple" && existing && stockRowOf(existing)){
+      var del = await sb.from("product_stock").delete().eq("product_id", id);
+      if(del.error) throw del.error;
+    }
+    var res = id
+      ? await sb.from("products").update(payload).eq("id", id).select().single()
+      : await sb.from("products").insert(payload).select().single();
+    if(res.error) throw res.error;
+    var pid = res.data.id;
+    if(!id) qs("#pf-id").value = pid;
+
+    if(stock.mode !== "simple"){
+      var row = {
+        product_id: pid,
+        total_stock: stock.values.total_stock,
+        available_stock: stock.values.available_stock,
+        reserved_stock: stock.values.reserved_stock,
+        low_stock_threshold: stock.values.low_stock_threshold,
+        stock_status: stock.mode === "made_to_order" ? "made_to_order" : "in_stock"   /* real status is computed by the database */
+      };
+      var st = await sb.from("product_stock").upsert(row, { onConflict: "product_id" });
+      if(st.error){
+        qs("#pf-stock-error").textContent = friendlyError(st.error, "Stock details were not saved");
+        toast("Product saved, but its stock details were not: " + friendlyError(st.error));
+        await loadProducts();
+        return;
+      }
+    }
+    toast("Product saved.");
+    await loadProducts();
+    if(!id){ openProductModal(pid); }                 /* reopen so images + colours can be added */
+    else { initStockForm(PRODUCTS_CACHE.find(function(x){ return x.id===pid; })); }
+  }catch(err){
+    toast("Could not save product: " + friendlyError(err));
+  }finally{
+    btn.disabled = false; btn.textContent = label;
+  }
 });
 async function deleteProduct(id){
-  if(!confirm("Delete this product permanently? This also removes its images.")) return;
+  if(!confirm("Delete this product permanently? This also removes its stock details and colour options.")) return;
   var res = await sb.from("products").delete().eq("id", id);
   if(res.error){ toast("Could not delete: "+res.error.message); return; }
   toast("Product deleted.");
   loadProducts();
 }
+
+/* ======================================================================
+   COLOUR OPTIONS (per product)
+   ====================================================================== */
+var COLOR_QUICK = [["Gold","#D4AF37"],["Silver","#C0C0C0"],["Rose Gold","#B76E79"],["Black","#111111"]];
+var currentColors = [];
+var colorKeySeq = 0;
+
+function newColorRow(name, hex){
+  return { key:"c"+(++colorKeySeq), id:null, name:name||"", hex:(hex||"#D4AF37").toLowerCase(), image_url:null,
+           qty:"", thr:"5", mode:"tracked", active:true, status:null, msg:"", msgKind:"", error:"" };
+}
+function colorRowFromDb(c){
+  return { key:"c"+(++colorKeySeq), id:c.id, name:c.color_name, hex:String(c.color_hex||"#000000").toLowerCase(), image_url:c.image_url||null,
+           qty:String(c.stock_quantity), thr:String(c.low_stock_threshold), mode:(c.stock_status==="made_to_order"?"made_to_order":"tracked"),
+           active:!!c.is_active, status:c.stock_status, msg:"", msgKind:"", error:"" };
+}
+function colorRowByKey(key){ return currentColors.find(function(r){ return r.key===key; }); }
+function colorPreviewKey(r){
+  if(r.mode === "made_to_order") return "made_to_order";
+  var q = parseCount(r.qty, "Stock quantity"), t = parseCount(r.thr === "" ? "5" : r.thr, "Threshold");
+  if(q.error || t.error || q.value === null) return null;
+  return computeStatus(q.value, t.value, false);
+}
+function colorRowHtml(r){
+  var imgHtml = r.image_url
+    ? '<div class="img-thumb"><img src="'+esc(r.image_url)+'" alt="Colour image"></div>'
+    : '<div class="img-empty">No colour image</div>';
+  var pk = colorPreviewKey(r);
+  return '<div class="color-row'+(r.active?"":" is-inactive")+'" data-key="'+r.key+'">' +
+    '<div class="color-row-head">' +
+      '<div class="color-pick"><label>Colour</label><input type="color" class="cr-hex" value="'+esc(r.hex)+'" aria-label="Pick colour"></div>' +
+      '<div class="field grow"><label>Colour Name</label><input type="text" class="cr-name" maxlength="60" placeholder="e.g. Gold" value="'+esc(r.name)+'"></div>' +
+      '<div class="cr-status">'+(pk ? stockPill(pk) : '<span class="cr-msg">—</span>')+'</div>' +
+    '</div>' +
+    '<div class="field-row4">' +
+      '<div class="field"><label>Stock Quantity</label><input type="number" class="cr-qty" min="0" step="1" inputmode="numeric" value="'+esc(r.qty)+'"></div>' +
+      '<div class="field"><label>Low Stock Threshold</label><input type="number" class="cr-thr" min="0" step="1" inputmode="numeric" value="'+esc(r.thr)+'"></div>' +
+      '<div class="field"><label>Stock Status</label><select class="cr-mode">' +
+        '<option value="tracked"'+(r.mode==="tracked"?" selected":"")+'>Automatic (by quantity)</option>' +
+        '<option value="made_to_order"'+(r.mode==="made_to_order"?" selected":"")+'>Made to Order</option>' +
+      '</select></div>' +
+      '<div class="checkbox-row" style="align-self:end;"><input type="checkbox" class="cr-active" id="cra-'+r.key+'"'+(r.active?" checked":"")+'><label for="cra-'+r.key+'" style="margin:0;">Active (shown on site)</label></div>' +
+    '</div>' +
+    '<div class="color-row-img">' + imgHtml +
+      '<label class="btn btn-outline btn-sm" style="cursor:pointer;">'+(r.image_url?"Change image":"Upload image")+'<input type="file" class="cr-file" accept="image/*" hidden></label>' +
+      (r.image_url ? '<button type="button" class="btn btn-danger btn-sm cr-img-remove">Remove image</button>' : '') +
+      '<span style="font-size:11px;color:var(--text-muted);">Optional. Shown on the product page when a customer picks this colour.</span>' +
+    '</div>' +
+    '<div class="field-error cr-error">'+esc(r.error)+'</div>' +
+    '<div class="color-row-foot">' +
+      '<button type="button" class="btn btn-primary btn-sm cr-save">'+(r.id?"Save Colour":"Add Colour")+'</button>' +
+      '<button type="button" class="btn btn-danger btn-sm cr-delete">'+(r.id?"Delete":"Discard")+'</button>' +
+      '<span class="cr-msg'+(r.msgKind?" "+r.msgKind:"")+'">'+esc(r.msg)+'</span>' +
+    '</div>' +
+  '</div>';
+}
+function renderColorRows(){
+  var list = qs("#pf-colors-list");
+  list.innerHTML = currentColors.length ? currentColors.map(colorRowHtml).join("") : '<div class="spinner-note">No colour options yet. Products without colours work exactly as before.</div>';
+  qs("#pf-colors-count").textContent = currentColors.length ? "(" + currentColors.length + ")" : "";
+  var used = currentColors.map(function(r){ return r.name.trim().toLowerCase(); });
+  var quick = COLOR_QUICK.filter(function(c){ return used.indexOf(c[0].toLowerCase()) === -1; });
+  qs("#pf-quick-add").innerHTML = quick.length ? '<span>Quick add:</span>' + quick.map(function(c){
+    return '<button type="button" class="quick-chip" data-quick="'+esc(c[0])+'"><i style="background:'+c[1]+'"></i>'+esc(c[0])+'</button>';
+  }).join("") : "";
+}
+async function loadColorsForModal(pid){
+  var locked = qs("#pf-colors-locked"), body = qs("#pf-colors-body"), list = qs("#pf-colors-list");
+  currentColors = [];
+  if(!pid || !UUID_RE.test(pid)){
+    locked.style.display = "block"; body.style.display = "none"; qs("#pf-colors-count").textContent = ""; return;
+  }
+  locked.style.display = "none"; body.style.display = "block";
+  list.innerHTML = '<div class="spinner-note">Loading colours…</div>';
+  qs("#pf-quick-add").innerHTML = "";
+  var res = await sb.from("product_colors").select("*").eq("product_id", pid).order("sort_order").order("created_at");
+  if(qs("#pf-id").value !== pid) return;                 /* the modal moved on to another product */
+  if(res.error){
+    list.innerHTML = '<div class="field-error" style="display:block;">Could not load colours. ' + esc(friendlyError(res.error, "Database error")) + ' <button type="button" class="icon-btn" id="pf-colors-retry">Retry</button></div>';
+    return;
+  }
+  currentColors = (res.data || []).map(colorRowFromDb);
+  renderColorRows();
+}
+function validateColorRow(r){
+  var pid = qs("#pf-id").value;
+  if(!UUID_RE.test(pid)) return { error: "Save the product first." };
+  var name = r.name.trim();
+  if(!name) return { error: "Colour name cannot be empty." };
+  if(name.length > 60) return { error: "Colour name must be 60 characters or fewer." };
+  if(!HEX_RE.test(r.hex)) return { error: "Pick a valid colour with the colour picker." };
+  var dupe = currentColors.some(function(o){ return o !== r && o.name.trim().toLowerCase() === name.toLowerCase(); });
+  if(dupe) return { error: "This product already has a colour called \"" + name + "\"." };
+  var q = parseCount(r.qty, "Stock quantity");
+  if(q.error) return { error: q.error };
+  if(q.value === null) return { error: "Enter the stock quantity (use 0 if there is none)." };
+  var t = parseCount(r.thr === "" ? "5" : r.thr, "Low stock threshold");
+  if(t.error) return { error: t.error };
+  var payload = {
+    product_id: pid,
+    color_name: name,
+    color_hex: r.hex.toUpperCase(),                       /* taken from the colour picker — never typed */
+    image_url: r.image_url || null,
+    stock_quantity: q.value,
+    low_stock_threshold: t.value,
+    stock_status: r.mode === "made_to_order" ? "made_to_order" : "in_stock",   /* real status computed by the database */
+    is_active: !!r.active
+  };
+  if(!r.id) payload.sort_order = currentColors.indexOf(r);
+  return { payload: payload };
+}
+function setRowBusy(r, busy, text){
+  var el = qs('.color-row[data-key="'+r.key+'"]');
+  if(!el) return;
+  qsa("button, input, select", el).forEach(function(x){ x.disabled = busy; });
+  var m = qs(".cr-msg", el); if(m){ m.textContent = text || ""; m.className = "cr-msg"; }
+}
+async function saveColor(r){
+  r.error = "";
+  var v = validateColorRow(r);
+  if(v.error){ r.error = v.error; r.msg = ""; renderColorRows(); return false; }
+  setRowBusy(r, true, "Saving…");
+  var res = r.id
+    ? await sb.from("product_colors").update(v.payload).eq("id", r.id).select().single()
+    : await sb.from("product_colors").insert(v.payload).select().single();
+  if(res.error){
+    r.error = friendlyError(res.error, "Could not save colour"); r.msg = ""; r.msgKind = "";
+    renderColorRows();
+    return false;
+  }
+  var idx = currentColors.indexOf(r);
+  var fresh = colorRowFromDb(res.data);
+  fresh.msg = "Saved"; fresh.msgKind = "ok";
+  currentColors[idx] = fresh;
+  renderColorRows();
+  loadProducts();
+  return true;
+}
+async function deleteColor(r){
+  if(!r.id){ currentColors = currentColors.filter(function(x){ return x !== r; }); renderColorRows(); return; }
+  if(!confirm('Delete the colour "' + r.name + '"? This cannot be undone.')) return;
+  setRowBusy(r, true, "Deleting…");
+  var res = await sb.from("product_colors").delete().eq("id", r.id);
+  if(res.error){ r.error = friendlyError(res.error, "Could not delete colour"); r.msg = ""; renderColorRows(); return; }
+  removeStoredImage(r.image_url);
+  currentColors = currentColors.filter(function(x){ return x !== r; });
+  renderColorRows();
+  loadProducts();
+  toast("Colour deleted.");
+}
+function storagePathFromUrl(url){
+  var m = /\/storage\/v1\/object\/public\/product-images\/(colors\/[^?#]+)/.exec(url || "");
+  return m ? decodeURIComponent(m[1]) : null;
+}
+function removeStoredImage(url){            /* best effort housekeeping; never blocks the UI */
+  var path = storagePathFromUrl(url);
+  if(path) sb.storage.from("product-images").remove([path]).then(function(){}, function(){});
+}
+async function uploadColorImage(r, file){
+  var pid = qs("#pf-id").value;
+  if(!UUID_RE.test(pid)){ r.error = "Save the product first."; renderColorRows(); return; }
+  if(!file.type || file.type.indexOf("image/") !== 0){ r.error = "Please choose an image file."; renderColorRows(); return; }
+  if(file.size > 5 * 1024 * 1024){ r.error = "Image must be 5 MB or smaller."; renderColorRows(); return; }
+  r.error = "";
+  setRowBusy(r, true, "Uploading image…");
+  var path = "colors/" + pid + "/" + Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
+  var up = await sb.storage.from("product-images").upload(path, file, { upsert:false, contentType:file.type });
+  if(up.error){ r.error = friendlyError(up.error, "Upload failed"); r.msg = ""; renderColorRows(); return; }
+  var url = sb.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  var previous = r.image_url;
+  r.image_url = url;
+  if(r.id){                                              /* already saved: persist straight away */
+    var ok = await saveColor(r);
+    if(ok){ removeStoredImage(previous); }
+    else { r.image_url = previous; removeStoredImage(url); renderColorRows(); }
+  } else {
+    r.msg = "Image uploaded — click Add Colour to save."; r.msgKind = "";
+    renderColorRows();
+  }
+}
+
+/* colour rows: one delegated set of listeners */
+(function(){
+  var list = qs("#pf-colors-list");
+  function rowOf(el){ var box = el.closest(".color-row"); return box ? colorRowByKey(box.dataset.key) : null; }
+  function refreshPreview(r, el){
+    var box = el.closest(".color-row"), pk = colorPreviewKey(r);
+    qs(".cr-status", box).innerHTML = pk ? stockPill(pk) : '<span class="cr-msg">—</span>';
+    box.classList.toggle("is-inactive", !r.active);
+  }
+  function markDirty(r, box){
+    r.error = ""; qs(".cr-error", box).textContent = "";
+    if(r.id){ var m = qs(".cr-msg", box); m.textContent = "Unsaved changes"; m.className = "cr-msg"; }
+  }
+  list.addEventListener("input", function(e){
+    var r = rowOf(e.target); if(!r) return;
+    var t = e.target, box = t.closest(".color-row");
+    if(t.classList.contains("cr-name")) r.name = t.value;
+    else if(t.classList.contains("cr-qty")) r.qty = t.value;
+    else if(t.classList.contains("cr-thr")) r.thr = t.value;
+    else if(t.classList.contains("cr-hex")) r.hex = t.value.toLowerCase();
+    else return;
+    markDirty(r, box); refreshPreview(r, t);
+  });
+  list.addEventListener("change", function(e){
+    var r = rowOf(e.target); if(!r) return;
+    var t = e.target, box = t.closest(".color-row");
+    if(t.classList.contains("cr-mode")){ r.mode = t.value; markDirty(r, box); refreshPreview(r, t); }
+    else if(t.classList.contains("cr-active")){
+      r.active = t.checked; markDirty(r, box); refreshPreview(r, t);
+      if(r.id) saveColor(r);                             /* enable / disable takes effect immediately */
+    }
+    else if(t.classList.contains("cr-file")){
+      var file = t.files && t.files[0];
+      if(file) uploadColorImage(r, file);
+      t.value = "";
+    }
+  });
+  list.addEventListener("click", function(e){
+    if(e.target.id === "pf-colors-retry"){ loadColorsForModal(qs("#pf-id").value); return; }
+    var r = rowOf(e.target); if(!r) return;
+    if(e.target.closest(".cr-save")) saveColor(r);
+    else if(e.target.closest(".cr-delete")) deleteColor(r);
+    else if(e.target.closest(".cr-img-remove")){
+      var previous = r.image_url;
+      r.image_url = null;
+      if(r.id){
+        saveColor(r).then(function(ok){ if(ok) removeStoredImage(previous); else { r.image_url = previous; renderColorRows(); } });
+      } else renderColorRows();
+    }
+  });
+  qs("#pf-add-color-btn").addEventListener("click", function(){
+    if(!UUID_RE.test(qs("#pf-id").value)){ toast("Save the product first."); return; }
+    currentColors.push(newColorRow("", "#D4AF37")); renderColorRows();
+    var last = qsa(".color-row .cr-name").pop(); if(last) last.focus();
+  });
+  qs("#pf-quick-add").addEventListener("click", function(e){
+    var chip = e.target.closest("[data-quick]"); if(!chip) return;
+    var q = COLOR_QUICK.find(function(c){ return c[0] === chip.dataset.quick; });
+    if(!q) return;
+    currentColors.push(newColorRow(q[0], q[1])); renderColorRows();
+    var qtyInputs = qsa(".color-row .cr-qty"); if(qtyInputs.length) qtyInputs[qtyInputs.length - 1].focus();
+  });
+})();
 
 /* ======================================================================
    CATEGORIES
