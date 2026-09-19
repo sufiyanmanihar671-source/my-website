@@ -564,6 +564,11 @@ function tryPinEntry(){
   }
 }
 
+(async function checkConnection(){
+  try{ await fetch(SUPABASE_URL + "/auth/v1/health", { headers:{ apikey: SUPABASE_ANON_KEY } }); }   /* any HTTP answer = reachable */
+  catch(e){ gateMessage(NETWORK_HINT, "err"); }
+})();
+
 qs("#gate-pin-btn").addEventListener("click", tryPinEntry);
 qs("#gate-pin").addEventListener("keydown", function(e){ if(e.key==="Enter") tryPinEntry(); });
 
@@ -618,7 +623,7 @@ async function trySignIn(){
   btn.disabled = true; btn.textContent = "Signing in…";
   try{
     var res = await sb.auth.signInWithPassword({ email: email, password: password });
-    if(res.error){ gateMessage(res.error.message || "Invalid email or password.", "err"); return; }
+    if(res.error){ gateMessage(isNetworkError(res.error) ? NETWORK_HINT : (res.error.message || "Invalid email or password."), "err"); return; }
     var sr = await sb.auth.getSession();
     var session = sr.data && sr.data.session;
     if(!(session && await verifyStaffSession(session))) return;
@@ -631,7 +636,7 @@ async function trySignIn(){
       enterApp();
     }
   }catch(e){
-    gateMessage("Could not sign in. Check your connection and try again.", "err");
+    gateMessage(isNetworkError(e) ? NETWORK_HINT : "Could not sign in. Check your connection and try again.", "err");
   }finally{
     btn.disabled = false; btn.textContent = "Sign In";
   }
@@ -773,8 +778,16 @@ function parseCount(str, label){
   if(n > 1000000000) return { value:null, error: label + " is too large." };
   return { value:n, error:null };
 }
+/* "Failed to fetch" = the browser could not reach Supabase at all (blocker / embedded browser / network) */
+var NETWORK_HINT = "Cannot reach the database. Open this page in a normal Chrome or Edge window (not inside another app), turn off any ad-blocker, VPN or antivirus web-shield for this site, or try an Incognito window (Ctrl+Shift+N). Then reload.";
+function isNetworkError(err){
+  if(!err) return false;
+  return err.name === "AuthRetryableFetchError" || err.status === 0 ||
+         /failed to fetch|networkerror|load failed|network request failed/i.test(String(err.message || err));
+}
 function friendlyError(err, fallback){
   if(!err) return fallback || "Something went wrong.";
+  if(isNetworkError(err)) return NETWORK_HINT;
   var msg = String(err.message || ""), code = err.code || "";
   if(/Only an active admin|Only staff|cannot change your own|cannot deactivate your own/i.test(msg)) return msg;
   if(code === "42501" || /row-level security|permission denied|JWT/i.test(msg)) return "Not allowed. Your staff session may have expired — sign out and sign in again.";
