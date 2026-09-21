@@ -724,9 +724,6 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 @media(max-width:480px){.pd-actions{grid-template-columns:1fr;}}
 .pd-actions .btn{width:100%;min-height:54px;}
 .pd-actions .pd-enquiry-btn{grid-column:1/-1;}
-.chip-label{align-self:center;font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-right:2px;flex:0 0 auto;}
-.chip-dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px;vertical-align:-1px;box-shadow:inset 0 0 0 1px rgba(34,34,34,0.22);}
-.chip.active .chip-dot{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.7);}
 .pd-info > .link-cta{margin-top:28px !important;}
 .pd-note{display:flex;gap:12px;align-items:center;margin-top:26px;padding:0;background:none;font-size:12px;letter-spacing:0.04em;color:var(--text-muted);}
 .pd-note .icon{width:15px;height:15px;color:var(--champagne);flex-shrink:0;}
@@ -1232,11 +1229,10 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <h2 id="discover-cat-title" style="margin-bottom:6px;"></h2>
       <p id="discover-cat-desc" style="margin-bottom:20px;"></p>
       <div class="chip-row" id="discover-sub-chips"></div>
-      <div class="chip-row" id="discover-extra-filters" style="margin-top:-14px;"></div>
       <div class="product-grid" id="discover-product-grid"></div>
       <div class="empty-state" id="discover-empty" style="display:none;">
         <svg class="icon"><use href="#i-search"/></svg>
-        <p>No pieces match this selection yet. Try another sub-category or filter.</p>
+        <p>No pieces match this selection yet. Try another sub-category.</p>
       </div>
     </div>
   </div>
@@ -1705,8 +1701,6 @@ var state = {
   watchlist:[],
   pendingLoginTab:"login",
   selectedColorId:null,
-  discoverColor:null,
-  discoverStock:null,
   inquiryColors:{}
 };
 
@@ -1964,30 +1958,7 @@ function renderDiscover(){
     return true;
   });
 
-  /* extra filters: only colours that customers can actually order, and the four availability labels */
-  var colourMap = {};
-  base.forEach(function(p){ (p.colors||[]).forEach(function(cl){ if(colorAvailable(cl)){ var k = cl.name.toLowerCase(); if(!colourMap[k]) colourMap[k] = { name:cl.name, hex:cl.hex }; } }); });
-  var colourKeys = Object.keys(colourMap).sort();
-  if(state.discoverColor && !colourMap[state.discoverColor]) state.discoverColor = null;
-  var fx = "";
-  if(colourKeys.length){
-    fx += '<span class="chip-label">Colour</span><button class="chip'+(!state.discoverColor?" active":"")+'" data-action="set-color" data-color="">All</button>';
-    fx += colourKeys.map(function(k){
-      return '<button class="chip'+(state.discoverColor===k?" active":"")+'" data-action="set-color" data-color="'+esc(k)+'"><i class="chip-dot" style="background:'+colourMap[k].hex+'"></i>'+esc(colourMap[k].name)+'</button>';
-    }).join("");
-  }
-  if(base.length){
-    fx += '<span class="chip-label">Availability</span>' + [["","All"],["in_stock","In Stock"],["few_pieces_left","Few Pieces Left"],["made_to_order","Made to Order"]].map(function(o){
-      return '<button class="chip'+((state.discoverStock||"")===o[0]?" active":"")+'" data-action="set-stock" data-stock="'+o[0]+'">'+o[1]+'</button>';
-    }).join("");
-  }
-  qs("#discover-extra-filters").innerHTML = fx;
-
-  var list = base.filter(function(p){
-    if(state.discoverColor && !(p.colors||[]).some(function(cl){ return colorAvailable(cl) && cl.name.toLowerCase()===state.discoverColor; })) return false;
-    if(state.discoverStock && effectiveStockKey(p)!==state.discoverStock) return false;
-    return true;
-  });
+  var list = base;
   var grid = qs("#discover-product-grid");
   var empty = qs("#discover-empty");
   if(list.length===0){ grid.style.display="none"; empty.style.display="block"; }
@@ -2566,8 +2537,6 @@ function goHome(){ showView("home"); }
 function goDiscover(catId, sub){
   state.discoverCat = catId || null;
   state.discoverSub = sub || null;
-  state.discoverColor = null;
-  state.discoverStock = null;
   showView("discover");
 }
 function viewProduct(id){
@@ -2685,8 +2654,6 @@ document.body.addEventListener("click", function(e){
       case "go-category": goDiscover(actionBtn.dataset.cat, null); break;
       case "view-product": if(id) viewProduct(id); break;
       case "set-sub": state.discoverSub = actionBtn.dataset.sub || null; renderDiscover(); break;
-      case "set-color": state.discoverColor = actionBtn.dataset.color || null; renderDiscover(); break;
-      case "set-stock": state.discoverStock = actionBtn.dataset.stock || null; renderDiscover(); break;
 
       case "open-login":
         if(state.isLoggedIn){
