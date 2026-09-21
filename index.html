@@ -350,6 +350,13 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .hero-copy p{font-size:17px;line-height:1.7;max-width:46ch;margin-bottom:38px;color:var(--text-body);}
 .hero-copy p.eyebrow{font-size:11px;max-width:none;margin-bottom:26px;color:var(--eyebrow);}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap;}
+/* Made to Order message: a champagne rule, a small-caps label, a serif line and a quiet supporting sentence */
+.hero-mto{position:relative;margin:34px 0 0;padding:2px 0 2px 22px;border-left:2px solid var(--champagne);max-width:46ch;}
+.hero-mto-label{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--emerald);margin-bottom:10px;}
+.hero-mto-label::before{content:'';width:6px;height:6px;background:var(--champagne);transform:rotate(45deg);flex-shrink:0;}
+.hero-mto-title{font-family:var(--font-display);font-size:clamp(24px,2.5vw,32px);font-weight:500;line-height:1.15;letter-spacing:0.005em;color:var(--heading);}
+.hero-mto-dot{color:var(--champagne);margin:0 0.1em;}
+.hero-mto-text{font-size:15.5px;line-height:1.65;color:var(--text-body);margin-top:10px;text-wrap:balance;}
 .hero-points{list-style:none;display:flex;gap:0;margin:44px 0 0;padding:0;border-top:1px solid var(--line-strong);}
 .hero-point{
   flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:24px 20px 0;
@@ -413,6 +420,8 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .hero-copy > *:nth-child(4){animation-delay:.48s;}
 .hero-copy > *:nth-child(5){animation-delay:.60s;}
 .hero-copy > *:nth-child(6){animation-delay:.72s;}
+.hero-copy > .hero-mto{animation-delay:.54s;}
+.hero-copy > .hero-points{animation-delay:.60s;}
 @keyframes riseIn{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
 
 @media(max-width:900px){
@@ -427,6 +436,9 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero-copy h1{font-size:clamp(40px,11.4vw,54px);max-width:12ch;}
   .hero-copy p{font-size:16px;margin-bottom:30px;}
   .hero-actions .btn{width:100%;}
+  .hero-mto{margin-top:28px;padding-left:18px;}
+  .hero-mto-title{font-size:clamp(22px,6.4vw,28px);}
+  .hero-mto-text{font-size:15px;}
   .hero-points{margin-top:40px;}
   .hero-point{padding:22px 10px 0;font-size:10px;letter-spacing:0.14em;}
 }
@@ -511,6 +523,8 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero-copy h1{font-size:clamp(34px,10vw,42px);}
   .hero-copy p{font-size:15px;margin-bottom:24px;}
   .hero-copy p.eyebrow{margin-bottom:18px;}
+  .hero-mto{margin-top:24px;}
+  .hero-mto-label{font-size:10.5px;letter-spacing:0.24em;}
   .hero-points{flex-direction:column;margin-top:28px;}
   .hero-point{padding:18px 0;gap:10px;font-size:11px;letter-spacing:0.18em;border-bottom:1px solid var(--line);}
   .hero-point + .hero-point{border-left:none;}
@@ -1095,6 +1109,11 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
         <p>Discover elegant artificial jewellery collections designed for wholesalers, retailers and jewellery businesses — browse the catalogue, then take the conversation to WhatsApp or a video call.</p>
         <div class="hero-actions">
           <button class="btn btn-primary" data-nav="discover">Explore Categories</button>
+        </div>
+        <div class="hero-mto">
+          <div class="hero-mto-label">Made to Order</div>
+          <div class="hero-mto-title">Any Design <span class="hero-mto-dot">•</span> Any Product</div>
+          <div class="hero-mto-text">Get your jewellery made on request in 7–10&nbsp;days.</div>
         </div>
         <ul class="hero-points" aria-label="Business highlights">
           <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.2 3.5h11.6L22 9.2 12 21 2 9.2Z"/><path d="M2 9.2h20"/><path d="m8.6 3.5 3.4 5.7 3.4-5.7"/><path d="M7.4 9.2 12 21l4.6-11.8"/></svg><span>Manufacturer &amp; B2B Supplier</span></li>
