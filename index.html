@@ -226,17 +226,53 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 }
 .header-icon-btn:hover{background:var(--surface-alt);color:var(--accent);}
 .badge-dot{position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--champagne);border:2px solid var(--surface);}
+/* Currency selector (header) */
+.cur-select{position:relative;}
 .currency-pill{
   display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.14em;
-  padding:0 16px;min-height:38px;border:1px solid var(--line-strong);border-radius:0;color:var(--text);
+  padding:0 12px 0 14px;min-height:38px;border:1px solid var(--line-strong);border-radius:0;color:var(--text);background:transparent;cursor:pointer;
   transition:border-color .35s var(--ease),color .35s var(--ease);
 }
-.currency-pill:hover{border-color:var(--emerald);color:var(--accent);}
+.currency-pill:hover,.currency-pill[aria-expanded="true"]{border-color:var(--emerald);color:var(--accent);}
+.currency-pill .cur-caret{width:11px;height:11px;transition:transform .3s var(--ease);}
+.currency-pill[aria-expanded="true"] .cur-caret{transform:rotate(180deg);}
+#currency-pill-flag{display:inline-flex;align-items:center;}
+.cur-flag{width:20px;height:15px;object-fit:cover;flex:none;display:inline-block;box-shadow:0 0 0 1px rgba(43,43,43,0.16);}
+.cur-flag-emoji{width:auto;height:auto;box-shadow:none;font-size:15px;line-height:1;letter-spacing:0;}
+.cur-menu{
+  position:absolute;right:0;top:calc(100% + 8px);width:340px;max-width:calc(100vw - 32px);max-height:min(72vh,500px);overflow-y:auto;
+  background:var(--surface-card);border:1px solid var(--line);border-top:2px solid var(--champagne);border-radius:0;box-shadow:var(--shadow-pop);
+  z-index:85;display:none;
+}
+.cur-menu.open{display:block;}
+.cur-menu-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);}
+.cur-menu-close{display:none;width:32px;height:32px;align-items:center;justify-content:center;color:var(--text);margin-right:-8px;}
+.cur-opt{
+  display:flex;align-items:center;gap:12px;width:100%;padding:12px 18px;font-size:14px;text-align:left;color:var(--text);
+  border-top:1px solid var(--line);background:transparent;cursor:pointer;transition:background-color .25s var(--ease);
+}
+.cur-opt:hover,.cur-opt:focus-visible{background:var(--surface-alt);outline:none;}
+.cur-opt.active{background:var(--surface-alt);box-shadow:inset 2px 0 0 var(--champagne);}
+.cur-opt .cur-code{font-weight:600;letter-spacing:0.06em;flex:none;}
+.cur-opt .cur-name{color:var(--text-muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cur-opt .cur-end{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none;color:var(--emerald);font-weight:500;}
+.cur-opt .cur-end .icon{width:15px;height:15px;}
+.cur-tag{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--emerald);border:1px solid var(--champagne);padding:1px 6px;font-weight:500;}
+.cur-foot{border-top:1px solid var(--line);padding:12px 18px 14px;font-size:11.5px;line-height:1.55;color:var(--text-muted);}
+.cur-foot p{margin:0 0 6px;font-size:11.5px;}
+.cur-foot .cur-link{color:var(--accent);text-decoration:underline;text-underline-offset:2px;font-size:11.5px;cursor:pointer;background:none;padding:0;}
 .hamburger{display:none;}
 .header-icon-btn.mobile-only{display:none;}
 @media(max-width:1000px){
   :root{--header-h:64px;}
-  .desktop-nav,.currency-pill,.desktop-only{display:none !important;}
+  .desktop-nav,.desktop-only{display:none !important;}
+  /* compact flag + code button; the list drops down as a full-width panel under the header
+     (the header's backdrop-filter would trap a position:fixed sheet inside it) */
+  .cur-select{position:static;}
+  .currency-pill{padding:0 9px;min-height:36px;gap:6px;letter-spacing:0.08em;}
+  .currency-pill .cur-caret{display:none;}
+  .cur-menu{left:0;right:0;top:100%;width:auto;max-width:none;max-height:min(75vh,520px);border-left:0;border-right:0;margin-top:0;}
+  .cur-menu-close{display:flex;}
   .header-inner{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;}
   .header-inner > nav{display:none;}
   .header-inner > .hamburger{justify-self:start;margin-left:-10px;}
@@ -877,15 +913,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 .confirm-state h4{font-size:32px;margin-bottom:10px;}
 .confirm-state p{margin-left:auto;margin-right:auto;margin-bottom:26px;}
 
-/* Currency modal */
-.currency-list{max-height:280px;overflow-y:auto;border:1px solid var(--line);border-radius:0;margin-top:8px;}
-.currency-opt{display:flex;align-items:center;gap:14px;padding:14px 16px;font-size:14px;border-bottom:1px solid var(--line);cursor:pointer;transition:background-color .25s var(--ease);}
-.currency-opt:last-child{border-bottom:none;}
-.currency-opt:hover{background:var(--surface-alt);}
-.currency-opt.active{background:var(--surface-alt);color:var(--heading);font-weight:500;box-shadow:inset 2px 0 0 var(--champagne);}
-.currency-sym{width:26px;text-align:center;font-weight:500;color:var(--emerald);}
-.currency-code{font-weight:500;width:44px;letter-spacing:0.06em;}
-.currency-name{color:var(--text-muted);}
+/* Currency converter modal */
 .converter-result{background:var(--surface-alt);border-radius:0;padding:22px;text-align:center;margin-top:20px;border-top:1px solid var(--champagne);}
 .converter-result .amt{font-family:var(--font-display);font-size:34px;font-weight:500;color:var(--heading);line-height:1.1;}
 
@@ -994,10 +1022,14 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 
     <div class="header-actions">
       <button class="header-icon-btn mobile-only" data-action="open-mobile-search" aria-label="Search"><svg class="icon"><use href="#i-search"/></svg></button>
-      <button class="currency-pill desktop-only" data-action="open-currency" aria-label="Change currency">
-        <svg class="icon" style="width:14px;height:14px"><use href="#i-globe"/></svg>
-        <span id="currency-pill-label">INR ₹</span>
-      </button>
+      <div class="cur-select" id="cur-select">
+        <button class="currency-pill" id="currency-pill" type="button" data-action="toggle-currency" aria-haspopup="listbox" aria-expanded="false" aria-controls="cur-menu" aria-label="Change currency">
+          <span id="currency-pill-flag"><svg class="icon" style="width:14px;height:14px"><use href="#i-globe"/></svg></span>
+          <span id="currency-pill-label">INR</span>
+          <svg class="icon cur-caret"><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="cur-menu" id="cur-menu" role="listbox" aria-label="Choose currency"></div>
+      </div>
       <button class="header-icon-btn" data-action="open-login" id="login-header-btn" aria-label="Login">
         <svg class="icon"><use href="#i-user"/></svg>
       </button>
@@ -1035,7 +1067,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <div class="drawer-rule"></div>
       <ul class="drawer-links drawer-links-sub">
         <li><button data-action="open-login" class="mnu-item">Login / Register</button></li>
-        <li><button data-action="open-currency" class="mnu-item">Currency: <span id="currency-pill-label-2">INR ₹</span></button></li>
       </ul>
     </div>
   </div>
@@ -1470,17 +1501,11 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 <div class="modal-overlay" id="currency-modal">
   <div class="modal-box">
     <div class="modal-head">
-      <h3>Currency</h3>
-      <button class="modal-close" data-action="close-currency"><svg class="icon"><use href="#i-x"/></svg></button>
+      <h3>Currency Converter</h3>
+      <button class="modal-close" data-action="close-currency" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body">
-      <p style="font-size:12px;margin-bottom:8px;">Display prices in your preferred currency.</p>
-      <div class="field" style="margin-bottom:8px;">
-        <input type="text" id="currency-search" placeholder="Search currency...">
-      </div>
-      <div class="currency-list" id="currency-option-list"></div>
-
-      <div class="divider-text">Quick Converter</div>
+      <p style="font-size:12px;margin-bottom:16px;">Convert any amount using the current indicative rates. To change the currency prices are shown in, use the selector in the header.</p>
       <div class="field-row">
         <div class="field"><label>Amount</label><input type="number" id="conv-amount" value="1000" min="0"></div>
         <div class="field">
@@ -1491,7 +1516,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <div class="field"><label>To</label><select id="conv-to"></select></div>
       <div class="converter-result">
         <div class="amt" id="conv-result">—</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Indicative rate for reference only, not for payment.</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Indicative rate for reference only.</div>
       </div>
     </div>
   </div>
@@ -1585,17 +1610,6 @@ function productPhoto(p, w){
   return photoUrl(categoryPhotoKey(p.cat), w, p.code || p.id);
 }
 
-var CURRENCIES = [];
-
-async function loadCurrencies(){
-  var res = await sb.from("currencies").select("*").eq("active", true).order("sort_order");
-  var rows = res.data || [];
-  CURRENCIES.length = 0;
-  rows.forEach(function(c){
-    CURRENCIES.push({ code:c.code, symbol:c.symbol, name:c.name, rate:Number(c.rate), symbolFirst: !!c.symbol_first });
-  });
-}
-
 async function loadCatalog(){
   await Promise.all([loadCategories(), loadCurrencies(), loadProducts()]);
   await loadColors();
@@ -1622,8 +1636,6 @@ async function loadColors(){
   }catch(e){ byProduct = {}; }
   PRODUCTS.forEach(function(p){ p.colors = byProduct[p.id] || []; });
 }
-
-function currencyByCode(code){ for(var i=0;i<CURRENCIES.length;i++){ if(CURRENCIES[i].code===code) return CURRENCIES[i]; } return CURRENCIES[0]; }
 
 var SEARCH_PHRASES = ["Search Necklace...","Search Earrings...","Search Bracelets...","Search Bangles...","Search Kundan...","Search Rings..."];
 var WHATSAPP_NUMBER = "919876543210";
@@ -1677,7 +1689,11 @@ var state = {
   currentProductId:null,
   isLoggedIn:false,
   userId:null,
-  currency:"INR",
+  currency:"INR",          /* currency prices are shown in */
+  currencyManual:false,    /* true = the visitor picked it (saved), false = auto-detected */
+  country:null,            /* detected ISO country code, or null */
+  geoSource:"none",        /* override | cache | ip | locale | none */
+  detectedCurrency:"INR",  /* currency of the detected country */
   inquiries:[],
   watchlist:[],
   pendingLoginTab:"login",
@@ -1698,7 +1714,6 @@ function safeSet(key, value){
   try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* ignore */ }
 }
 async function loadState(){
-  state.currency = safeGet("naj_currency", "INR") || "INR";
   state.inquiries = safeGet("naj_inquiries", []) || [];
   if(!Array.isArray(state.inquiries)) state.inquiries = [];
   state.inquiryColors = safeGet("naj_inquiry_colors", {}) || {};
@@ -1728,7 +1743,7 @@ function pruneInquiries(){
   if(state.inquiries.length !== before) persist();
 }
 function persist(){
-  safeSet("naj_currency", state.currency);
+  /* the currency is stored separately, and only when the visitor picks one (see chooseCurrency) */
   safeSet("naj_inquiries", state.inquiries);
   safeSet("naj_inquiry_colors", state.inquiryColors);
 }
@@ -1745,17 +1760,7 @@ function esc(str){
 }
 function productById(id){ for(var i=0;i<PRODUCTS.length;i++){ if(PRODUCTS[i].id===id) return PRODUCTS[i]; } return null; }
 
-function formatPrice(inr){
-  var c = currencyByCode(state.currency);
-  var val = inr * c.rate;
-  var decimals = (c.code==="INR" || c.code==="JPY") ? 0 : 2;
-  var fixed = val.toFixed(decimals);
-  var parts = fixed.split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  var out = parts.join(".");
-  var symbolFirst = c.symbolFirst!==undefined ? c.symbolFirst : (["INR","USD","GBP","EUR","AUD","CAD","SGD","JPY"].indexOf(c.code)>-1);
-  return symbolFirst ? (c.symbol+out) : (out+" "+c.symbol);
-}
+/* formatPrice(inr) lives in the CURRENCY & REGIONAL PRICING section below */
 
 function toast(msg, opts){
   var wrap = qs("#toast-wrap");
@@ -2187,44 +2192,323 @@ function cyclePlaceholders(){
 }
 
 /* ======================================================================
-   CURRENCY MODAL
+   CURRENCY & REGIONAL PRICING
+   Product prices are stored in INR and never modified. What a visitor sees is
+   price x rate, where rate comes from the `currencies` table (refreshed on the
+   server — the storefront never calls an exchange-rate API itself).
+
+   Which currency is shown, in order:
+     1. the visitor's own saved choice (set only when they pick one in the header)
+     2. the currency of the country they are visiting from
+     3. INR, whenever a country or a rate is unavailable
    ====================================================================== */
-function renderCurrencyOptions(filter){
-  filter = (filter||"").trim().toLowerCase();
-  var list = CURRENCIES.filter(function(c){
-    return !filter || c.code.toLowerCase().indexOf(filter)>-1 || c.name.toLowerCase().indexOf(filter)>-1;
-  });
-  qs("#currency-option-list").innerHTML = list.map(function(c){
-    return '<div class="currency-opt'+(state.currency===c.code?" active":"")+'" data-action="select-currency" data-code="'+c.code+'">' +
-      '<span class="currency-sym">'+c.symbol+'</span><span class="currency-code">'+c.code+'</span><span class="currency-name">'+esc(c.name)+'</span>' +
-      (state.currency===c.code?'<svg class="icon" style="width:15px;height:15px;margin-left:auto;"><use href="#i-check"/></svg>':'') +
-    '</div>';
-  }).join("");
+var BASE_CURRENCY = "INR";
+var FALLBACK_CURRENCY = "USD";                 /* visitors from a country with no supported local currency */
+var CHOICE_KEY = "naj_currency_choice";        /* {code, manual:true} — written only on a manual pick */
+var GEO_KEY = "naj_geo";                       /* {country, ts} cached country lookup */
+var RATES_KEY = "naj_rates_cache";             /* last rates that loaded successfully */
+var REFRESH_PING_KEY = "naj_rates_ping";
+var GEO_TTL_MS = 24*60*60*1000;
+var RATES_STALE_MS = 24*60*60*1000;
+var REFRESH_PING_GAP_MS = 6*60*60*1000;
+var CURRENCIES = [];                           /* active currencies with a usable rate; INR is always present */
+var CURRENCY_FORMATTERS = {};
+CURRENCIES.push(baseCurrencyEntry());          /* so INR works even before / without any rate load */
+
+function validRate(v){ return typeof v==="number" && isFinite(v) && v>0; }
+
+function baseCurrencyEntry(){
+  return { code:"INR", symbol:"₹", name:"Indian Rupee", rate:1, symbolFirst:true, countryName:"India", countryCode:"IN", countries:["IN"], locale:"en-IN", updatedAt:0 };
 }
+function normaliseCurrency(r){
+  var code = String((r && r.code) || "").toUpperCase();
+  if(!/^[A-Z]{3}$/.test(code)) return null;
+  var rate = code===BASE_CURRENCY ? 1 : Number(r.rate);
+  if(!validRate(rate)) return null;                   /* a currency we cannot convert to is simply not offered */
+  var cc = String(r.country_code || "").toUpperCase();
+  return {
+    code:code, symbol:String(r.symbol || code), name:String(r.name || code), rate:rate,
+    symbolFirst: r.symbol_first!==false,
+    countryName:String(r.country_name || ""), countryCode:/^[A-Z]{2}$/.test(cc) ? cc : null,
+    countries: Array.isArray(r.countries) ? r.countries : [],
+    locale:String(r.format_locale || "en-US"),
+    updatedAt: Math.max(Date.parse(r.auto_rate_updated_at)||0, Date.parse(r.manual_rate_updated_at)||0)
+  };
+}
+function setCurrencies(rows){
+  var list = [];
+  (rows || []).forEach(function(r){ var c = normaliseCurrency(r); if(c) list.push(c); });
+  if(!list.some(function(c){ return c.code===BASE_CURRENCY; })) list.unshift(baseCurrencyEntry());
+  CURRENCIES.length = 0;
+  list.forEach(function(c){ CURRENCIES.push(c); });
+}
+function hasCurrency(code){ return CURRENCIES.some(function(c){ return c.code===code; }); }
+function currencyByCode(code){
+  for(var i=0;i<CURRENCIES.length;i++){ if(CURRENCIES[i].code===code) return CURRENCIES[i]; }
+  return baseCurrencyEntry();                          /* never undefined: INR is the safe fallback */
+}
+
+/* Rates. If the request fails, fall back to the last set that loaded, then to INR only. */
+async function loadCurrencies(){
+  var rows = null;
+  try{
+    /* cap the wait: a slow / failing rates request must not hold the whole catalogue back */
+    var res = await Promise.race([
+      sb.from("currencies").select("*").eq("active", true).order("sort_order"),
+      new Promise(function(resolve){ setTimeout(function(){ resolve({ error:new Error("rates request timed out") }); }, 4000); })
+    ]);
+    if(res.error) throw res.error;
+    rows = res.data || [];
+    safeSet(RATES_KEY, { ts:Date.now(), rows:rows });
+    maybePingRateRefresh(rows);
+  }catch(e){
+    var cached = safeGet(RATES_KEY, null);
+    rows = (cached && Array.isArray(cached.rows)) ? cached.rows : [];
+  }
+  setCurrencies(rows);
+}
+/* Safety net for the 6-hourly server job: if the stored rates look more than a day old, nudge the
+   refresh function (it throttles itself and honours the admin's on/off switch). Fire-and-forget. */
+function maybePingRateRefresh(rows){
+  try{
+    var newest = 0;
+    rows.forEach(function(r){ if(r.code!==BASE_CURRENCY){ var t = Date.parse(r.auto_rate_updated_at); if(t>newest) newest = t; } });
+    if(newest && Date.now()-newest < RATES_STALE_MS) return;
+    if(Date.now() - (Number(safeGet(REFRESH_PING_KEY, 0)) || 0) < REFRESH_PING_GAP_MS) return;
+    safeSet(REFRESH_PING_KEY, Date.now());
+    fetch(SUPABASE_URL + "/functions/v1/refresh-exchange-rates", { method:"POST", headers:{ "Content-Type":"application/json" }, body:"{}" }).catch(function(){});
+  }catch(e){ /* best effort */ }
+}
+
+/* ---------- country detection ---------- */
+var GEO_SOURCES = [
+  { url:"https://www.cloudflare.com/cdn-cgi/trace", text:true, parse:function(t){ var m = /^loc=([A-Z]{2})\s*$/m.exec(t); return m && m[1]; } },
+  { url:"https://api.country.is/",                  parse:function(j){ return j && j.country; } },
+  { url:"https://get.geojs.io/v1/ip/country.json",  parse:function(j){ return j && j.country; } },
+  { url:"https://ipwho.is/?fields=success,country_code", parse:function(j){ return j && j.success!==false && j.country_code; } }
+];
+/* used only when every IP service fails (offline / blocked): the browser's time zone, then its language region */
+var TZ_COUNTRY = {
+  "Asia/Kolkata":"IN","Asia/Calcutta":"IN","Asia/Dubai":"AE","Asia/Riyadh":"SA","Asia/Singapore":"SG","Asia/Tokyo":"JP",
+  "Europe/London":"GB","Europe/Dublin":"IE","Europe/Paris":"FR","Europe/Berlin":"DE","Europe/Madrid":"ES","Europe/Rome":"IT",
+  "Europe/Amsterdam":"NL","Europe/Brussels":"BE","Europe/Vienna":"AT","Europe/Lisbon":"PT","Europe/Athens":"GR","Europe/Helsinki":"FI",
+  "Europe/Luxembourg":"LU","Europe/Malta":"MT","Europe/Tallinn":"EE","Europe/Riga":"LV","Europe/Vilnius":"LT","Europe/Bratislava":"SK",
+  "Europe/Ljubljana":"SI","Europe/Zagreb":"HR","Europe/Sofia":"BG","Asia/Nicosia":"CY",
+  "America/Toronto":"CA","America/Vancouver":"CA","America/Edmonton":"CA","America/Winnipeg":"CA","America/Halifax":"CA","America/St_Johns":"CA","America/Regina":"CA",
+  "America/New_York":"US","America/Chicago":"US","America/Denver":"US","America/Los_Angeles":"US","America/Phoenix":"US","America/Anchorage":"US","America/Detroit":"US","Pacific/Honolulu":"US"
+};
+function validCountry(c){ return typeof c==="string" && /^[A-Z]{2}$/.test(c) && c!=="XX" && c!=="T1"; }
+function countryFromTimezone(){
+  try{
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    if(TZ_COUNTRY[tz]) return TZ_COUNTRY[tz];
+    if(/^Australia\//.test(tz)) return "AU";
+  }catch(e){ /* ignore */ }
+  return null;
+}
+function countryFromLocale(){
+  var langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ""];
+  for(var i=0;i<langs.length;i++){
+    var m = /-([A-Za-z]{2})$/.exec(String(langs[i]||""));
+    if(m) return m[1].toUpperCase();
+  }
+  return null;
+}
+function fetchWithTimeout(url, ms){
+  var ctl = ("AbortController" in window) ? new AbortController() : null;
+  var timer = setTimeout(function(){ if(ctl) ctl.abort(); }, ms);
+  return fetch(url, ctl ? { signal:ctl.signal, cache:"no-store" } : { cache:"no-store" }).then(function(r){
+    clearTimeout(timer);
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    return r;
+  }, function(e){ clearTimeout(timer); throw e; });
+}
+async function lookupCountryByIp(){
+  for(var i=0;i<GEO_SOURCES.length;i++){
+    try{
+      var s = GEO_SOURCES[i];
+      var r = await fetchWithTimeout(s.url, 2000);
+      var cc = String(s.parse(s.text ? await r.text() : await r.json()) || "").toUpperCase();
+      if(validCountry(cc)) return cc;
+    }catch(e){ /* try the next service */ }
+  }
+  return null;
+}
+/* -> { country: "IN" | null, source: "override" | "cache" | "ip" | "locale" | "none" }. Never throws. */
+async function detectCountry(){
+  try{
+    var override = (new URLSearchParams(location.search).get("geo") || "").toUpperCase();   /* ?geo=US lets you preview any country */
+    if(validCountry(override)) return { country:override, source:"override" };
+    var cached = safeGet(GEO_KEY, null);
+    if(cached && validCountry(cached.country) && Date.now()-Number(cached.ts) < GEO_TTL_MS) return { country:cached.country, source:"cache" };
+    var cc = await lookupCountryByIp();
+    if(cc){ safeSet(GEO_KEY, { country:cc, ts:Date.now() }); return { country:cc, source:"ip" }; }
+    cc = countryFromTimezone() || countryFromLocale();
+    return validCountry(cc) ? { country:cc, source:"locale" } : { country:null, source:"none" };
+  }catch(e){ return { country:null, source:"none" }; }
+}
+function applyGeo(g){ state.country = g && g.country || null; state.geoSource = g && g.source || "none"; }
+function countryDisplayName(cc){
+  try{ if(window.Intl && Intl.DisplayNames) return new Intl.DisplayNames(["en"], { type:"region" }).of(cc) || cc; }catch(e){ /* ignore */ }
+  return cc;
+}
+
+/* ---------- which currency to show ---------- */
+function currencyForCountry(cc){
+  if(!cc) return BASE_CURRENCY;                                          /* unknown location -> INR */
+  for(var i=0;i<CURRENCIES.length;i++){ if(CURRENCIES[i].countries.indexOf(cc) > -1) return CURRENCIES[i].code; }
+  return hasCurrency(FALLBACK_CURRENCY) ? FALLBACK_CURRENCY : BASE_CURRENCY;
+}
+function resolveCurrency(){
+  var saved = safeGet(CHOICE_KEY, null);
+  state.detectedCurrency = currencyForCountry(state.country);
+  if(saved && saved.manual===true && hasCurrency(saved.code)){ state.currency = saved.code; state.currencyManual = true; }
+  else { state.currency = state.detectedCurrency; state.currencyManual = false; }
+}
+function chooseCurrency(code){
+  if(!hasCurrency(code)) return;
+  state.currency = code; state.currencyManual = true;
+  safeSet(CHOICE_KEY, { code:code, manual:true, ts:Date.now() });
+  refreshCurrencyUI(); renderCurrentView();
+}
+function resetCurrencyChoice(){
+  try{ localStorage.removeItem(CHOICE_KEY); }catch(e){ /* ignore */ }
+  state.currencyManual = false; state.currency = state.detectedCurrency;
+  refreshCurrencyUI(); renderCurrentView();
+}
+
+/* ---------- formatting ---------- */
+function currencyFormatter(c){
+  var key = c.code+"|"+c.locale;
+  if(!(key in CURRENCY_FORMATTERS)){
+    try{ CURRENCY_FORMATTERS[key] = new Intl.NumberFormat(c.locale, { style:"currency", currency:c.code }); }
+    catch(e){ CURRENCY_FORMATTERS[key] = null; }
+  }
+  return CURRENCY_FORMATTERS[key];
+}
+function currencySymbol(c){
+  var f = currencyFormatter(c);
+  try{ if(f && f.formatToParts){ var p = f.formatToParts(1).filter(function(x){ return x.type==="currency"; })[0]; if(p) return p.value; } }catch(e){ /* ignore */ }
+  return c.symbol;
+}
+/* amount is already in currency c; returns null if it cannot be shown safely */
+function formatMoney(amount, c){
+  if(typeof amount!=="number" || !isFinite(amount) || amount<0) return null;
+  var out = null;
+  var f = currencyFormatter(c);
+  if(f){ try{ out = f.format(amount); }catch(e){ out = null; } }
+  if(!out){
+    var n = amount.toFixed(c.code==="JPY" ? 0 : 2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    out = c.symbolFirst ? c.symbol+n : c.code+" "+n;
+  }
+  return /NaN|undefined|Infinity|null/.test(out) ? null : out;
+}
+/* inr = the product's base price from Supabase. Never returns NaN / undefined / 0. */
+function formatPrice(inr){
+  var n = Number(inr);
+  if(!isFinite(n) || n<=0) return "Price on request";
+  var c = currencyByCode(state.currency);
+  var out = formatMoney(n * c.rate, c);
+  if(!out) out = formatMoney(n, baseCurrencyEntry());          /* anything unexpected: show the INR price */
+  return out || "Price on request";
+}
+
+/* ---------- header selector ---------- */
+function flagEmoji(cc){ return String(cc).toUpperCase().replace(/./g, function(ch){ return String.fromCodePoint(127397 + ch.charCodeAt(0)); }); }
+/* Windows browsers do not draw flag emoji, so use small flag images; the emoji is only the fallback */
+function flagHtml(c){
+  if(!c.countryCode) return '<svg class="icon" style="width:16px;height:16px"><use href="#i-globe"/></svg>';
+  return '<img class="cur-flag" src="https://flagcdn.com/w40/'+c.countryCode.toLowerCase()+'.png" width="20" height="15" alt="" data-cc="'+c.countryCode+'">';
+}
+document.addEventListener("error", function(e){
+  var t = e.target;
+  if(t && t.classList && t.classList.contains("cur-flag") && t.dataset.cc){
+    var s = document.createElement("span");
+    s.className = "cur-flag cur-flag-emoji"; s.setAttribute("aria-hidden","true"); s.textContent = flagEmoji(t.dataset.cc);
+    t.replaceWith(s);
+  }
+}, true);
+
+function ratesUpdatedText(){
+  var newest = 0;
+  CURRENCIES.forEach(function(c){ if(c.code!==BASE_CURRENCY && c.updatedAt>newest) newest = c.updatedAt; });
+  return newest ? new Date(newest).toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric" }) : "";
+}
+function renderCurrencyMenu(){
+  var menu = qs("#cur-menu");
+  if(!menu) return;
+  var html = '<div class="cur-menu-head"><span>Display prices in</span>' +
+    '<button type="button" class="cur-menu-close" data-action="close-currency-menu" aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button></div>';
+  CURRENCIES.forEach(function(c){
+    var active = c.code===state.currency;
+    html += '<button type="button" role="option" aria-selected="'+active+'" class="cur-opt'+(active?" active":"")+'" data-action="select-currency" data-code="'+esc(c.code)+'">' +
+      flagHtml(c)+'<span class="cur-code">'+esc(c.code)+'</span><span class="cur-name">— '+esc(c.name)+'</span>' +
+      '<span class="cur-end">'+(c.code===state.detectedCurrency && state.country ? '<span class="cur-tag">Detected</span>' : '')+
+      (currencySymbol(c)!==c.code ? '<span>'+esc(currencySymbol(c))+'</span>' : '')+(active?'<svg class="icon"><use href="#i-check"/></svg>':'')+'</span></button>';
+  });
+  var foot = "";
+  if(state.currencyManual && state.currency!==state.detectedCurrency){
+    foot += '<p>Your choice is saved on this device. <button type="button" class="cur-link" data-action="reset-currency">Use detected currency ('+esc(state.detectedCurrency)+')</button></p>';
+  } else if(state.country){
+    foot += '<p>Detected location: '+esc(countryDisplayName(state.country))+'</p>';
+  }
+  var upd = ratesUpdatedText();
+  foot += '<p>Indicative rates'+(upd ? ', updated '+esc(upd) : '')+'. Product prices are held in INR.</p>' +
+    '<p><button type="button" class="cur-link" data-action="open-currency">Currency converter</button> · ' +
+    '<a class="cur-link" href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates via ExchangeRate-API</a></p>';
+  menu.innerHTML = html + '<div class="cur-foot">'+foot+'</div>';
+}
+function currencyMenuOpen(){ var m = qs("#cur-menu"); return !!(m && m.classList.contains("open")); }
+function openCurrencyMenu(){
+  renderCurrencyMenu();
+  qs("#cur-menu").classList.add("open");
+  qs("#currency-pill").setAttribute("aria-expanded","true");
+  var a = qs("#cur-menu .cur-opt.active") || qs("#cur-menu .cur-opt");
+  if(a) a.focus({ preventScroll:true });
+}
+function closeCurrencyMenu(returnFocus){
+  var m = qs("#cur-menu"), p = qs("#currency-pill");
+  if(!m || !m.classList.contains("open")) return;
+  m.classList.remove("open"); p.setAttribute("aria-expanded","false");
+  if(returnFocus) p.focus();
+}
+document.addEventListener("click", function(e){
+  if(currencyMenuOpen() && !e.target.closest("#cur-select")) closeCurrencyMenu(false);
+});
+document.addEventListener("keydown", function(e){
+  if(!currencyMenuOpen()) return;
+  if(e.key==="Escape"){ closeCurrencyMenu(true); return; }
+  if(e.key==="ArrowDown" || e.key==="ArrowUp"){
+    var opts = qsa("#cur-menu .cur-opt");
+    if(!opts.length) return;
+    var i = opts.indexOf(document.activeElement);
+    i = e.key==="ArrowDown" ? (i+1) % opts.length : (i<=0 ? opts.length-1 : i-1);
+    opts[i].focus(); e.preventDefault();
+  }
+});
+
+function refreshCurrencyUI(){
+  var c = currencyByCode(state.currency);
+  qs("#currency-pill-flag").innerHTML = flagHtml(c);
+  qs("#currency-pill-label").textContent = c.code;
+  qs("#currency-pill").setAttribute("aria-label", "Currency: "+c.name+". Change currency");
+  renderCurrencyMenu();
+}
+
+/* ---------- converter modal ---------- */
 function populateConverterSelects(){
   var from = qs("#conv-from"), to = qs("#conv-to");
-  var opts = CURRENCIES.map(function(c){ return '<option value="'+c.code+'">'+c.code+' — '+c.name+'</option>'; }).join("");
+  var opts = CURRENCIES.map(function(c){ return '<option value="'+esc(c.code)+'">'+esc(c.code)+' — '+esc(c.name)+'</option>'; }).join("");
   from.innerHTML = opts; to.innerHTML = opts;
   from.value = state.currency;
-  to.value = state.currency==="INR" ? "USD" : "INR";
+  to.value = state.currency===BASE_CURRENCY ? (hasCurrency("USD") ? "USD" : state.currency) : BASE_CURRENCY;
   updateConverterResult();
 }
 function updateConverterResult(){
-  var amount = parseFloat(qs("#conv-amount").value) || 0;
-  var from = currencyByCode(qs("#conv-from").value);
-  var to = currencyByCode(qs("#conv-to").value);
-  var inr = amount / from.rate;
-  var result = inr * to.rate;
-  var decimals = (to.code==="INR"||to.code==="JPY") ? 0 : 2;
-  var fixed = result.toFixed(decimals);
-  var parts = fixed.split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  qs("#conv-result").textContent = to.symbol + " " + parts.join(".");
-}
-function refreshCurrencyUI(){
-  var c = currencyByCode(state.currency);
-  qs("#currency-pill-label").textContent = c.code+" "+c.symbol;
-  qs("#currency-pill-label-2").textContent = c.code+" "+c.symbol;
+  var amount = parseFloat(qs("#conv-amount").value);
+  var from = currencyByCode(qs("#conv-from").value), to = currencyByCode(qs("#conv-to").value);
+  var out = (isFinite(amount) && amount>=0) ? formatMoney(amount / from.rate * to.rate, to) : null;
+  qs("#conv-result").textContent = out || "—";
 }
 
 
@@ -2232,6 +2516,7 @@ function refreshCurrencyUI(){
    VIEW ROUTER
    ====================================================================== */
 function closeAllModalsAndPanels(){
+  closeCurrencyMenu(false);
   qsa(".modal-overlay.open").forEach(function(m){ m.classList.remove("open"); });
   qs("#mobile-search-panel").classList.remove("open");
 }
@@ -2319,8 +2604,6 @@ function openVideoCallModal(collectionPrefill){
 
 function openCurrencyModal(){
   openModal("#currency-modal");
-  qs("#currency-search").value = "";
-  renderCurrencyOptions("");
   populateConverterSelects();
 }
 
@@ -2552,11 +2835,17 @@ document.body.addEventListener("click", function(e){
 
       case "open-currency": openCurrencyModal(); break;
       case "close-currency": closeModal("#currency-modal"); break;
+      case "toggle-currency": if(currencyMenuOpen()) closeCurrencyMenu(false); else openCurrencyMenu(); break;
+      case "close-currency-menu": closeCurrencyMenu(true); break;
       case "select-currency":
-        state.currency = actionBtn.dataset.code; persist();
-        refreshCurrencyUI(); renderCurrencyOptions(qs("#currency-search").value);
-        renderCurrentView();
+        chooseCurrency(actionBtn.dataset.code);
+        closeCurrencyMenu(true);
         toast("Prices now shown in "+state.currency+".");
+        break;
+      case "reset-currency":
+        resetCurrencyChoice();
+        closeCurrencyMenu(true);
+        toast("Using your detected currency ("+state.currency+").");
         break;
 
       case "open-menu": openModal("#mobile-menu-overlay"); break;
@@ -2681,9 +2970,8 @@ function initSearchInputs(){
   wireSearchInput(qs("#search-input-discover"), qs("#search-suggest-discover"));
 }
 
-/* currency search + converter */
+/* currency converter */
 function initCurrencyInputs(){
-  qs("#currency-search").addEventListener("input", function(){ renderCurrencyOptions(this.value); });
   qs("#conv-amount").addEventListener("input", updateConverterResult);
   qs("#conv-from").addEventListener("change", updateConverterResult);
   qs("#conv-to").addEventListener("change", updateConverterResult);
@@ -2711,10 +2999,17 @@ function renderHeroSparkles(){
    INIT
    ====================================================================== */
 async function init(){
+  /* Country detection runs alongside the catalogue load; it never blocks the page for more than 2.5s.
+     If it is slower than that, the page renders first and the currency updates when it arrives. */
+  var geoPromise = detectCountry();
+  var geoBudget = Promise.race([geoPromise, new Promise(function(r){ setTimeout(function(){ r(null); }, 2500); })]);
   try{
     await loadCatalog();
   }catch(e){ toast("Could not load catalogue. Please refresh."); }
   await loadState();
+  var early = await geoBudget;
+  if(early) applyGeo(early);
+  resolveCurrency();
   pruneInquiries();
   renderCategoryRails();
   renderNewArrivals();
@@ -2725,6 +3020,16 @@ async function init(){
   initCurrencyInputs();
   renderHeroSparkles();
   setInterval(cyclePlaceholders, 2600);
+
+  if(!early){
+    geoPromise.then(function(g){
+      applyGeo(g);
+      var before = state.currency;
+      resolveCurrency();                        /* a saved manual choice still wins */
+      refreshCurrencyUI();
+      if(state.currency!==before) renderCurrentView();
+    });
+  }
 
   sb.auth.onAuthStateChange(function(event){
     if(event === "SIGNED_OUT"){

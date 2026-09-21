@@ -177,6 +177,29 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
 @media (hover:none){.img-thumb .mk-btn{opacity:1;}}
 @media (max-width:900px){.field-row3,.field-row4{grid-template-columns:1fr 1fr;}}
 @media (max-width:520px){.field-row3,.field-row4{grid-template-columns:1fr;} .color-row-head{flex-wrap:wrap;}}
+/* ---- currency & regional pricing ---- */
+.cs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px 28px;margin-top:10px;}
+.cs-item .l{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:5px;}
+.cs-item .v{font-size:14.5px;font-weight:500;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.cs-item .sub{font-size:12px;color:var(--text-muted);margin-top:3px;font-weight:400;line-height:1.45;}
+.switch{position:relative;display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:500;}
+.switch input{position:absolute;opacity:0;width:0;height:0;}
+.switch .track{width:38px;height:21px;border-radius:21px;background:#C4BFB6;position:relative;transition:background .2s;flex:none;}
+.switch .track::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,0.25);}
+.switch input:checked + .track{background:var(--success);}
+.switch input:checked + .track::after{transform:translateX(17px);}
+.switch input:focus-visible + .track{outline:2px solid var(--accent);outline-offset:2px;}
+.switch input:disabled + .track{opacity:0.5;cursor:not-allowed;}
+.flag{width:20px;height:15px;object-fit:cover;box-shadow:0 0 0 1px rgba(0,0,0,0.15);display:inline-block;vertical-align:-3px;margin-right:8px;}
+.flag-emoji{width:auto;height:auto;box-shadow:none;font-size:14px;vertical-align:baseline;}
+.rate-main{font-weight:500;white-space:nowrap;}
+.rate-sub{font-size:11.5px;color:var(--text-muted);white-space:nowrap;}
+tr.is-off td{opacity:0.6;}
+tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
+.callout{border:1px solid var(--line-strong);border-radius:var(--radius-m);padding:10px 12px;font-size:12.5px;background:#FCFBFA;margin-bottom:14px;line-height:1.5;}
+.callout:empty{display:none;}
+.callout.warn{background:var(--warn-bg);border-color:#E5CFA0;color:#6B4A12;}
+.card h3{font-size:19px;}
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
 .toast{background:var(--wine-deep);color:#fff;padding:11px 16px;border-radius:var(--radius-s);font-size:13px;box-shadow:var(--shadow-pop);}
 
@@ -241,7 +264,7 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
     <div class="navlink" data-section="customers">Customers</div>
     <div class="navlink" data-section="enquiries">Enquiries <span class="count" id="count-enquiries" style="display:none;"></span></div>
     <div class="navlink" data-section="videocalls">Video Call Requests <span class="count" id="count-videocalls" style="display:none;"></span></div>
-    <div class="navlink" data-section="currencies">Currencies</div>
+    <div class="navlink" data-section="currencies">Currency &amp; Pricing</div>
     <div class="navlink" data-section="billing">Billing</div>
     <div class="sidebar-foot">
       <div class="who" id="who-label"></div>
@@ -336,11 +359,21 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
 
     <!-- CURRENCIES -->
     <section class="section" id="sec-currencies" style="display:none;">
-      <div class="topbar"><div><h2>Currencies</h2><p>Prices are stored in INR; other currencies are shown for reference using these rates (per ₹1).</p></div>
-        <button class="btn btn-primary" id="add-currency-btn">+ Add Currency</button></div>
-      <div class="card table-wrap"><table id="currencies-table"><thead><tr>
-        <th>Code</th><th>Name</th><th>Symbol</th><th>Rate (per ₹1)</th><th>Active</th><th></th>
-      </tr></thead><tbody></tbody></table></div>
+      <div class="topbar"><div><h2>Currency &amp; Regional Pricing</h2><p>Product prices are stored in INR. Visitors see them converted into their own country's currency, using the exchange rates below. Display only — there is no checkout or online payment.</p></div>
+        <button class="btn btn-primary" id="update-rates-btn">Update Rates</button></div>
+
+      <div class="card">
+        <h3>Currency Settings</h3>
+        <div class="cs-grid" id="cur-settings-body"><div class="empty-note" style="grid-column:1/-1;">Loading…</div></div>
+      </div>
+
+      <div class="card" style="padding-bottom:8px;">
+        <h3>Supported Currencies</h3>
+        <p class="hint" style="margin:0 0 12px;">Exchange rates update automatically — you never need to type them. Use <b>Override</b> only if a rate is wrong for your business; an override stays in place until you reset it.</p>
+        <div class="table-wrap"><table id="currencies-table"><thead><tr>
+          <th>Country / Region</th><th>Code</th><th>Currency</th><th>Symbol</th><th>Status</th><th>Rate in use</th><th>Automatic rate</th><th>Last updated</th><th></th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
     </section>
 
     <!-- BILLING -->
@@ -514,25 +547,16 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
 <!-- ============ CURRENCY MODAL ============ -->
 <div class="modal-overlay" id="modal-currency">
   <div class="modal-box">
-    <div class="modal-head"><h3 id="currency-modal-title">Add Currency</h3><button class="modal-close" data-close="modal-currency">&times;</button></div>
-    <input type="hidden" id="cu-original-code">
-    <div class="field-row">
-      <div class="field"><label>Code (3 letters, e.g. USD)</label><input type="text" id="cu-code" maxlength="3" placeholder="USD" style="text-transform:uppercase;"></div>
-      <div class="field"><label>Symbol</label><input type="text" id="cu-symbol" maxlength="8" placeholder="$"></div>
-    </div>
-    <div class="field"><label>Name</label><input type="text" id="cu-name" maxlength="60" placeholder="US Dollar"></div>
-    <div class="field-row">
-      <div class="field"><label>Rate (units per ₹1)</label><input type="number" id="cu-rate" step="0.000001" min="0" placeholder="0.012"></div>
-      <div class="field"><label>Sort Order</label><input type="number" id="cu-sort" step="1" value="0"></div>
-    </div>
-    <div class="field-row">
-      <div class="checkbox-row"><input type="checkbox" id="cu-symbol-first" checked><label for="cu-symbol-first" style="margin:0;">Symbol before amount ($100)</label></div>
-      <div class="checkbox-row"><input type="checkbox" id="cu-active" checked><label for="cu-active" style="margin:0;">Active</label></div>
-    </div>
+    <div class="modal-head"><h3 id="currency-modal-title">Override exchange rate</h3><button class="modal-close" data-close="modal-currency">&times;</button></div>
+    <input type="hidden" id="cu-code">
+    <div class="callout" id="cu-info"></div>
+    <div class="field"><label id="cu-rate-label">1 unit = ₹</label><input type="number" id="cu-rate" step="any" min="0" placeholder="e.g. 96.00"></div>
+    <div class="callout" id="cu-preview"></div>
     <div class="field-error" id="cu-error"></div>
     <div class="modal-foot">
       <button class="btn btn-outline" data-close="modal-currency">Cancel</button>
-      <button class="btn btn-primary" id="cu-save-btn">Save Currency</button>
+      <button class="btn btn-outline" id="cu-reset-btn" style="display:none;">Reset to automatic</button>
+      <button class="btn btn-primary" id="cu-save-btn">Save override</button>
     </div>
   </div>
 </div>
@@ -940,7 +964,7 @@ function friendlyError(err, fallback){
     if(/categories_id_slug_chk/.test(msg)) return "Category slug may only contain lowercase letters, numbers and single hyphens.";
     if(/categories_name_chk|subcategories_name_chk/.test(msg)) return "Name is required (max 80 characters).";
     if(/currencies_code_chk/.test(msg)) return "Currency code must be 3 capital letters (e.g. USD).";
-    if(/currencies_rate_chk/.test(msg)) return "Exchange rate must be greater than 0.";
+    if(/currencies_(rate|manual_rate|auto_rate)_chk/.test(msg)) return "Exchange rate must be greater than 0.";
     if(/currencies_(name|symbol)_chk/.test(msg)) return "Currency name and symbol are required.";
     if(/bills_money_chk/.test(msg))    return "Bill amounts cannot be negative (is the discount larger than the total?).";
     if(/bill_items_chk/.test(msg))     return "Every bill line needs a name, a quantity of at least 1 and a price of 0 or more.";
@@ -2199,95 +2223,258 @@ qs("#videocall-save-btn").addEventListener("click", async function(){
 });
 
 /* ======================================================================
-   CURRENCIES
+   CURRENCY & REGIONAL PRICING
+   Product prices stay in INR. currencies.rate is the rate the website uses: the admin's
+   override (manual_rate) if there is one, otherwise the automatic rate (auto_rate) that the
+   refresh-exchange-rates function keeps up to date. Rates are "units of currency per ₹1".
    ====================================================================== */
+var CURRENCY_SETTINGS = null;
+var CS_ERR = null;
+var RATES_STALE_MS = 36 * 60 * 60 * 1000;      /* no successful update for this long = "stale" */
+
+async function loadCurrencySettings(){
+  var res = await sb.from("currency_settings").select("*").eq("id", true).maybeSingle();
+  CS_ERR = res.error || null;
+  if(!res.error) CURRENCY_SETTINGS = res.data || null;
+  return !res.error;
+}
 async function loadCurrenciesTable(){
-  showLoading("#currencies-table", 6, "currencies");
-  await loadCurrencies();
+  showLoading("#currencies-table", 9, "currencies");
+  await Promise.all([loadCurrencies(), loadCurrencySettings()]);
   staleNotice(LOAD_ERR.currencies, CURRENCIES.length);
+  renderCurrencySettings();
   renderCurrenciesTable();
 }
 RETRY.currencies = loadCurrenciesTable;
+
+function currencyByCodeAdmin(code){ return CURRENCIES.find(function(c){ return c.code === code; }); }
+function fmtDateTime(d){ return d ? new Date(d).toLocaleString("en-IN", {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "—"; }
+function timeAgo(d){
+  var s = Math.max(0, (Date.now() - Date.parse(d)) / 1000);
+  if(!isFinite(s)) return "";
+  if(s < 90) return "just now";
+  if(s < 5400) return Math.round(s / 60) + " min ago";
+  if(s < 129600) return Math.round(s / 3600) + " h ago";
+  return Math.round(s / 86400) + " days ago";
+}
+/* rates are per ₹1; admins think in "1 USD = ₹96" */
+function inrPerUnit(rate){ var r = Number(rate); return (isFinite(r) && r > 0) ? 1 / r : null; }
+function fmtInrPerUnit(rate){
+  var v = inrPerUnit(rate);
+  if(v === null) return "—";
+  return "₹" + v.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: v < 1 ? 4 : 2 });
+}
+function fmtPerInr(rate){ var r = Number(rate); return (isFinite(r) && r > 0) ? String(Number(r.toPrecision(6))) : "—"; }
+function flagImg(c){
+  var cc = String(c.country_code || "").toLowerCase();
+  if(!/^[a-z]{2}$/.test(cc)) return "";
+  var emoji = cc.toUpperCase().replace(/./g, function(ch){ return String.fromCodePoint(127397 + ch.charCodeAt(0)); });
+  return '<img class="flag" src="https://flagcdn.com/w40/' + cc + '.png" width="20" height="15" alt="" data-emoji="' + emoji + '">';
+}
+document.addEventListener("error", function(e){      /* flag image failed to load: show the emoji instead */
+  var t = e.target;
+  if(t && t.classList && t.classList.contains("flag") && t.dataset.emoji){
+    var s = document.createElement("span"); s.className = "flag flag-emoji"; s.textContent = t.dataset.emoji; t.replaceWith(s);
+  }
+}, true);
+
+function rateApiStatus(s){
+  if(!s.auto_rates_enabled) return { cls:"pill-grey", label:"Paused" };
+  if(s.last_status === "never") return { cls:"pill-grey", label:"Not run yet" };
+  if(s.last_status === "error") return { cls:"pill-red", label:"Failing" };
+  if(s.last_status === "partial") return { cls:"pill-amber", label:"Partly updated" };
+  if(!s.last_success_at || Date.now() - Date.parse(s.last_success_at) > RATES_STALE_MS) return { cls:"pill-amber", label:"Stale" };
+  return { cls:"pill-green", label:"Working" };
+}
+function renderCurrencySettings(){
+  var box = qs("#cur-settings-body"), btn = qs("#update-rates-btn");
+  var s = CURRENCY_SETTINGS;
+  if(!s){
+    box.innerHTML = '<div class="empty-note err-note" style="grid-column:1/-1;">Could not load the exchange-rate settings' + (CS_ERR ? ': ' + esc(friendlyError(CS_ERR)) : '.') +
+      ' <button type="button" class="icon-btn" data-retry="currencies">Retry</button></div>';
+    btn.disabled = true;
+    return;
+  }
+  var on = !!s.auto_rates_enabled;
+  var st = rateApiStatus(s);
+  var enabled = CURRENCIES.filter(function(c){ return c.active; }).length;
+  var overrides = CURRENCIES.filter(function(c){ return c.code !== "INR" && c.manual_rate != null; }).length;
+  function item(label, valueHtml, sub){ return '<div class="cs-item"><div class="l">' + label + '</div><div class="v">' + valueHtml + '</div>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>'; }
+  box.innerHTML =
+    item("Base Currency", "INR — Indian Rupee (₹)", "Product prices are always stored in INR.") +
+    item("Automatic Exchange Rates",
+      '<label class="switch"><input type="checkbox" id="auto-rates-toggle"' + (on ? " checked" : "") + '><span class="track"></span><span>' + (on ? "ON" : "OFF") + '</span></label>',
+      on ? "Rates refresh automatically every 6 hours." : "Rates are frozen at their last values until you switch this back on.") +
+    item("Last Exchange Rate Update",
+      s.last_success_at ? esc(fmtDateTime(s.last_success_at)) : "Never",
+      s.last_success_at ? esc(timeAgo(s.last_success_at)) : "No successful update yet.") +
+    item("Exchange Rate API Status",
+      '<span class="pill ' + st.cls + '">' + st.label + '</span>',
+      esc(s.last_message || "The rates have not been updated yet.") +
+        (s.provider ? "<br>Source: " + esc(s.provider) : "") +
+        (s.last_attempt_at ? "<br>Last attempt: " + esc(fmtDateTime(s.last_attempt_at)) : "")) +
+    item("Supported Currencies", enabled + " enabled of " + CURRENCIES.length,
+      overrides ? overrides + " with a manual override." : "All using automatic rates.");
+  btn.disabled = !on;
+  btn.title = on ? "Fetch the latest exchange rates now" : "Switch automatic exchange rates on to update";
+}
+
 function renderCurrenciesTable(){
-  if(LOAD_ERR.currencies && !CURRENCIES.length){ showError("#currencies-table", 6, LOAD_ERR.currencies, "currencies"); return; }
-  if(!CURRENCIES.length){ showEmpty("#currencies-table", 6, "No currencies yet. Click + Add Currency."); return; }
+  if(LOAD_ERR.currencies && !CURRENCIES.length){ showError("#currencies-table", 9, LOAD_ERR.currencies, "currencies"); return; }
+  if(!CURRENCIES.length){ showEmpty("#currencies-table", 9, "No currencies found."); return; }
   qs("#currencies-table tbody").innerHTML = CURRENCIES.map(function(c){
     var base = c.code === "INR";
-    return '<tr>' +
-      '<td>'+esc(c.code)+(base?' <span style="color:var(--text-muted);font-size:11px;">(base)</span>':'')+'</td><td>'+esc(c.name)+'</td><td>'+esc(c.symbol)+'</td>' +
-      '<td><input type="number" step="0.000001" min="0" style="width:120px;" data-currency-rate="'+esc(c.code)+'" value="'+Number(c.rate)+'"'+(base?' disabled title="INR is the base currency (rate 1)"':'')+'></td>' +
-      '<td><input type="checkbox" data-currency-active="'+esc(c.code)+'" '+(c.active?"checked":"")+(base?' disabled':'')+'></td>' +
-      '<td><button class="icon-btn" data-save-currency="'+esc(c.code)+'"'+(base?' disabled':'')+'>Save</button> <button class="icon-btn" data-edit-currency="'+esc(c.code)+'"'+(base?' disabled':'')+'>Edit</button> <button class="icon-btn danger" data-delete-currency="'+esc(c.code)+'"'+(base?' disabled':'')+'>Delete</button></td>' +
+    var manual = !base && c.manual_rate != null;
+    var hasAuto = c.auto_rate != null;
+    var mode, updated;
+    if(base){ mode = '<span class="pill pill-grey">Base currency</span>'; updated = "—"; }
+    else if(manual){ mode = '<span class="pill pill-amber">Manual override</span>'; updated = "Override set " + esc(fmtDateTime(c.manual_rate_updated_at)); }
+    else if(hasAuto){ mode = '<span class="pill pill-green">Automatic</span>'; updated = esc(fmtDateTime(c.auto_rate_updated_at)) + '<span class="sub-note">' + esc(timeAgo(c.auto_rate_updated_at)) + '</span>'; }
+    else { mode = '<span class="pill pill-grey">Awaiting first update</span>'; updated = "—"; }
+    var rateCell = '<div class="rate-main">1 ' + esc(c.code) + ' = ' + fmtInrPerUnit(c.rate) + '</div><div class="rate-sub">' + fmtPerInr(c.rate) + ' per ₹1</div><div style="margin-top:4px;">' + mode + '</div>';
+    var autoCell = base ? "—" : (hasAuto ? '<div class="rate-main">1 ' + esc(c.code) + ' = ' + fmtInrPerUnit(c.auto_rate) + '</div>' : "—");
+    var actions = base ? '<span class="sub-note">Always enabled</span>' :
+      '<button type="button" class="icon-btn" data-override-currency="' + esc(c.code) + '">' + (manual ? "Edit override" : "Override") + '</button>' +
+      (manual ? ' <button type="button" class="icon-btn" data-reset-currency="' + esc(c.code) + '">Reset to automatic</button>' : "");
+    return '<tr class="' + (c.active ? "" : "is-off") + '">' +
+      '<td>' + flagImg(c) + esc(c.country_name || "—") + '</td>' +
+      '<td><strong>' + esc(c.code) + '</strong></td><td>' + esc(c.name) + '</td><td>' + esc(c.symbol) + '</td>' +
+      '<td><label class="switch"><input type="checkbox" data-currency-active="' + esc(c.code) + '"' + (c.active ? " checked" : "") + (base ? " disabled" : "") +
+        ' aria-label="' + esc(c.code) + ' enabled"><span class="track"></span><span>' + (c.active ? "Enabled" : "Disabled") + '</span></label></td>' +
+      '<td>' + rateCell + '</td><td>' + autoCell + '</td><td>' + updated + '</td><td>' + actions + '</td>' +
     '</tr>';
   }).join("");
 }
-function currencyByCodeAdmin(code){ return CURRENCIES.find(function(c){ return c.code === code; }); }
-function parseRate(v){ var n = Number(String(v).trim()); return (String(v).trim() !== "" && isFinite(n) && n > 0 && n <= 1000000000) ? n : null; }
-document.body.addEventListener("click", async function(e){
-  var b = e.target.closest("[data-save-currency]");
-  if(b){
-    if(!(await ensureStaffSession())) return;
-    var code = b.dataset.saveCurrency;
-    var rate = parseRate(qs('[data-currency-rate="'+code+'"]').value);
-    if(rate === null){ toast("Enter an exchange rate greater than 0."); return; }
-    var active = qs('[data-currency-active="'+code+'"]').checked;
-    var res = await sb.from("currencies").update({ rate: rate, active: active }).eq("code", code).select("code");
-    if(res.error){ toast("Could not save: " + friendlyError(res.error)); return; }
-    if(!res.data || !res.data.length){ toast("Nothing was changed. You may not have permission."); return; }
-    toast("Currency updated.");
-    await loadCurrencies(); renderCurrenciesTable();
+
+/* ---- switches: automatic rates ON/OFF, currency enabled/disabled ---- */
+document.body.addEventListener("change", async function(e){
+  var t = e.target;
+  if(t.id === "auto-rates-toggle"){
+    var on = t.checked;
+    if(!(await ensureStaffSession())){ t.checked = !on; return; }
+    var res = await sb.from("currency_settings").update({ auto_rates_enabled: on }).eq("id", true).select("id");
+    if(res.error || !res.data || !res.data.length){
+      t.checked = !on;
+      toast("Could not change this setting: " + (res.error ? friendlyError(res.error) : "you may not have permission."));
+      return;
+    }
+    toast(on ? "Automatic exchange rates are ON." : "Automatic exchange rates are OFF. Rates stay at their last values.");
+    await loadCurrenciesTable();
     return;
   }
-  var ed = e.target.closest("[data-edit-currency]");
-  if(ed){ openCurrencyModal(ed.dataset.editCurrency); return; }
-  var del = e.target.closest("[data-delete-currency]");
-  if(del){
-    if(!(await ensureStaffSession())) return;
-    var dc = currencyByCodeAdmin(del.dataset.deleteCurrency); if(!dc) return;
-    if(!confirm('Delete the currency ' + dc.code + ' (' + dc.name + ')? Prices are stored in INR, so no product prices are affected.')) return;
-    var dr = await sb.from("currencies").delete().eq("code", dc.code);
-    if(dr.error){ toast("Could not delete: " + friendlyError(dr.error)); return; }
-    toast("Currency deleted.");
-    await loadCurrencies(); renderCurrenciesTable();
+  if(t.dataset && t.dataset.currencyActive){
+    var code = t.dataset.currencyActive, active = t.checked;
+    if(!(await ensureStaffSession())){ t.checked = !active; return; }
+    var r = await sb.from("currencies").update({ active: active }).eq("code", code).select("code");
+    if(r.error || !r.data || !r.data.length){
+      t.checked = !active;
+      toast("Could not update " + code + ": " + (r.error ? friendlyError(r.error) : "you may not have permission."));
+      return;
+    }
+    toast(code + (active ? " is now shown on the website." : " is now hidden from the website."));
+    await loadCurrencies(); renderCurrencySettings(); renderCurrenciesTable();
   }
 });
-qs("#add-currency-btn").addEventListener("click", function(){ openCurrencyModal(null); });
-function openCurrencyModal(code){
-  var c = code ? currencyByCodeAdmin(code) : null;
-  qs("#currency-modal-title").textContent = c ? "Edit Currency" : "Add Currency";
-  qs("#cu-original-code").value = c ? c.code : "";
-  qs("#cu-code").value = c ? c.code : ""; qs("#cu-code").disabled = !!c;
-  qs("#cu-symbol").value = c ? c.symbol : ""; qs("#cu-name").value = c ? c.name : "";
-  qs("#cu-rate").value = c ? Number(c.rate) : ""; qs("#cu-sort").value = c ? c.sort_order : CURRENCIES.length;
-  qs("#cu-symbol-first").checked = c ? !!c.symbol_first : true; qs("#cu-active").checked = c ? !!c.active : true;
+
+/* ---- Update Rates: asks the server to fetch fresh rates right now ---- */
+qs("#update-rates-btn").addEventListener("click", async function(){
+  if(!(await ensureStaffSession())) return;
+  var btn = this, label = btn.textContent;
+  btn.disabled = true; btn.textContent = "Updating…";
+  try{
+    var res = await sb.functions.invoke("refresh-exchange-rates", { body: { force: true } });
+    var payload = res.data, msg = "";
+    if(res.error){
+      payload = null;
+      try{ payload = await res.error.context.json(); }catch(e){ /* no body */ }
+      msg = (payload && (payload.error || payload.message)) || "the update service could not be reached.";
+      toast("Rate update failed: " + msg);
+    } else if(payload && payload.skipped){
+      toast(payload.skipped);
+    } else {
+      toast((payload && payload.message) || "The rate update did not complete.");
+    }
+  }catch(e){
+    toast("Rate update failed: the update service could not be reached.");
+  }finally{
+    btn.textContent = label;
+    await loadCurrenciesTable();               /* refreshes the status, the table and the button's enabled state */
+  }
+});
+
+/* ---- manual override ---- */
+document.body.addEventListener("click", async function(e){
+  var ov = e.target.closest("[data-override-currency]");
+  if(ov){ openOverrideModal(ov.dataset.overrideCurrency); return; }
+  var rs = e.target.closest("[data-reset-currency]");
+  if(rs){ resetOverride(rs.dataset.resetCurrency, false); }
+});
+function openOverrideModal(code){
+  var c = currencyByCodeAdmin(code); if(!c || c.code === "INR") return;
+  var manual = c.manual_rate != null;
+  qs("#currency-modal-title").textContent = "Override exchange rate — " + c.code;
+  qs("#cu-code").value = c.code;
+  qs("#cu-rate-label").textContent = "1 " + c.code + " = ₹";
+  var cur = inrPerUnit(c.rate);
+  qs("#cu-rate").value = cur === null ? "" : Number(cur.toPrecision(6));
+  qs("#cu-info").innerHTML = (c.auto_rate != null
+      ? "Automatic rate right now: <b>1 " + esc(c.code) + " = " + fmtInrPerUnit(c.auto_rate) + "</b>. "
+      : "No automatic rate has been fetched yet. ") +
+    "An override is used on the website instead of the automatic rate, and stays until you reset it.";
   qs("#cu-error").textContent = "";
+  qs("#cu-reset-btn").style.display = manual ? "" : "none";
+  qs("#cu-save-btn").textContent = manual ? "Update override" : "Save override";
+  updateOverridePreview();
   openModal("modal-currency");
 }
+function parseInrPerUnit(v){ var t = String(v).trim(), n = Number(t); return (t !== "" && isFinite(n) && n > 0 && n <= 1000000000) ? n : null; }
+function updateOverridePreview(){
+  var c = currencyByCodeAdmin(qs("#cu-code").value), x = parseInrPerUnit(qs("#cu-rate").value), box = qs("#cu-preview");
+  if(!c || x === null){ box.innerHTML = ""; return; }
+  var shown;
+  try{ shown = new Intl.NumberFormat(c.format_locale || "en-US", { style: "currency", currency: c.code }).format(1000 / x); }
+  catch(e){ shown = (1000 / x).toFixed(2) + " " + c.code; }
+  var html = "Preview: a ₹1,000 product will show as <b>" + esc(shown) + "</b>.";
+  if(c.auto_rate != null){
+    var auto = 1 / Number(c.auto_rate), diff = (x / auto - 1) * 100;
+    html += " That is " + (Math.abs(diff) < 0.05 ? "the same as" : Math.abs(diff).toFixed(1) + "% " + (diff > 0 ? "higher" : "lower") + " than") + " the automatic rate.";
+  }
+  box.innerHTML = html;
+}
+qs("#cu-rate").addEventListener("input", updateOverridePreview);
 qs("#cu-save-btn").addEventListener("click", async function(){
   if(!(await ensureStaffSession())) return;
-  var orig = qs("#cu-original-code").value;
-  var code = orig || qs("#cu-code").value.trim().toUpperCase();
-  var name = qs("#cu-name").value.trim(), symbol = qs("#cu-symbol").value.trim();
-  var rate = parseRate(qs("#cu-rate").value), sortRaw = qs("#cu-sort").value.trim();
-  var sort = sortRaw === "" ? 0 : Number(sortRaw);
-  var errs = [];
-  if(!/^[A-Z]{3}$/.test(code)) errs.push("Code must be exactly 3 capital letters (e.g. USD).");
-  else if(!orig && currencyByCodeAdmin(code)) errs.push("The currency " + code + " already exists.");
-  if(!name || name.length > 60) errs.push("Name is required (max 60 characters).");
-  if(!symbol || symbol.length > 8) errs.push("Symbol is required (max 8 characters).");
-  if(rate === null) errs.push("Exchange rate must be a number greater than 0.");
-  if(!Number.isInteger(sort)) errs.push("Sort order must be a whole number.");
-  qs("#cu-error").textContent = errs.join(" ");
-  if(errs.length){ toast(errs[0]); return; }
-  var row = { name: name, symbol: symbol, rate: rate, sort_order: sort, symbol_first: qs("#cu-symbol-first").checked, active: qs("#cu-active").checked };
+  var code = qs("#cu-code").value, c = currencyByCodeAdmin(code), x = parseInrPerUnit(qs("#cu-rate").value);
+  if(!c) return;
+  if(x === null){ var m = "Enter how many rupees 1 " + code + " is worth (a number greater than 0)."; qs("#cu-error").textContent = m; toast(m); return; }
+  qs("#cu-error").textContent = "";
+  if(c.auto_rate != null){
+    var auto = 1 / Number(c.auto_rate);
+    if(x / auto > 1.25 || x / auto < 0.8){
+      if(!confirm("This override (1 " + code + " = ₹" + x + ") is more than 20% away from the automatic rate (" + fmtInrPerUnit(c.auto_rate) + "). Save it anyway?")) return;
+    }
+  }
   var btn = this; btn.disabled = true;
-  var res = orig ? await sb.from("currencies").update(row).eq("code", orig) : await sb.from("currencies").insert(Object.assign({ code: code }, row));
+  var res = await sb.from("currencies").update({ manual_rate: Number((1 / x).toPrecision(10)) }).eq("code", code).select("code");
   btn.disabled = false;
-  if(res.error){ var m = friendlyError(res.error); qs("#cu-error").textContent = m; toast("Could not save: " + m); return; }
-  toast("Currency saved.");
+  if(res.error || !res.data || !res.data.length){
+    var em = res.error ? friendlyError(res.error) : "Nothing was changed. You may not have permission.";
+    qs("#cu-error").textContent = em; toast("Could not save: " + em); return;
+  }
+  toast(code + " now uses your manual rate.");
   closeModal("modal-currency");
-  await loadCurrencies(); renderCurrenciesTable();
+  await loadCurrenciesTable();
 });
+qs("#cu-reset-btn").addEventListener("click", function(){ resetOverride(qs("#cu-code").value, true); });
+async function resetOverride(code, fromModal){
+  var c = currencyByCodeAdmin(code); if(!c || c.manual_rate == null) return;
+  if(!(await ensureStaffSession())) return;
+  var res = await sb.from("currencies").update({ manual_rate: null }).eq("code", code).select("code");
+  if(res.error || !res.data || !res.data.length){ toast("Could not reset: " + (res.error ? friendlyError(res.error) : "you may not have permission.")); return; }
+  toast(code + " is back on the automatic rate.");
+  if(fromModal) closeModal("modal-currency");
+  await loadCurrenciesTable();
+}
 
 /* ======================================================================
    BILLING
