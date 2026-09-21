@@ -1832,13 +1832,6 @@ function defaultColor(p){
   for(var i=0;i<list.length;i++){ if(colorAvailable(list[i])) return list[i]; }
   return null;
 }
-/* Status shown for the product as a whole (cards): the product's own status,
-   unless it has colour options and every one of them is out of stock. */
-function effectiveStockKey(p){
-  var list = p.colors || [];
-  if(list.length && p.stockState !== "out_of_stock" && !list.some(colorAvailable)) return "out_of_stock";
-  return p.stockState;
-}
 /* Status shown on the detail page: the selected colour's, when there are colours. */
 function detailStockKey(p){
   if(!(p.colors && p.colors.length)) return p.stockState;
@@ -1887,11 +1880,10 @@ function renderCategoryRails(){
 /* ======================================================================
    RENDER: PRODUCT CARD
    ====================================================================== */
+/* Cards show only the "New" tag. Colour options, stock / availability and made-to-order status
+   are shown on the product details page only. */
 function productCardHtml(p){
-  var badges = '<div class="card-badges">';
-  if(p.badge==="NEW") badges += '<span class="pill pill-new">New</span>';
-  badges += stockPillHtml(effectiveStockKey(p));
-  badges += '</div>';
+  var badges = p.badge==="NEW" ? '<div class="card-badges"><span class="pill pill-new">New</span></div>' : "";
   var photo = productPhoto(p, 640);
   return '' +
   '<div class="product-card">' +
