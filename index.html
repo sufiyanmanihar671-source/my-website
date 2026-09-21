@@ -734,7 +734,6 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .pd-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0;}
 @media(max-width:480px){.pd-actions{grid-template-columns:1fr;}}
 .pd-actions .btn{width:100%;min-height:54px;}
-.pd-actions .pd-enquiry-btn{grid-column:1/-1;}
 .pd-info > .link-cta{margin-top:28px !important;}
 .pd-note{display:flex;gap:12px;align-items:center;margin-top:26px;padding:0;background:none;font-size:12px;letter-spacing:0.04em;color:var(--text-muted);}
 .pd-note .icon{width:15px;height:15px;color:var(--champagne);flex-shrink:0;}
@@ -926,7 +925,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 .converter-result{background:var(--surface-alt);border-radius:0;padding:22px;text-align:center;margin-top:20px;border-top:1px solid var(--champagne);}
 .converter-result .amt{font-family:var(--font-display);font-size:34px;font-weight:500;color:var(--heading);line-height:1.1;}
 
-/* ============ INQUIRY / WATCHLIST ITEMS ============ */
+/* ============ WATCHLIST ITEMS ============ */
 .list-item{display:flex;gap:20px;align-items:center;padding:16px;border:1px solid var(--line);border-radius:0;background:var(--surface-card);margin-bottom:14px;transition:border-color .4s var(--ease),box-shadow .5s var(--ease);}
 .list-item:hover{border-color:rgba(200,169,107,0.6);box-shadow:var(--shadow-card);}
 .list-item-media{width:92px;height:92px;border-radius:0;background:var(--surface-alt);overflow:hidden;position:relative;flex-shrink:0;}
@@ -980,7 +979,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></symbol>
 <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24"><path class="icon-line" d="M12 20.5s-7.5-4.6-9.8-9.4C.6 7.4 2.4 4 5.9 4c2 0 3.6 1.1 4.4 2.6C11.1 5.1 12.7 4 14.7 4c3.5 0 5.3 3.4 3.7 7.1C16.1 15.9 12 20.5 12 20.5z"/><path class="icon-fill" d="M12 20.5s-7.5-4.6-9.8-9.4C.6 7.4 2.4 4 5.9 4c2 0 3.6 1.1 4.4 2.6C11.1 5.1 12.7 4 14.7 4c3.5 0 5.3 3.4 3.7 7.1C16.1 15.9 12 20.5 12 20.5z"/></symbol>
-<symbol id="i-message" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.8 8.8 0 0 1-3.8-.9L3 20l1.1-4.8A8.3 8.3 0 0 1 3 11.5 8.4 8.4 0 0 1 11.9 3a8.5 8.5 0 0 1 9.1 8.5z"/></symbol>
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9.5h12V10"/></symbol>
 <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M15.5 8.5 13 13l-4.5 2.5L11 11l4.5-2.5z"/></symbol>
 <symbol id="i-video" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="13" height="11" rx="2"/><path d="M15.5 10.5 21 7v10l-5.5-3.5"/></symbol>
@@ -1275,28 +1273,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 </section>
 
 <!-- ============================================================ -->
-<!-- INQUIRIES VIEW -->
-<!-- ============================================================ -->
-<section class="view" id="view-inquiries" data-view="inquiries">
-  <div class="container page-top" style="padding-top:32px;padding-bottom:60px;">
-    <div class="breadcrumb"><button data-nav="home">Home</button><span class="sep">/</span><span class="current">Inquiries</span></div>
-    <div class="list-page-head">
-      <div><p class="eyebrow">YOUR SELECTION</p><h2 style="margin:0;">B2B Inquiries</h2></div>
-    </div>
-    <p style="margin-bottom:26px;">Products you've asked about. Send them all to our team on WhatsApp in one message, or reach out for individual pieces from their detail page.</p>
-    <div id="inquiries-list"></div>
-    <div class="empty-state" id="inquiries-empty" style="display:none;">
-      <svg class="icon"><use href="#i-message"/></svg>
-      <p>No inquiries yet. Products you save will appear here.</p>
-      <button class="btn btn-outline" data-nav="discover" style="margin-top:10px;">Browse Categories</button>
-    </div>
-    <button class="btn btn-primary btn-block" id="send-all-inquiry-btn" data-action="submit-enquiry" style="margin-top:10px;">
-      <svg class="icon" style="width:15px;height:15px;"><use href="#i-whatsapp"/></svg> Send Enquiry on WhatsApp
-    </button>
-  </div>
-</section>
-
-<!-- ============================================================ -->
 <!-- WATCH LIST VIEW -->
 <!-- ============================================================ -->
 <section class="view" id="view-watchlist" data-view="watchlist">
@@ -1345,7 +1321,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <ul class="footer-links">
         <li><button data-action="open-login">Login</button></li>
         <li><button data-action="open-login" data-tab="register">Business Registration</button></li>
-        <li><button data-nav="inquiries">Inquiries</button></li>
         <li><button data-action="open-videocall">Video Call</button></li>
       </ul>
     </div>
@@ -1712,11 +1687,9 @@ var state = {
   country:null,            /* detected ISO country code, or null */
   geoSource:"none",        /* override | cache | ip | locale | none */
   detectedCurrency:"INR",  /* currency of the detected country */
-  inquiries:[],
   watchlist:[],
   pendingLoginTab:"login",
-  selectedColorId:null,
-  inquiryColors:{}
+  selectedColorId:null
 };
 
 function safeGet(key, fallback){
@@ -1730,10 +1703,8 @@ function safeSet(key, value){
   try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* ignore */ }
 }
 async function loadState(){
-  state.inquiries = safeGet("naj_inquiries", []) || [];
-  if(!Array.isArray(state.inquiries)) state.inquiries = [];
-  state.inquiryColors = safeGet("naj_inquiry_colors", {}) || {};
-  if(typeof state.inquiryColors !== "object" || Array.isArray(state.inquiryColors)) state.inquiryColors = {};
+  /* the enquiry list feature was removed: drop what it left behind in this browser */
+  try{ localStorage.removeItem("naj_inquiries"); localStorage.removeItem("naj_inquiry_colors"); }catch(e){ /* ignore */ }
   try{
     var sessionRes = await sb.auth.getSession();
     var session = sessionRes.data && sessionRes.data.session;
@@ -1751,19 +1722,6 @@ async function loadState(){
     state.isLoggedIn = false; state.userId = null; state.watchlist = [];
   }
 }
-function pruneInquiries(){
-  if(!PRODUCTS.length) return;                      /* catalogue failed to load: never wipe the user's list */
-  var before = state.inquiries.length;
-  state.inquiries = state.inquiries.filter(function(id){ return !!productById(id); });
-  Object.keys(state.inquiryColors).forEach(function(id){ if(state.inquiries.indexOf(id) === -1) delete state.inquiryColors[id]; });
-  if(state.inquiries.length !== before) persist();
-}
-function persist(){
-  /* the currency is stored separately, and only when the visitor picks one (see chooseCurrency) */
-  safeSet("naj_inquiries", state.inquiries);
-  safeSet("naj_inquiry_colors", state.inquiryColors);
-}
-
 /* ======================================================================
    UTILITIES
    ====================================================================== */
@@ -1798,19 +1756,8 @@ function openExternal(url){
   window.open(url, "_blank", "noopener");
 }
 
-function enquiryErrorText(err){
-  var m = String((err && err.message) || "");
-  if(/wait a few seconds|no longer available|must contain between|sign in|not active/i.test(m)) return m;
-  if(/failed to fetch|network|load failed/i.test(m)) return "Could not reach the server. Check your connection and try again.";
-  if(err && (err.code==="42501" || /permission denied|row-level security/i.test(m))) return "Please sign in again to send your enquiry.";
-  return "Could not send enquiry. Please try again.";
-}
 function updateCounts(){
-  var iEl = qs("#mnav-inquiry-count"), wEl = qs("#mnav-watchlist-count");
-  if(iEl){
-    if(state.inquiries.length>0){ iEl.style.display="flex"; iEl.textContent = state.inquiries.length; }
-    else { iEl.style.display="none"; }
-  }
+  var wEl = qs("#mnav-watchlist-count");
   if(wEl){
     if(state.watchlist.length>0){ wEl.style.display="flex"; wEl.textContent = state.watchlist.length; }
     else { wEl.style.display="none"; }
@@ -2068,14 +2015,6 @@ function selectColor(id){
   swapProductImage(c.image || state.pdDefaultPhoto);
 }
 
-function enquiryButtonHtml(p){
-  var inList = state.inquiries.indexOf(p.id) > -1;
-  return '<button class="btn btn-outline pd-enquiry-btn" id="pd-enquiry-btn" ' +
-    (inList ? 'data-nav="inquiries"' : 'data-action="enquire-product" data-id="'+p.id+'"') + '>' +
-    '<svg class="icon" style="width:14px;height:14px;"><use href="#i-message"/></svg> ' +
-    (inList ? 'In your enquiry list — View' : 'Add to Enquiry List') + '</button>';
-}
-function refreshEnquiryButton(p){ var b = qs("#pd-enquiry-btn"); if(b) b.outerHTML = enquiryButtonHtml(p); }
 
 function renderProductDetail(p, keepColorId){
   var c = cat(p.cat);
@@ -2128,7 +2067,6 @@ function renderProductDetail(p, keepColorId){
     '<div class="pd-actions">' +
       '<button class="btn btn-primary" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon" style="width:14px;height:14px;"><use href="#i-whatsapp"/></svg> Chat With Us</button>' +
       '<button class="btn btn-outline" data-action="call-us"><svg class="icon" style="width:14px;height:14px;"><use href="#i-phone"/></svg> Call Us</button>' +
-      enquiryButtonHtml(p) +
     '</div>' +
     '<button class="link-cta" style="margin-top:22px;" data-nav="contact"><svg class="icon"><use href="#i-phone"/></svg> Contact Us</button>' +
   '</div>';
@@ -2136,36 +2074,28 @@ function renderProductDetail(p, keepColorId){
 }
 
 /* ======================================================================
-   RENDER: INQUIRIES / WATCHLIST
+   RENDER: WATCHLIST
    ====================================================================== */
-function listItemHtml(p, kind){
-  var removeAction = kind==="inquiry" ? "remove-inquiry" : "remove-watchlist";
+function listItemHtml(p){
   return '' +
   '<div class="list-item">' +
     '<div class="list-item-media">'+imgTag(productPhoto(p,160),p.name,160)+'<span class="media-tint"></span></div>' +
     '<div class="list-item-info">' +
       '<div class="card-name">'+esc(p.name)+'</div>' +
-      '<div class="card-code">'+esc(p.code)+(kind==="inquiry" && state.inquiryColors[p.id] ? ' · '+esc(state.inquiryColors[p.id]) : '')+'</div>' +
+      '<div class="card-code">'+esc(p.code)+'</div>' +
     '</div>' +
     '<div class="list-item-actions">' +
       '<button class="icon-text-btn" data-action="view-product" data-id="'+p.id+'">View Details <svg class="icon"><use href="#i-chevron-right"/></svg></button>' +
-      '<button class="icon-text-btn" data-action="'+removeAction+'" data-id="'+p.id+'"><svg class="icon"><use href="#i-trash"/></svg> Remove</button>' +
+      '<button class="icon-text-btn" data-action="remove-watchlist" data-id="'+p.id+'"><svg class="icon"><use href="#i-trash"/></svg> Remove</button>' +
     '</div>' +
   '</div>';
-}
-function renderInquiries(){
-  var ids = state.inquiries;
-  var wrap = qs("#inquiries-list"), empty = qs("#inquiries-empty"), sendBtn = qs("#send-all-inquiry-btn");
-  if(ids.length===0){ wrap.innerHTML=""; empty.style.display="block"; sendBtn.style.display="none"; return; }
-  empty.style.display="none"; sendBtn.style.display="flex";
-  wrap.innerHTML = ids.map(function(id){ var p=productById(id); return p?listItemHtml(p,"inquiry"):""; }).join("");
 }
 function renderWatchlist(){
   var ids = state.watchlist;
   var wrap = qs("#watchlist-list"), empty = qs("#watchlist-empty");
   if(ids.length===0){ wrap.innerHTML=""; empty.style.display="block"; return; }
   empty.style.display="none";
-  wrap.innerHTML = ids.map(function(id){ var p=productById(id); return p?listItemHtml(p,"watchlist"):""; }).join("");
+  wrap.innerHTML = ids.map(function(id){ var p=productById(id); return p?listItemHtml(p):""; }).join("");
 }
 
 
@@ -2576,7 +2506,6 @@ function renderCurrentView(){
     var p = productById(state.currentProductId);
     if(p) renderProductDetail(p);
   }
-  else if(state.view==="inquiries"){ renderInquiries(); }
   else if(state.view==="watchlist"){ renderWatchlist(); }
   updateCounts();
 }
@@ -2630,7 +2559,6 @@ function goNav(name){
   if(name==="home") return goHome();
   if(name==="discover") return goDiscover(null,null);
   if(name==="new-arrivals") return showView("new-arrivals");
-  if(name==="inquiries") return showView("inquiries");
   if(name==="watchlist") return showView("watchlist");
   if(name==="about"){ showView("home"); setTimeout(function(){ var el=qs("#about-section"); if(el) el.scrollIntoView({behavior:"smooth"}); }, 60); return; }
   if(name==="contact"){ showView("home"); setTimeout(function(){ var el=qs("#contact-section"); if(el) el.scrollIntoView({behavior:"smooth"}); }, 60); return; }
@@ -2924,19 +2852,6 @@ document.body.addEventListener("click", function(e){
         break;
       case "close-mobile-search": qs("#mobile-search-panel").classList.remove("open"); break;
 
-      case "enquire-product":
-        (function(){
-          var ep = id ? productById(id) : null;
-          if(!ep) return;
-          /* remember the colour the customer picked (name only) */
-          var col = (ep.colors && ep.colors.length && state.currentProductId===ep.id) ? selectedColor(ep) : null;
-          var already = state.inquiries.indexOf(id) > -1;
-          if(!already) state.inquiries.push(id);
-          if(col) state.inquiryColors[id] = col.name; else if(!already) delete state.inquiryColors[id];
-          persist(); updateCounts(); refreshEnquiryButton(ep);
-          toast(already ? "Updated in your enquiry list." : "Added to your enquiry list.");
-        })();
-        break;
       case "whatsapp-product":
         var pp = productById(id);
         if(pp){
@@ -2968,43 +2883,11 @@ document.body.addEventListener("click", function(e){
           if(btn) btn.classList.toggle("saved", state.watchlist.indexOf(id)>-1);
         }
         break;
-      case "remove-inquiry":
-        state.inquiries = state.inquiries.filter(function(x){ return x!==id; });
-        delete state.inquiryColors[id];
-        persist(); renderInquiries(); updateCounts();
-        break;
       case "remove-watchlist":
         state.watchlist = state.watchlist.filter(function(x){ return x!==id; });
         if(state.userId) sb.from("watchlist").delete().eq("user_id", state.userId).eq("product_id", id).then(function(){});
         renderWatchlist(); updateCounts();
         break;
-      case "submit-enquiry":
-        if(!state.isLoggedIn){ toast("Please sign in to submit an enquiry."); openLoginModal("login"); break; }
-        if(state.inquiries.length===0) break;
-        (function(){
-          var originalText = actionBtn.innerHTML;
-          actionBtn.disabled = true; actionBtn.textContent = "Sending...";
-          (async function(){
-            try{
-              var ids = state.inquiries.filter(function(pid){ return !!productById(pid); });      /* skip products that no longer exist */
-              if(ids.length===0) throw { message:"The products in your list are no longer available." };
-              /* one call, one transaction: the database validates every product and colour */
-              var rpc = await sb.rpc("submit_enquiry", { p_items: ids.map(function(pid){ return { product_id: pid, color_name: state.inquiryColors[pid] || null }; }) });
-              if(rpc.error) throw rpc.error;
-              var waMsg = "Hello Nisha Art Jewellery, I would like to enquire about: " +
-                ids.map(function(pid){ var p=productById(pid), c=state.inquiryColors[pid]; return p.name+" ("+p.code+")"+(c ? ", Colour: "+c : ""); }).join("; ");
-              openExternal(waLink(waMsg));
-              state.inquiries = []; state.inquiryColors = {}; persist(); renderInquiries(); updateCounts();
-              toast("Enquiry sent — our team will reach out shortly.");
-            }catch(err){
-              toast(enquiryErrorText(err));
-            } finally {
-              actionBtn.disabled = false; actionBtn.innerHTML = originalText;
-            }
-          })();
-        })();
-        break;
-
       case "call-us": window.location.href = "tel:+912240001234"; break;
       case "email-us": window.location.href = "mailto:wholesale@nishaartjewellery.com"; break;
       case "open-maps": openExternal("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("Zaveri Bazaar, Mumbai, Maharashtra 400002, India")); break;
@@ -3078,7 +2961,6 @@ async function init(){
   var early = await geoBudget;
   if(early) applyGeo(early);
   resolveCurrency();
-  pruneInquiries();
   renderCategoryRails();
   renderNewArrivals();
   updateCounts();
@@ -3153,7 +3035,7 @@ if(document.readyState==="loading"){
 
   /* Blocks the app re-renders: stagger each new child as it appears */
   ["#new-arrivals-desktop", "#new-arrivals-full-grid", "#discover-product-grid",
-   "#discover-cat-rail", "#pd-root", "#inquiries-list", "#watchlist-list"].forEach(function(sel){
+   "#discover-cat-rail", "#pd-root", "#watchlist-list"].forEach(function(sel){
     var host = document.querySelector(sel);
     if(!host) return;
     function stagger(){ Array.prototype.forEach.call(host.children, function(child, i){ tag(child, i); }); }
