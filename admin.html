@@ -177,6 +177,16 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
 @media (hover:none){.img-thumb .mk-btn{opacity:1;}}
 @media (max-width:900px){.field-row3,.field-row4{grid-template-columns:1fr 1fr;}}
 @media (max-width:520px){.field-row3,.field-row4{grid-template-columns:1fr;} .color-row-head{flex-wrap:wrap;}}
+/* ---- category images ---- */
+.cat-thumb{width:36px;height:48px;border-radius:999px 999px 2px 2px;object-fit:cover;border:1px solid var(--line);background:var(--parchment);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-muted);}
+.cat-img-box{display:flex;gap:18px;align-items:flex-start;}
+.cat-img-preview{width:96px;height:128px;border-radius:999px 999px 3px 3px;overflow:hidden;border:1px solid var(--line-strong);background:var(--parchment);flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted);text-align:center;}
+.cat-img-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+.cat-img-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0;}
+.progress{height:4px;width:190px;max-width:100%;background:var(--parchment-2);border-radius:4px;overflow:hidden;}
+.progress i{display:block;height:100%;width:40%;background:var(--accent);border-radius:4px;animation:progSlide 1.1s ease-in-out infinite;}
+@keyframes progSlide{0%{transform:translateX(-110%);}100%{transform:translateX(260%);}}
+@media (max-width:520px){.cat-img-box{flex-direction:column;}}
 /* ---- currency & regional pricing ---- */
 .cs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px 28px;margin-top:10px;}
 .cs-item .l{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:5px;}
@@ -220,15 +230,29 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
 .totals-box .row.grand{font-family:var(--font-display);font-size:20px;font-weight:600;padding-top:6px;}
 
 @media print{
-  .sidebar,.topbar,.toolbar,.no-print{display:none !important;}
+  .sidebar,.topbar,.toolbar,.no-print,.mobile-bar,.sidebar-backdrop{display:none !important;}
   .main{padding:0;}
   body{background:#fff;}
 }
+.mobile-bar,.sidebar-backdrop{display:none;}
 @media (max-width:900px){
-  .sidebar{position:fixed;left:-230px;transition:left .2s;z-index:90;}
-  .sidebar.open{left:0;}
-  .main{padding:18px;}
+  .sidebar{position:fixed;left:-250px;top:0;bottom:0;width:240px;height:100vh;height:100dvh;transition:left .22s ease,box-shadow .22s;z-index:90;padding-bottom:max(22px,env(safe-area-inset-bottom));}
+  .sidebar.open{left:0;box-shadow:8px 0 40px rgba(0,0,0,0.35);}
+  .navlink{padding:14px 22px;}                       /* bigger tap targets */
+  .main{padding:0 16px 40px;}
   .field-row{grid-template-columns:1fr;}
+  .mobile-bar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:80;margin:0 -16px 16px;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));background:var(--surface);border-bottom:1px solid var(--line-strong);}
+  .menu-btn{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-m);color:var(--text);}
+  .menu-btn:hover,.menu-btn:focus-visible{background:var(--parchment-2);outline:none;}
+  .menu-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+  .mb-title{font-family:var(--font-display);font-size:20px;font-weight:600;line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .sidebar-backdrop.open{display:block;position:fixed;inset:0;background:rgba(20,16,14,0.5);z-index:85;}
+  .topbar h2{font-size:23px;}
+  .table-wrap > table{min-width:680px;}              /* scroll sideways inside the card instead of squeezing every column */
+  .table-wrap{-webkit-overflow-scrolling:touch;}
+  .toast-wrap{left:12px;right:12px;bottom:max(16px,env(safe-area-inset-bottom));}
+  .modal-overlay{padding:16px 10px;}
+  .modal-box{padding:20px 16px;}
 }
 </style>
 </head>
@@ -272,7 +296,12 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
     </div>
   </div>
 
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
   <div class="main">
+    <div class="mobile-bar" id="mobile-bar">
+      <button type="button" class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
+      <span class="mb-title" id="mb-title">Overview</span>
+    </div>
     <!-- OVERVIEW -->
     <section class="section" id="sec-overview">
       <div class="topbar"><div><h2>Overview</h2><p>A quick snapshot of the store.</p></div></div>
@@ -305,10 +334,10 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
 
     <!-- CATEGORIES -->
     <section class="section" id="sec-categories" style="display:none;">
-      <div class="topbar"><div><h2>Categories</h2><p>Top-level catalogue navigation.</p></div>
+      <div class="topbar"><div><h2>Categories</h2><p>Top-level catalogue navigation. Click Edit to upload or change a category's picture — it appears on the website automatically.</p></div>
         <button class="btn btn-primary" id="add-category-btn">+ Add Category</button></div>
       <div class="card table-wrap"><table id="categories-table"><thead><tr>
-        <th>Order</th><th>Name</th><th>Slug (id)</th><th>Description</th><th>Active</th><th></th>
+        <th>Order</th><th>Image</th><th>Name</th><th>Slug (id)</th><th>Description</th><th>Active</th><th></th>
       </tr></thead><tbody></tbody></table></div>
     </section>
 
@@ -475,6 +504,20 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
     <div class="field"><label>Slug (id) — lowercase, hyphenated, cannot be changed later</label><input type="text" id="cf-id" placeholder="e.g. necklace-sets"></div>
     <div class="field"><label>Name</label><input type="text" id="cf-name"></div>
     <div class="field"><label>Description</label><textarea rows="2" id="cf-description"></textarea></div>
+    <div class="field">
+      <label>Category image</label>
+      <div class="cat-img-box">
+        <div class="cat-img-preview" id="cf-img-preview"></div>
+        <div class="cat-img-actions">
+          <button type="button" class="btn btn-outline btn-sm" id="cf-img-choose">Upload image</button>
+          <button type="button" class="btn btn-outline btn-sm" id="cf-img-remove">Remove image</button>
+          <div class="progress" id="cf-img-progress" style="display:none;"><i></i></div>
+          <div class="cr-msg" id="cf-img-status" aria-live="polite"></div>
+          <div class="hint" style="margin:0;">JPG, PNG or WebP, up to 8 MB (it is resized automatically). Shown as a tall arch on the website, so a portrait photo works best.</div>
+        </div>
+      </div>
+      <input type="file" id="cf-img-file" accept="image/jpeg,image/png,image/webp" style="display:none;">
+    </div>
     <div class="field-row">
       <div class="field"><label>Sort Order</label><input type="number" id="cf-sort" value="0"></div>
       <div class="checkbox-row" style="align-self:end;"><input type="checkbox" id="cf-active" checked><label for="cf-active" style="margin:0;">Active</label></div>
@@ -777,8 +820,21 @@ function wireNav(){
     el.addEventListener("click", function(){ showSection(el.dataset.section); });
   });
 }
+/* phone / tablet: the sidebar slides in from the left */
+function setSidebar(open){
+  qs("#sidebar").classList.toggle("open", open);
+  qs("#sidebar-backdrop").classList.toggle("open", open);
+  var b = qs("#menu-btn"); b.setAttribute("aria-expanded", open ? "true" : "false"); b.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+}
+qs("#menu-btn").addEventListener("click", function(){ setSidebar(!qs("#sidebar").classList.contains("open")); });
+qs("#sidebar-backdrop").addEventListener("click", function(){ setSidebar(false); });
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") setSidebar(false); });
+window.addEventListener("resize", function(){ if(window.innerWidth > 900) setSidebar(false); });
 function showSection(name){
+  setSidebar(false);
   qsa(".navlink").forEach(function(el){ el.classList.toggle("active", el.dataset.section===name); });
+  var active = qs('.navlink[data-section="' + name + '"]');
+  if(active) qs("#mb-title").textContent = active.firstChild ? active.firstChild.textContent.trim() : active.textContent.trim();
   qsa(".section").forEach(function(el){ el.style.display = (el.id==="sec-"+name) ? "block" : "none"; });
   if(name==="overview") loadOverview();
   if(name==="products") openProductsSection();
@@ -935,6 +991,8 @@ function friendlyError(err, fallback){
   var msg = String(err.message || err || ""), code = err.code || "";
   /* messages raised on purpose by our database rules are already user-friendly */
   if(/Only an active admin|Only staff|cannot change your own|cannot deactivate your own|base currency|does not belong to the selected category|Preferred date|Please wait|no longer available|Please sign in|not active|must contain between|Nothing was changed|was not changed/i.test(msg)) return msg;
+  if(/exceeded the maximum allowed size|payload too large/i.test(msg)) return "That image is larger than 5 MB after processing. Please choose a smaller one.";
+  if(/mime type|not supported|invalid_mime/i.test(msg) && /image|mime/i.test(msg)) return "That image type is not allowed. Use JPG, PNG or WebP.";
   if(code === "42501" || /row-level security|permission denied|JWT/i.test(msg)) return "Not allowed. Your staff session may have expired — sign out and sign in again.";
   if(code === "23505"){
     if(/products_code/.test(msg))               return "That product code is already used by another product.";
@@ -961,6 +1019,7 @@ function friendlyError(err, fallback){
     if(/products_name_chk/.test(msg))  return "Product name is required (max 200 characters).";
     if(/products_code_chk/.test(msg))  return "Product code is required (max 60 characters).";
     if(/products_price_chk/.test(msg)) return "Price cannot be negative.";
+    if(/categories_image_(url|path)_chk/.test(msg)) return "The image address is not valid. Please upload the image again.";
     if(/categories_id_slug_chk/.test(msg)) return "Category slug may only contain lowercase letters, numbers and single hyphens.";
     if(/categories_name_chk|subcategories_name_chk/.test(msg)) return "Name is required (max 80 characters).";
     if(/currencies_code_chk/.test(msg)) return "Currency code must be 3 capital letters (e.g. USD).";
@@ -1731,18 +1790,18 @@ async function uploadColorImage(r, file){
    CATEGORIES
    ====================================================================== */
 async function loadCategoriesTable(){
-  showLoading("#categories-table", 6, "categories");
+  showLoading("#categories-table", 7, "categories");
   await loadCategories();
   staleNotice(LOAD_ERR.categories, CATS.length);
   renderCategoriesTable();
 }
 RETRY.categories = loadCategoriesTable;
 function renderCategoriesTable(){
-  if(LOAD_ERR.categories && !CATS.length){ showError("#categories-table", 6, LOAD_ERR.categories, "categories"); return; }
-  if(!CATS.length){ showEmpty("#categories-table", 6, "No categories yet. Click + Add Category to create the first one."); return; }
+  if(LOAD_ERR.categories && !CATS.length){ showError("#categories-table", 7, LOAD_ERR.categories, "categories"); return; }
+  if(!CATS.length){ showEmpty("#categories-table", 7, "No categories yet. Click + Add Category to create the first one."); return; }
   qs("#categories-table tbody").innerHTML = CATS.slice().sort(function(a, b){ return a.sort_order - b.sort_order; }).map(function(c){
     var nSubs = SUBS.filter(function(x){ return x.category_id === c.id; }).length;
-    return '<tr><td>'+c.sort_order+'</td><td>'+esc(c.name)+' <span style="color:var(--text-muted);font-size:11.5px;">('+nSubs+' sub)</span></td><td>'+esc(c.id)+'</td><td>'+esc(c.description||"")+'</td>' +
+    return '<tr><td>'+c.sort_order+'</td><td><button type="button" class="icon-btn" data-edit-category="'+esc(c.id)+'" title="Change image" aria-label="Change image for '+esc(c.name)+'">'+catThumbHtml(c)+'</button></td><td>'+esc(c.name)+' <span style="color:var(--text-muted);font-size:11.5px;">('+nSubs+' sub)</span></td><td>'+esc(c.id)+'</td><td>'+esc(c.description||"")+'</td>' +
       '<td>'+(c.active?'<span class="pill pill-green">Active</span>':'<span class="pill pill-grey">Hidden</span>')+'</td>' +
       '<td><button class="icon-btn" data-edit-category="'+esc(c.id)+'">Edit</button> <button class="icon-btn danger" data-delete-category="'+esc(c.id)+'">Delete</button></td></tr>';
   }).join("");
@@ -1764,12 +1823,120 @@ function openCategoryModal(id){
     qs("#cf-id").value = c.id; qs("#cf-name").value = c.name;
     qs("#cf-description").value = c.description||""; qs("#cf-sort").value = c.sort_order;
     qs("#cf-active").checked = !!c.active;
+    cfImgReset(c);
   } else {
     qs("#cf-id").value=""; qs("#cf-name").value=""; qs("#cf-description").value="";
     qs("#cf-sort").value = CATS.length; qs("#cf-active").checked = true;
+    cfImgReset(null);
   }
   openModal("modal-category");
 }
+/* ---- category images ----
+   The picture is stored in the public 'category-images' bucket; categories.image_url is what the website
+   shows and categories.image_path is the file's location, kept so the old file can be deleted when the
+   image is replaced or removed. A new file always gets a new name, so browsers never show a stale copy. */
+var CF_IMG = { url:null, path:null, pending:null, remove:false };
+var CAT_IMG_TYPES = ["image/jpeg", "image/png", "image/webp"];
+var CAT_IMG_MAX_BYTES = 8 * 1024 * 1024;     /* what the admin may pick; the file is resized before upload */
+var CAT_IMG_MAX_SIDE = 1000;                 /* px: plenty for a card that is shown ~180 px wide */
+var CAT_IMG_MIN_SIDE = 300;                  /* px: smaller pictures look blurry on the website */
+
+function catThumbHtml(c){
+  return c.image_url
+    ? '<img class="cat-thumb" src="' + esc(c.image_url) + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">'
+    : '<span class="cat-thumb">None</span>';
+}
+function cfImgRevoke(){ if(CF_IMG.pending && CF_IMG.pending.previewUrl) URL.revokeObjectURL(CF_IMG.pending.previewUrl); }
+function cfImgReset(c){
+  cfImgRevoke();
+  CF_IMG = { url: (c && c.image_url) || null, path: (c && c.image_path) || null, pending:null, remove:false };
+  cfImgStatus("");
+  renderCfImage();
+}
+function cfImgStatus(msg, isErr, busy){
+  var el = qs("#cf-img-status");
+  el.textContent = msg || ""; el.className = "cr-msg" + (isErr ? " err" : "");
+  qs("#cf-img-progress").style.display = busy ? "block" : "none";
+}
+function cfImgBusy(on){ qs("#cf-img-choose").disabled = on; qs("#cf-img-remove").disabled = on; }
+function renderCfImage(){
+  var shown = CF_IMG.pending ? CF_IMG.pending.previewUrl : (CF_IMG.remove ? null : CF_IMG.url);
+  qs("#cf-img-preview").innerHTML = shown ? '<img src="' + esc(shown) + '" alt="Category image preview">' : '<span>No image</span>';
+  qs("#cf-img-choose").textContent = shown ? "Replace image" : "Upload image";
+  qs("#cf-img-remove").style.display = shown ? "" : "none";
+  if(CF_IMG.pending) cfImgStatus("New image ready (" + CF_IMG.pending.width + "×" + CF_IMG.pending.height + " px, " + Math.max(1, Math.round(CF_IMG.pending.blob.size / 1024)) + " KB). It is uploaded when you click Save.");
+  else if(CF_IMG.remove) cfImgStatus("The image will be removed when you click Save.");
+}
+qs("#cf-img-choose").addEventListener("click", function(){ qs("#cf-img-file").click(); });
+qs("#cf-img-remove").addEventListener("click", function(){
+  cfImgRevoke(); CF_IMG.pending = null; CF_IMG.remove = true; renderCfImage();
+});
+qs("#cf-img-file").addEventListener("change", async function(){
+  var file = this.files && this.files[0];
+  this.value = "";                                            /* lets the same file be picked again */
+  if(!file) return;
+  cfImgBusy(true); cfImgStatus("Preparing image…", false, true);
+  try{
+    var p = await prepareCategoryImage(file);
+    cfImgRevoke();
+    p.previewUrl = URL.createObjectURL(p.blob);
+    CF_IMG.pending = p; CF_IMG.remove = false;
+    renderCfImage();
+  }catch(e){
+    cfImgStatus(e.message, true); toast(e.message);
+  }finally{
+    cfImgBusy(false); qs("#cf-img-progress").style.display = "none";
+  }
+});
+
+function loadImageFile(file){
+  return new Promise(function(resolve, reject){
+    var url = URL.createObjectURL(file), im = new Image();
+    im.onload = function(){ URL.revokeObjectURL(url); resolve(im); };
+    im.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("That file could not be read as an image. Try a different JPG, PNG or WebP.")); };
+    im.src = url;
+  });
+}
+function canvasToBlob(canvas, type, quality){
+  return new Promise(function(resolve){ canvas.toBlob(function(b){ resolve(b); }, type, quality); });
+}
+/* validates the file, shrinks it to <= 1000 px and re-encodes it (WebP, or JPEG where WebP is unsupported) */
+async function prepareCategoryImage(file){
+  if(CAT_IMG_TYPES.indexOf(file.type) === -1) throw new Error("Please choose a JPG, PNG or WebP image.");
+  if(file.size > CAT_IMG_MAX_BYTES) throw new Error("That image is " + (file.size / 1048576).toFixed(1) + " MB. Please choose one that is 8 MB or smaller.");
+  if(file.size === 0) throw new Error("That file is empty.");
+  var im = await loadImageFile(file);
+  var w = im.naturalWidth, h = im.naturalHeight;
+  if(!w || !h) throw new Error("That file could not be read as an image.");
+  if(Math.min(w, h) < CAT_IMG_MIN_SIDE) throw new Error("That image is only " + w + "×" + h + " px. Please use one that is at least " + CAT_IMG_MIN_SIDE + " px on its shorter side.");
+  var scale = Math.min(1, CAT_IMG_MAX_SIDE / Math.max(w, h));
+  var cw = Math.round(w * scale), ch = Math.round(h * scale);
+  var canvas = document.createElement("canvas"); canvas.width = cw; canvas.height = ch;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(im, 0, 0, cw, ch);
+  var blob = await canvasToBlob(canvas, "image/webp", 0.86), ext = "webp";
+  if(!blob || blob.type !== "image/webp"){                    /* browser cannot write WebP: JPEG on a white background */
+    ctx.globalCompositeOperation = "destination-over"; ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, cw, ch);
+    blob = await canvasToBlob(canvas, "image/jpeg", 0.88); ext = "jpg";
+  }
+  if(!blob) throw new Error("The image could not be prepared. Please try another one.");
+  return { blob: blob, ext: ext, type: blob.type, width: cw, height: ch };
+}
+async function uploadCategoryImage(catId, p){
+  var path = "categories/" + catId + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + p.ext;
+  var up = await sb.storage.from("category-images").upload(path, p.blob, { contentType: p.type, upsert: false, cacheControl: "31536000" });
+  if(up.error) throw up.error;
+  return { path: path, url: sb.storage.from("category-images").getPublicUrl(path).data.publicUrl };
+}
+/* true when the file is gone. Storage answers "0 files removed" (no error) if a policy blocked it, so check the count */
+async function removeCategoryFile(path){
+  if(!path) return true;
+  try{
+    var r = await sb.storage.from("category-images").remove([path]);
+    return !r.error && Array.isArray(r.data) && r.data.length > 0;
+  }catch(e){ return false; }
+}
+
 async function refreshTaxonomy(){
   await loadCategories();
   populateCategorySelects();
@@ -1794,13 +1961,40 @@ qs("#cf-save-btn").addEventListener("click", async function(){
   qs("#cf-error").textContent = errs.join(" ");
   if(errs.length){ toast(errs[0]); return; }
   var payload = { name: name, description: desc, sort_order: sort, active: qs("#cf-active").checked };
-  var btn = this; btn.disabled = true;
-  var res = origId ? await sb.from("categories").update(payload).eq("id", origId) : await sb.from("categories").insert(Object.assign({ id: slug }, payload));
-  btn.disabled = false;
-  if(res.error){ var m = friendlyError(res.error); qs("#cf-error").textContent = m; toast("Could not save: " + m); return; }
-  toast("Category saved.");
-  closeModal("modal-category");
-  await refreshTaxonomy();
+  var catId = origId || slug;
+  var imgChange = !!CF_IMG.pending || CF_IMG.remove;
+  var oldPath = CF_IMG.path, uploaded = null;
+  var btn = this; btn.disabled = true; cfImgBusy(true);
+  try{
+    /* 1. upload the new file first: if this fails nothing else has changed */
+    if(CF_IMG.pending){
+      cfImgStatus("Uploading image…", false, true);
+      try{ uploaded = await uploadCategoryImage(catId, CF_IMG.pending); }
+      catch(e){ var um = friendlyError(e); qs("#cf-error").textContent = "Image upload failed: " + um; toast("Image upload failed: " + um); return; }
+      payload.image_url = uploaded.url; payload.image_path = uploaded.path;
+    } else if(CF_IMG.remove){
+      payload.image_url = null; payload.image_path = null;
+    }
+    /* 2. save the category record (with the new image address, if any) */
+    cfImgStatus(imgChange ? "Saving…" : "", false, imgChange);
+    var res = origId ? await sb.from("categories").update(payload).eq("id", origId).select("id")
+                     : await sb.from("categories").insert(Object.assign({ id: slug }, payload)).select("id");
+    var failed = res.error || !res.data || !res.data.length;
+    if(failed){
+      if(uploaded) await removeCategoryFile(uploaded.path);                  /* never leave an orphan file behind */
+      var m = res.error ? friendlyError(res.error) : "Nothing was changed. You may not have permission.";
+      qs("#cf-error").textContent = m; toast("Could not save: " + m); return;
+    }
+    /* 3. the record now points at the new image, so the old uploaded file is unused: delete it */
+    var cleaned = true;
+    if(imgChange && oldPath && oldPath !== payload.image_path) cleaned = await removeCategoryFile(oldPath);
+    toast(imgChange ? (CF_IMG.remove && !uploaded ? "Category saved and image removed." : "Category saved and image updated.") + (cleaned ? "" : " (The old image file could not be deleted.)") : "Category saved.");
+    cfImgRevoke();
+    closeModal("modal-category");
+    await refreshTaxonomy();
+  } finally {
+    btn.disabled = false; cfImgBusy(false); cfImgStatus("");
+  }
 });
 async function deleteCategory(id){
   if(!(await ensureStaffSession())) return;
@@ -1815,6 +2009,7 @@ async function deleteCategory(id){
   if(!confirm('Delete the category "' + c.name + '"' + (nSubs ? ' and its ' + nSubs + ' subcategor' + (nSubs === 1 ? 'y' : 'ies') : '') + '? This cannot be undone.')) return;
   var res = await sb.from("categories").delete().eq("id", id);
   if(res.error){ toast("Could not delete: " + friendlyError(res.error)); return; }
+  if(c.image_path) removeCategoryFile(c.image_path);                        /* its uploaded picture is no longer used */
   toast("Category deleted.");
   await refreshTaxonomy();
 }
