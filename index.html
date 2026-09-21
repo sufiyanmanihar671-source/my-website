@@ -1635,7 +1635,10 @@ async function loadColors(){
         status: normalizeStockKey(c.stock_status, true)
       });
     });
-  }catch(e){ byProduct = {}; }
+  }catch(e){
+    byProduct = {};
+    console.warn("Colour options could not be loaded:", e && (e.message || e));      /* products still work; the reason is visible for debugging */
+  }
   PRODUCTS.forEach(function(p){ p.colors = byProduct[p.id] || []; });
 }
 

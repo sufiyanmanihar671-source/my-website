@@ -481,7 +481,7 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
       <div class="section-title">Colour Options <span class="muted" id="pf-colors-count"></span></div>
       <p class="hint" id="pf-colors-locked">Save the product first, then add its colour options here.</p>
       <div id="pf-colors-body" style="display:none;">
-        <p class="hint">Pick a colour with the colour picker &mdash; the HEX value is saved automatically. Each colour has its own stock and status. Products without colour options keep working as before.</p>
+        <p class="hint">Pick a colour with the colour picker &mdash; the HEX value is saved automatically. Each colour has its own stock and status. Colours are saved together with the product when you click <b>Save Product</b> (or one at a time with the button on each colour). Products without colour options keep working as before.</p>
         <div id="pf-colors-list"></div>
         <div class="quick-add" id="pf-quick-add"></div>
         <button type="button" class="btn btn-outline btn-sm" id="pf-add-color-btn">+ Add Colour</button>
@@ -1456,6 +1456,21 @@ qs("#pf-save-btn").addEventListener("click", async function(){
   showStockErrors(null);
   var payload = v.payload;
 
+  /* colour options on screen are part of this product: check them BEFORE anything is written,
+     so a mistake in a colour never leaves the product half saved */
+  var pendingColors = unsavedColors();
+  if(pendingColors.length){
+    var badColor = null;
+    pendingColors.forEach(function(r){ r.error = ""; var cv = validateColorRow(r); if(cv.error){ r.error = cv.error; if(!badColor) badColor = r; } });
+    if(badColor){
+      renderColorRows();
+      var cmsg = 'Colour option "' + (badColor.name.trim() || "(no name)") + '": ' + badColor.error;
+      qs("#pf-error").textContent = cmsg; toast(cmsg);
+      var bad = qs('.color-row[data-key="' + badColor.key + '"]'); if(bad) bad.scrollIntoView({ block:"center", behavior:"smooth" });
+      return;
+    }
+  }
+
   /* legacy boolean kept in step (the database also keeps it in sync once a stock row exists) */
   payload.stock_status = stock.mode === "simple"
     ? stock.simpleInStock
@@ -1494,7 +1509,15 @@ qs("#pf-save-btn").addEventListener("click", async function(){
         return;
       }
     }
-    toast("Product saved.");
+    var colourResult = await saveAllColors();
+    if(colourResult.failed.length){
+      var first = colourResult.failed[0];
+      var fm = 'Product saved, but colour "' + first.name + '" was not: ' + first.reason + (colourResult.failed.length > 1 ? " (+" + (colourResult.failed.length - 1) + " more)" : "");
+      qs("#pf-error").textContent = fm; toast(fm);
+      loadProducts();
+      return;
+    }
+    toast(colourResult.saved ? "Product saved, with " + colourResult.saved + " colour option" + (colourResult.saved === 1 ? "" : "s") + "." : "Product saved.");
     loadProducts();
     if(!id){ await openProductModal(pid); }           /* reopen so images + colours can be added */
     else { EDITING_PRODUCT = await fetchProductForEdit(pid); if(EDITING_PRODUCT) initStockForm(EDITING_PRODUCT); }
@@ -1546,13 +1569,15 @@ var colorKeySeq = 0;
 
 function newColorRow(name, hex){
   return { key:"c"+(++colorKeySeq), id:null, name:name||"", hex:(hex||"#D4AF37").toLowerCase(), image_url:null,
-           qty:"", thr:"5", mode:"tracked", active:true, status:null, msg:"", msgKind:"", error:"" };
+           qty:"", thr:"5", mode:"tracked", active:true, status:null, dirty:true, msg:"Not saved yet — it is saved when you click Save Product.", msgKind:"", error:"" };
 }
 function colorRowFromDb(c){
   return { key:"c"+(++colorKeySeq), id:c.id, name:c.color_name, hex:String(c.color_hex||"#000000").toLowerCase(), image_url:c.image_url||null,
            qty:String(c.stock_quantity), thr:String(c.low_stock_threshold), mode:(c.stock_status==="made_to_order"?"made_to_order":"tracked"),
-           active:!!c.is_active, status:c.stock_status, msg:"", msgKind:"", error:"" };
+           active:!!c.is_active, status:c.stock_status, dirty:false, msg:"", msgKind:"", error:"" };
 }
+/* colour rows that exist only on screen, or were edited, and have not reached the database yet */
+function unsavedColors(){ return currentColors.filter(function(r){ return !r.id || r.dirty; }); }
 function colorRowByKey(key){ return currentColors.find(function(r){ return r.key===key; }); }
 function colorPreviewKey(r){
   if(r.mode === "made_to_order") return "made_to_order";
@@ -1676,6 +1701,21 @@ async function saveColor(r){
   loadProducts();
   return true;
 }
+/* saves every unsaved/edited colour row; reports which ones failed and why */
+async function saveAllColors(){
+  var result = { saved:0, failed:[] };
+  var todo = unsavedColors();
+  for(var i = 0; i < todo.length; i++){
+    var r = todo[i];
+    var ok = await saveColor(r);
+    if(ok) result.saved++;
+    else {
+      var again = currentColors.find(function(x){ return x.key === r.key; }) || r;
+      result.failed.push({ name: (r.name || "").trim() || "(no name)", reason: again.error || "it could not be saved." });
+    }
+  }
+  return result;
+}
 async function deleteColor(r){
   if(r.id && !(await ensureStaffSession())) return;
   if(!r.id){ currentColors = currentColors.filter(function(x){ return x !== r; }); renderColorRows(); return; }
@@ -1717,10 +1757,21 @@ async function uploadColorImage(r, file){
     if(ok){ removeStoredImage(previous); }
     else { r.image_url = previous; removeStoredImage(url); renderColorRows(); }
   } else {
-    r.msg = "Image uploaded — click Add Colour to save."; r.msgKind = "";
+    r.msg = "Image uploaded — it is saved with the product (or click Add Colour)."; r.msgKind = "";
     renderColorRows();
   }
 }
+
+/* closing the product form (Cancel, ×, or clicking outside) with unsaved colour options asks first */
+document.addEventListener("click", function(e){
+  var closing = e.target.closest && e.target.closest('[data-close="modal-product"]');
+  var overlay = e.target === qs("#modal-product");
+  if(!(closing || overlay) || !qs("#modal-product").classList.contains("open")) return;
+  var n = unsavedColors().length;
+  if(n && !confirm("You have " + n + " colour option" + (n === 1 ? "" : "s") + " that " + (n === 1 ? "has" : "have") + " not been saved yet. Close without saving " + (n === 1 ? "it" : "them") + "?")){
+    e.stopImmediatePropagation(); e.preventDefault();
+  }
+}, true);
 
 /* colour rows: one delegated set of listeners */
 (function(){
@@ -1732,8 +1783,10 @@ async function uploadColorImage(r, file){
     box.classList.toggle("is-inactive", !r.active);
   }
   function markDirty(r, box){
-    r.error = ""; qs(".cr-error", box).textContent = "";
-    if(r.id){ var m = qs(".cr-msg", box); m.textContent = "Unsaved changes"; m.className = "cr-msg"; }
+    r.error = ""; qs(".cr-error", box).textContent = ""; r.dirty = true;
+    var m = qs(".cr-msg", box);
+    r.msg = r.id ? "Unsaved changes" : "Not saved yet — it is saved when you click Save Product.";
+    m.textContent = r.msg; m.className = "cr-msg";
   }
   list.addEventListener("input", function(e){
     var r = rowOf(e.target); if(!r) return;
