@@ -177,6 +177,29 @@ input[type=color].cr-hex::-moz-color-swatch{border:none;border-radius:50%;}
 @media (hover:none){.img-thumb .mk-btn{opacity:1;}}
 @media (max-width:900px){.field-row3,.field-row4{grid-template-columns:1fr 1fr;}}
 @media (max-width:520px){.field-row3,.field-row4{grid-template-columns:1fr;} .color-row-head{flex-wrap:wrap;}}
+/* ---- billing: customer type, customer list, product picker ---- */
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--radius-s);overflow:hidden;}
+.seg-opt{position:relative;cursor:pointer;}
+.seg-opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0;}
+.seg-opt span{display:block;padding:9px 18px;font-size:13px;font-weight:500;background:#fff;color:var(--text);border-right:1px solid var(--line-strong);}
+.seg-opt:last-child span{border-right:none;}
+.seg-opt input:checked + span{background:var(--accent);color:#fff;}
+.seg-opt input:focus-visible + span{outline:2px solid var(--accent);outline-offset:-2px;}
+.req{color:var(--danger);} .opt{font-weight:400;opacity:0.75;}
+.cust-list{max-height:210px;overflow-y:auto;border:1px solid var(--line-strong);border-radius:var(--radius-s);background:#fff;margin-bottom:14px;}
+.cust-opt{display:block;width:100%;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);background:#fff;}
+.cust-opt:last-child{border-bottom:none;}
+.cust-opt span{display:block;font-size:12px;color:var(--text-muted);margin-top:1px;}
+.cust-opt:hover,.cust-opt:focus-visible{background:var(--parchment);outline:none;}
+.cust-opt.is-selected{background:var(--success-bg);box-shadow:inset 3px 0 0 var(--success);}
+.prod-picker{position:relative;margin-bottom:10px;}
+.prod-picker input{width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:var(--radius-s);background:#fff;}
+.prod-results{position:absolute;left:0;right:0;top:calc(100% + 4px);max-height:280px;overflow-y:auto;background:#fff;border:1px solid var(--line-strong);border-radius:var(--radius-s);box-shadow:var(--shadow-pop);z-index:20;}
+.prod-opt{display:flex;justify-content:space-between;gap:12px;align-items:center;width:100%;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);background:#fff;font-size:13px;}
+.prod-opt:last-child{border-bottom:none;}
+.prod-opt:hover,.prod-opt:focus-visible{background:var(--parchment);outline:none;}
+.prod-opt .muted{color:var(--text-muted);font-size:12px;}
+.bill-line-table td{vertical-align:top;}
 /* ---- category images ---- */
 .cat-thumb{width:36px;height:48px;border-radius:999px 999px 2px 2px;object-fit:cover;border:1px solid var(--line);background:var(--parchment);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-muted);}
 .cat-img-box{display:flex;gap:18px;align-items:flex-start;}
@@ -392,7 +415,7 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
 
     <!-- BILLING -->
     <section class="section" id="sec-billing" style="display:none;">
-      <div class="topbar"><div><h2>Billing</h2><p>Create and manage customer invoices.</p></div>
+      <div class="topbar"><div><h2>Billing</h2><p>Create invoices for website customers and for offline (walk-in) customers.</p></div>
         <button class="btn btn-primary" id="add-bill-btn">+ New Bill</button></div>
       <div class="card table-wrap"><table id="bills-table"><thead><tr>
         <th>Invoice #</th><th>Customer</th><th>Date</th><th>Grand Total</th><th>Status</th><th></th>
@@ -579,13 +602,49 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
 <div class="modal-overlay" id="modal-bill">
   <div class="modal-box wide">
     <div class="modal-head"><h3 id="bill-modal-title">New Bill</h3><button class="modal-close" data-close="modal-bill">&times;</button></div>
-    <div class="field"><label>Customer</label><select id="bf-customer"></select></div>
+    <div class="section-box">
+      <div class="section-title">Customer</div>
+      <div class="seg" role="radiogroup" aria-label="Customer type">
+        <label class="seg-opt"><input type="radio" name="bf-ctype" value="registered"><span>Existing Customer</span></label>
+        <label class="seg-opt"><input type="radio" name="bf-ctype" value="offline" checked><span>Offline Customer</span></label>
+      </div>
+      <p class="hint" id="bf-ctype-hint" style="margin-top:8px;"></p>
+      <div id="bf-existing-pane" style="display:none;">
+        <div class="field"><label>Search existing customers</label><input type="text" id="bf-cust-search" placeholder="Name, business, phone, email or city" autocomplete="off"></div>
+        <div class="cust-list" id="bf-cust-list" role="listbox" aria-label="Existing customers"></div>
+      </div>
+      <div id="bf-cust-fields">
+        <div class="field-row">
+          <div class="field"><label>Customer Name <span class="req">*</span></label><input type="text" id="bf-name" maxlength="120" autocomplete="off"></div>
+          <div class="field"><label>Mobile Number <span class="req" id="bf-phone-req">*</span></label><input type="tel" id="bf-phone" inputmode="tel" maxlength="20" placeholder="e.g. 9876543210" autocomplete="off"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Email <span class="opt">(optional)</span></label><input type="email" id="bf-email" maxlength="120" autocomplete="off"></div>
+          <div class="field"><label>Business / Shop Name <span class="opt">(optional)</span></label><input type="text" id="bf-business" maxlength="120" autocomplete="off"></div>
+        </div>
+        <div class="field"><label>Billing Address <span class="opt">(optional)</span></label><textarea id="bf-address" rows="2" maxlength="300"></textarea></div>
+        <div class="field-row3">
+          <div class="field"><label>City <span class="opt">(optional)</span></label><input type="text" id="bf-city" maxlength="60" autocomplete="off"></div>
+          <div class="field"><label>State <span class="opt">(optional)</span></label><input type="text" id="bf-state" maxlength="60" autocomplete="off"></div>
+          <div class="field"><label>Pincode <span class="opt">(optional)</span></label><input type="text" id="bf-pincode" maxlength="6" inputmode="numeric" autocomplete="off"></div>
+        </div>
+        <div class="field"><label>GST Number <span class="opt">(optional)</span></label><input type="text" id="bf-gst" maxlength="15" placeholder="e.g. 27ABCDE1234F1Z5" style="text-transform:uppercase;" autocomplete="off"></div>
+      </div>
+      <div class="field-error" id="bf-cust-error"></div>
+    </div>
+
+    <div class="section-title" style="margin:6px 0 8px;">Products</div>
+    <div class="prod-picker">
+      <input type="text" id="bf-prod-search" placeholder="Search products by name or code, then pick one to add" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="bf-prod-results">
+      <div class="prod-results" id="bf-prod-results" role="listbox" style="display:none;"></div>
+    </div>
     <div class="table-wrap">
       <table class="bill-line-table"><thead><tr>
-        <th>Product</th><th style="width:70px;">Qty</th><th style="width:110px;">Unit Price (₹)</th><th style="width:100px;">Total</th><th></th>
+        <th>Product</th><th style="width:70px;">Qty</th><th style="width:130px;">Selling Price (₹)</th><th style="width:100px;">Total</th><th></th>
       </tr></thead><tbody id="bf-items-body"></tbody></table>
     </div>
-    <button class="btn btn-outline btn-sm" id="bf-add-line-btn" style="margin-top:8px;">+ Add Line Item</button>
+    <button type="button" class="btn btn-outline btn-sm" id="bf-add-line-btn" style="margin-top:8px;">+ Add Custom Item</button>
+    <p class="hint" style="margin-top:8px;">Each item keeps the name, code and price it has now, so this invoice will not change if the product is edited later. The selling price starts at the catalogue price and can be changed.</p>
     <div class="field-row" style="margin-top:16px;">
       <div class="field"><label>Discount (₹)</label><input type="number" id="bf-discount" value="0" min="0"></div>
       <div class="field"><label>Tax (₹)</label><input type="number" id="bf-tax" value="0" min="0"></div>
@@ -635,6 +694,8 @@ function toast(msg){
   setTimeout(function(){ el.style.transition="opacity .3s"; el.style.opacity="0"; setTimeout(function(){ el.remove(); }, 300); }, 3000);
 }
 function fmtMoney(n){ return "₹" + Number(n||0).toLocaleString("en-IN", {maximumFractionDigits:2}); }
+/* invoices always show paise: ₹9,050.50 */
+function fmtMoney2(n){ return "₹" + Number(n||0).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2}); }
 function fmtDate(d){ if(!d) return "—"; var dt = new Date(d); return dt.toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"}); }
 function openModal(id){ qs("#"+id).classList.add("open"); }
 function closeModal(id){ qs("#"+id).classList.remove("open"); }
@@ -982,6 +1043,9 @@ function friendlyError(err, fallback){
     if(/categories_image_(url|path)_chk/.test(msg)) return "The image address is not valid. Please upload the image again.";
     if(/categories_id_slug_chk/.test(msg)) return "Category slug may only contain lowercase letters, numbers and single hyphens.";
     if(/categories_name_chk|subcategories_name_chk/.test(msg)) return "Name is required (max 80 characters).";
+    if(/bills_customer_chk/.test(msg))        return "An offline customer needs a name and a mobile number (and no account).";
+    if(/bills_customer_fields_chk/.test(msg)) return "One of the customer details is not valid. Check the mobile number, email, pincode and GST number.";
+    if(/bills_totals_chk|bill_items_total_chk/.test(msg)) return "The bill totals do not add up. Please check the quantities and prices.";
     if(/currencies_code_chk/.test(msg)) return "Currency code must be 3 capital letters (e.g. USD).";
     if(/currencies_(rate|manual_rate|auto_rate)_chk/.test(msg)) return "Exchange rate must be greater than 0.";
     if(/currencies_(name|symbol)_chk/.test(msg)) return "Currency name and symbol are required.";
@@ -2203,7 +2267,7 @@ async function openCustomerDetail(id){
   var box = qs("#cust-history"); if(!box) return;
   var billHtml = r[0].error ? '<div class="err-note">Could not load bills: ' + esc(friendlyError(r[0].error)) + '</div>'
     : (r[0].data.length ? '<div class="hist-list">' + r[0].data.map(function(b){
-        return '<div class="row"><span>'+esc(b.bill_number)+' — '+fmtDate(b.bill_date)+'</span><span>'+fmtMoney(b.grand_total)+' · '+esc(b.payment_status)+'</span></div>';
+        return '<div class="row"><span>'+esc(b.bill_number)+' — '+fmtDate(b.bill_date)+'</span><span>'+fmtMoney2(b.grand_total)+' · '+esc(b.payment_status)+'</span></div>';
       }).join("") + '</div>' : '<div class="empty-note" style="text-align:left;padding:6px 0;">No bills yet.</div>');
   box.innerHTML = '<div class="field"><label>Bills</label>' + billHtml + '</div>';
 }
@@ -2566,8 +2630,15 @@ async function resetOverride(code, fromModal){
 
 /* ======================================================================
    BILLING
+   A bill is for either a registered (website) customer or an OFFLINE customer who has no account.
+   Either way the customer's details are copied onto the bill, and every line copies the product's name,
+   code, quantity and price — so an invoice keeps showing what it showed when it was issued.
    ====================================================================== */
 var BILLS_CACHE = [];
+function round2(n){ return Math.round((Number(n) || 0) * 100) / 100; }
+function billProfile(b){ return b.customer_id ? profileById(b.customer_id) : null; }
+function billCustomerName(b){ var p = billProfile(b); return b.customer_name || (p ? fullName(p) : "") || "—"; }
+
 async function loadBillsTable(){
   showLoading("#bills-table", 6, "bills");
   var res = await sb.from("bills").select("*").order("created_at", {ascending:false}).limit(200);
@@ -2575,13 +2646,14 @@ async function loadBillsTable(){
   BILLS_CACHE = res.data || [];
   if(!BILLS_CACHE.length){ showEmpty("#bills-table", 6, "No bills yet. Click + New Bill to create one."); return; }
   qs("#bills-table tbody").innerHTML = BILLS_CACHE.map(function(b){
-    var p = profileById(b.customer_id);
+    var p = billProfile(b);
     var statusClass = b.payment_status==="Paid" ? "pill-green" : (b.payment_status==="Partial" ? "pill-amber" : "pill-red");
+    var sub = [b.business_name || (p && p.company_name), b.customer_phone].filter(Boolean).join(" · ");
     return '<tr>' +
       '<td>'+esc(b.bill_number)+'</td>' +
-      '<td>'+esc(fullName(p) || "—")+'</td>' +
+      '<td>'+esc(billCustomerName(b))+(b.customer_type==="offline" ? ' <span class="pill pill-blue">Offline</span>' : '')+(sub ? '<span class="sub-note">'+esc(sub)+'</span>' : '')+'</td>' +
       '<td>'+fmtDate(b.bill_date)+'</td>' +
-      '<td>'+fmtMoney(b.grand_total)+'</td>' +
+      '<td>'+fmtMoney2(b.grand_total)+'</td>' +
       '<td><span class="pill '+statusClass+'">'+esc(b.payment_status)+'</span></td>' +
       '<td><button class="icon-btn" data-view-bill="'+esc(b.id)+'">View</button></td>' +
     '</tr>';
@@ -2593,119 +2665,240 @@ document.body.addEventListener("click", function(e){
   if(v) openBillView(v.dataset.viewBill);
 });
 
-var billLineIdSeq = 0;
+/* ---------- customer: existing (registered) or offline ---------- */
+var BILL_CTYPE = "offline";
+var BILL_CUST_ID = null;
+var GST_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+var BILL_FIELDS = ["name","phone","email","business","address","city","state","pincode","gst"];
+function billCustomers(){ return PROFILES.filter(function(p){ return p.role === "customer"; }); }
+function clearBillCustomerFields(){ BILL_FIELDS.forEach(function(k){ qs("#bf-" + k).value = ""; }); qs("#bf-cust-error").textContent = ""; }
+function setBillCustomerType(type){
+  BILL_CTYPE = type; BILL_CUST_ID = null;
+  qsa('input[name="bf-ctype"]').forEach(function(r){ r.checked = (r.value === type); });
+  clearBillCustomerFields();
+  var existing = type === "registered";
+  qs("#bf-existing-pane").style.display = existing ? "block" : "none";
+  qs("#bf-cust-fields").style.display = existing ? "none" : "block";            /* an existing customer's details appear once one is chosen */
+  qs("#bf-phone-req").style.display = existing ? "none" : "inline";
+  qs("#bf-ctype-hint").textContent = existing
+    ? "Choose a customer who has registered on the website. Their details are filled in for this invoice."
+    : "For a customer who buys directly from you and has no website account. No password or registration is needed.";
+  if(existing){ qs("#bf-cust-search").value = ""; renderBillCustomerList(); }
+}
+qsa('input[name="bf-ctype"]').forEach(function(r){ r.addEventListener("change", function(){ if(this.checked) setBillCustomerType(this.value); }); });
+function renderBillCustomerList(){
+  var q = qs("#bf-cust-search").value.trim().toLowerCase();
+  var list = billCustomers().filter(function(p){
+    var hay = [fullName(p), p.company_name, p.phone, p.whatsapp_number, p.email, p.city].join(" ").toLowerCase();
+    return !q || hay.indexOf(q) > -1;
+  });
+  var box = qs("#bf-cust-list");
+  if(!billCustomers().length){ box.innerHTML = '<div class="empty-note" style="padding:14px 0;">No customers have registered on the website yet. Use <b>Offline Customer</b> instead.</div>'; return; }
+  if(!list.length){ box.innerHTML = '<div class="empty-note" style="padding:14px 0;">No registered customer matches “' + esc(q) + '”.</div>'; return; }
+  box.innerHTML = list.map(function(p){
+    var sub = [p.company_name, p.phone || p.whatsapp_number || p.email, [p.city, p.state].filter(Boolean).join(", ")].filter(Boolean).join(" · ");
+    return '<button type="button" class="cust-opt' + (p.id === BILL_CUST_ID ? " is-selected" : "") + '" data-cust="' + esc(p.id) + '" role="option" aria-selected="' + (p.id === BILL_CUST_ID) + '">' +
+      '<strong>' + esc(fullName(p) || "(no name)") + '</strong>' + (p.is_active ? "" : ' <span class="pill pill-grey">Inactive</span>') + '<span>' + esc(sub) + '</span></button>';
+  }).join("");
+}
+qs("#bf-cust-search").addEventListener("input", renderBillCustomerList);
+qs("#bf-cust-list").addEventListener("click", function(e){
+  var b = e.target.closest("[data-cust]"); if(!b) return;
+  var p = profileById(b.dataset.cust); if(!p) return;
+  BILL_CUST_ID = p.id;
+  clearBillCustomerFields();
+  qs("#bf-name").value = fullName(p); qs("#bf-phone").value = p.phone || p.whatsapp_number || ""; qs("#bf-email").value = p.email || "";
+  qs("#bf-business").value = p.company_name || ""; qs("#bf-city").value = p.city || ""; qs("#bf-state").value = p.state || "";
+  qs("#bf-cust-fields").style.display = "block";
+  renderBillCustomerList();
+});
+/* reads + checks the customer block; the same rules are enforced again by the database */
+function readBillCustomer(){
+  var v = function(k){ return qs("#bf-" + k).value.trim(); };
+  var errs = [], type = BILL_CTYPE;
+  var name = v("name"), phoneRaw = v("phone"), email = v("email"), pin = v("pincode"), gst = v("gst").toUpperCase().replace(/\s+/g, "");
+  if(type === "registered" && !BILL_CUST_ID) errs.push("Select a customer, or switch to Offline Customer.");
+  if(type === "offline" || BILL_CUST_ID){
+    if(!name) errs.push("Enter the customer's name."); else if(name.length > 120) errs.push("Customer name must be 120 characters or fewer.");
+    var phone = null;
+    if(phoneRaw){ phone = normalizePhone(phoneRaw); if(!phone) errs.push("Mobile number is not valid (for example 9876543210 or +919876543210)."); }
+    else if(type === "offline") errs.push("Enter the customer's mobile number.");
+    if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) errs.push("Email address is not valid.");
+    if(v("business").length > 120) errs.push("Business / shop name must be 120 characters or fewer.");
+    if(v("address").length > 300) errs.push("Billing address must be 300 characters or fewer.");
+    if(v("city").length > 60 || v("state").length > 60) errs.push("City and state must be 60 characters or fewer.");
+    if(pin && !/^\d{6}$/.test(pin)) errs.push("Pincode must be 6 digits.");
+    if(gst && !GST_RE.test(gst)) errs.push("GST number is not valid (15 characters, for example 27ABCDE1234F1Z5).");
+  }
+  return { errs: errs, data: {
+    customer_type: type, customer_id: type === "registered" ? BILL_CUST_ID : null,
+    customer_name: name, customer_phone: phone || null, customer_email: email || null, business_name: v("business") || null,
+    billing_address: v("address") || null, city: v("city") || null, state: v("state") || null, pincode: pin || null, gst_number: gst || null
+  } };
+}
+
+/* ---------- products: search the existing catalogue and add to the invoice ---------- */
+var billProdTimer = null, billProdReq = 0, BILL_PROD_RESULTS = [];
+function hideBillProdResults(){ qs("#bf-prod-results").style.display = "none"; qs("#bf-prod-search").setAttribute("aria-expanded", "false"); }
+async function searchBillProducts(){
+  var raw = qs("#bf-prod-search").value.trim(), box = qs("#bf-prod-results");
+  if(!raw){ hideBillProdResults(); return; }
+  var safe = raw.replace(/[%,()*\\]/g, " ").trim(), my = ++billProdReq;
+  if(!safe){ hideBillProdResults(); return; }
+  var res = await sb.from("products").select("id,code,name,price,active").or("name.ilike.%" + safe + "%,code.ilike.%" + safe + "%").order("name").limit(12);
+  if(my !== billProdReq) return;                                   /* a newer search is already running */
+  box.style.display = "block"; qs("#bf-prod-search").setAttribute("aria-expanded", "true");
+  if(res.error){ BILL_PROD_RESULTS = []; box.innerHTML = '<div class="empty-note err-note" style="padding:12px;">Could not search products: ' + esc(friendlyError(res.error)) + '</div>'; return; }
+  BILL_PROD_RESULTS = res.data || [];
+  box.innerHTML = BILL_PROD_RESULTS.length ? BILL_PROD_RESULTS.map(function(p, i){
+    return '<button type="button" class="prod-opt" data-prod="' + i + '" role="option"><span><strong>' + esc(p.name) + '</strong> <span class="muted">' + esc(p.code) + '</span>' +
+      (p.active ? "" : ' <span class="pill pill-grey">Hidden</span>') + '</span><span>' + fmtMoney2(p.price) + '</span></button>';
+  }).join("") : '<div class="empty-note" style="padding:12px;">No product matches “' + esc(raw) + '”.</div>';
+}
+qs("#bf-prod-search").addEventListener("input", function(){ clearTimeout(billProdTimer); billProdTimer = setTimeout(searchBillProducts, 250); });
+qs("#bf-prod-search").addEventListener("keydown", function(e){
+  if(e.key === "Escape") hideBillProdResults();
+  else if(e.key === "Enter"){ e.preventDefault(); if(BILL_PROD_RESULTS.length && qs("#bf-prod-results").style.display !== "none") addBillProduct(BILL_PROD_RESULTS[0]); }
+});
+qs("#bf-prod-results").addEventListener("click", function(e){
+  var b = e.target.closest("[data-prod]"); if(b) addBillProduct(BILL_PROD_RESULTS[Number(b.dataset.prod)]);
+});
+document.addEventListener("click", function(e){ if(!e.target.closest(".prod-picker")) hideBillProdResults(); });
+function addBillProduct(p){
+  if(!p) return;
+  var same = qsa("#bf-items-body tr").find(function(tr){ return tr.dataset.productId === p.id; });
+  if(same){                                                         /* already on the invoice: one more piece, not a duplicate line */
+    var q = same.querySelector(".bl-qty"); q.value = (Number(q.value) || 0) + 1; recomputeBillTotals();
+  } else {
+    addBillLine({ product_id: p.id, product_code: p.code, product_name: p.name, quantity: 1, unit_price: Number(p.price) || 0, catalogue_price: Number(p.price) || 0 });
+  }
+  qs("#bf-prod-search").value = ""; hideBillProdResults(); BILL_PROD_RESULTS = [];
+  qs("#bf-prod-search").focus();
+}
+
+/* ---------- invoice lines ---------- */
 function addBillLine(item){
   item = item || {};
-  billLineIdSeq++;
-  var rowId = "bl"+billLineIdSeq;
   var tr = document.createElement("tr");
-  tr.dataset.rowId = rowId;
-  tr.innerHTML =
-    '<td><input type="text" class="bl-name" value="'+esc(item.product_name||"")+'" placeholder="Product name"></td>' +
-    '<td><input type="number" class="bl-qty" value="'+(item.quantity!=null?item.quantity:1)+'" min="0" step="1"></td>' +
-    '<td><input type="number" class="bl-price" value="'+(item.unit_price!=null?item.unit_price:0)+'" min="0" step="0.01"></td>' +
-    '<td class="bl-total">'+fmtMoney((item.quantity||1)*(item.unit_price||0))+'</td>' +
-    '<td><button class="icon-btn danger" data-remove-line>&times;</button></td>';
+  var price = item.unit_price != null ? item.unit_price : 0, qty = item.quantity != null ? item.quantity : 1;
   tr.dataset.productId = item.product_id || "";
   tr.dataset.productCode = item.product_code || "";
+  tr.dataset.catalogue = item.catalogue_price != null ? String(item.catalogue_price) : "";
+  tr.innerHTML =
+    '<td><input type="text" class="bl-name" value="'+esc(item.product_name||"")+'" placeholder="Item name" maxlength="200">' +
+      (item.product_code ? '<span class="sub-note">Code: '+esc(item.product_code)+'</span>' : (item.product_id ? '' : '<span class="sub-note">Custom item</span>')) + '</td>' +
+    '<td><input type="number" class="bl-qty" value="'+qty+'" min="1" step="1"></td>' +
+    '<td><input type="number" class="bl-price" value="'+price+'" min="0" step="0.01"><span class="sub-note bl-cat"></span></td>' +
+    '<td class="bl-total">'+fmtMoney2(round2(qty * price))+'</td>' +
+    '<td><button type="button" class="icon-btn danger" data-remove-line aria-label="Remove item">&times;</button></td>';
   qs("#bf-items-body").appendChild(tr);
   tr.querySelector(".bl-qty").addEventListener("input", recomputeBillTotals);
   tr.querySelector(".bl-price").addEventListener("input", recomputeBillTotals);
   tr.querySelector("[data-remove-line]").addEventListener("click", function(){ tr.remove(); recomputeBillTotals(); });
+  recomputeBillTotals();
 }
-qs("#bf-add-line-btn").addEventListener("click", function(){ addBillLine(); });
+qs("#bf-add-line-btn").addEventListener("click", function(){
+  addBillLine({ quantity: 1, unit_price: 0 });
+  var names = qsa("#bf-items-body .bl-name"); if(names.length) names[names.length - 1].focus();
+});
 function recomputeBillTotals(){
   var subtotal = 0;
   qsa("#bf-items-body tr").forEach(function(tr){
-    var qty = Number(tr.querySelector(".bl-qty").value)||0;
-    var price = Number(tr.querySelector(".bl-price").value)||0;
-    var lineTotal = qty*price;
-    tr.querySelector(".bl-total").textContent = fmtMoney(lineTotal);
+    var qty = Number(tr.querySelector(".bl-qty").value) || 0;
+    var price = Number(tr.querySelector(".bl-price").value) || 0;
+    var lineTotal = round2(qty * price);
+    tr.querySelector(".bl-total").textContent = fmtMoney2(lineTotal);
+    var cat = tr.dataset.catalogue, note = tr.querySelector(".bl-cat");   /* say so when the selling price is not the catalogue price */
+    note.textContent = (cat !== "" && Math.abs(Number(cat) - price) > 0.004) ? "Catalogue price " + fmtMoney2(Number(cat)) : "";
     subtotal += lineTotal;
   });
-  var discount = Number(qs("#bf-discount").value)||0;
-  var tax = Number(qs("#bf-tax").value)||0;
-  var grand = subtotal - discount + tax;
-  qs("#bf-subtotal").textContent = fmtMoney(subtotal);
-  qs("#bf-grandtotal").textContent = fmtMoney(grand);
+  subtotal = round2(subtotal);
+  var discount = Number(qs("#bf-discount").value) || 0;
+  var tax = Number(qs("#bf-tax").value) || 0;
+  qs("#bf-subtotal").textContent = fmtMoney2(subtotal);
+  qs("#bf-grandtotal").textContent = fmtMoney2(round2(subtotal - discount + tax));
 }
 qs("#bf-discount").addEventListener("input", recomputeBillTotals);
 qs("#bf-tax").addEventListener("input", recomputeBillTotals);
 
-function populateBillCustomerSelect(){
-  var customers = PROFILES.filter(function(p){ return p.role==="customer"; });
-  qs("#bf-customer").innerHTML = customers.map(function(p){
-    return '<option value="'+p.id+'">'+esc((p.first_name||"")+" "+(p.last_name||"")+" — "+(p.company_name||""))+'</option>';
-  }).join("");
-}
-async function openBillModal(billId){
+async function openBillModal(){
   qs("#bill-modal-title").textContent = "New Bill";
   qs("#bf-items-body").innerHTML = "";
   qs("#bf-discount").value = 0; qs("#bf-tax").value = 0; qs("#bf-notes").value = "";
   qs("#bf-payment-status").value = "Pending";
-  if(!PROFILES.filter(function(p){ return p.role==="customer"; }).length){ toast("No customers have registered yet, so there is nobody to bill."); return; }
-  populateBillCustomerSelect();
+  qs("#bf-prod-search").value = ""; hideBillProdResults();
+  await loadProfiles();                                             /* a customer who registered a minute ago is there */
+  setBillCustomerType(billCustomers().length ? "registered" : "offline");
   recomputeBillTotals();
   openModal("modal-bill");
 }
-qs("#add-bill-btn").addEventListener("click", function(){ openBillModal(null); });
+qs("#add-bill-btn").addEventListener("click", function(){ openBillModal(); });
 
 qs("#bf-save-btn").addEventListener("click", async function(){
   if(!(await ensureStaffSession())) return;
-  var customerId = qs("#bf-customer").value;
-  if(!customerId){ toast("Select a customer."); return; }
-  var errs = [], lines = [];
+  var cust = readBillCustomer();
+  var errs = cust.errs.slice(), lines = [];
+  qs("#bf-cust-error").textContent = cust.errs.join(" ");
   qsa("#bf-items-body tr").forEach(function(tr, i){
     var name = tr.querySelector(".bl-name").value.trim();
     var qtyRaw = tr.querySelector(".bl-qty").value.trim(), priceRaw = tr.querySelector(".bl-price").value.trim();
     var qty = Number(qtyRaw), price = Number(priceRaw);
-    if(!name && (qtyRaw === "" || Number(qtyRaw) === 0) && (priceRaw === "" || price === 0)) return;     /* completely empty row: ignore */
-    if(!name) errs.push("Line " + (i + 1) + ": enter a product name.");
-    if(!Number.isInteger(qty) || qty < 1) errs.push("Line " + (i + 1) + ": quantity must be a whole number of 1 or more.");
-    if(!isFinite(price) || priceRaw === "" || price < 0) errs.push("Line " + (i + 1) + ": price must be 0 or more.");
-    lines.push({ product_id: tr.dataset.productId || null, product_code: tr.dataset.productCode || null, product_name: name, quantity: qty, unit_price: price });
+    if(!name && !tr.dataset.productId && (qtyRaw === "" || Number(qtyRaw) === 0) && (priceRaw === "" || price === 0)) return;     /* completely empty row: ignore */
+    if(!name) errs.push("Item " + (i + 1) + ": enter a name.");
+    if(!Number.isInteger(qty) || qty < 1) errs.push("Item " + (i + 1) + ": quantity must be a whole number of 1 or more.");
+    if(!isFinite(price) || priceRaw === "" || price < 0) errs.push("Item " + (i + 1) + ": price must be 0 or more.");
+    lines.push({ product_id: tr.dataset.productId || null, product_code: tr.dataset.productCode || null, product_name: name, quantity: qty, unit_price: round2(price), total: round2(qty * price) });
   });
-  if(!lines.length && !errs.length) errs.push("Add at least one line item.");
-  var discount = Number(qs("#bf-discount").value || 0), tax = Number(qs("#bf-tax").value || 0);
+  if(!lines.length && !errs.length) errs.push("Add at least one product to the bill.");
+  var discount = round2(qs("#bf-discount").value || 0), tax = round2(qs("#bf-tax").value || 0);
   if(!isFinite(discount) || discount < 0) errs.push("Discount must be 0 or more.");
   if(!isFinite(tax) || tax < 0) errs.push("Tax must be 0 or more.");
-  var subtotal = lines.reduce(function(sum, l){ return sum + l.quantity * l.unit_price; }, 0);
-  var grand = subtotal - discount + tax;
+  var subtotal = round2(lines.reduce(function(sum, l){ return sum + l.total; }, 0));
+  var grand = round2(subtotal - discount + tax);
   if(!errs.length && grand < 0) errs.push("The discount is larger than the bill total.");
   if(errs.length){ toast(errs[0]); alert(errs.join("\n")); return; }
-  var btn = this; btn.disabled = true;
-  var billPayload = {
-    customer_id: customerId,
+  var btn = this; btn.disabled = true; var label = btn.textContent; btn.textContent = "Saving…";
+  var billPayload = Object.assign({}, cust.data, {
     subtotal: subtotal, discount: discount, tax: tax, grand_total: grand,
     payment_status: qs("#bf-payment-status").value,
     notes: qs("#bf-notes").value.trim(),
     created_by: currentProfile.id
-  };
+  });
   var insBill = await sb.from("bills").insert(billPayload).select().single();
-  if(insBill.error){ btn.disabled = false; toast("Could not save bill: " + friendlyError(insBill.error)); return; }
+  if(insBill.error){ btn.disabled = false; btn.textContent = label; toast("Could not save bill: " + friendlyError(insBill.error)); return; }
   var items = lines.map(function(l){
-    return { bill_id: insBill.data.id, product_id: l.product_id, product_name: l.product_name, product_code: l.product_code, quantity: l.quantity, unit_price: l.unit_price, total: l.quantity * l.unit_price };
+    return { bill_id: insBill.data.id, product_id: l.product_id, product_name: l.product_name, product_code: l.product_code, quantity: l.quantity, unit_price: l.unit_price, total: l.total };
   });
   var insItems = await sb.from("bill_items").insert(items);
   if(insItems.error){
     await sb.from("bills").delete().eq("id", insBill.data.id);          /* no half-saved bill: remove it so nothing is misleading */
-    btn.disabled = false;
+    btn.disabled = false; btn.textContent = label;
     toast("Bill was NOT saved: " + friendlyError(insItems.error));
     return;
   }
-  btn.disabled = false;
+  btn.disabled = false; btn.textContent = label;
   toast("Bill " + insBill.data.bill_number + " created.");
   closeModal("modal-bill");
   loadBillsTable();
 });
 
+/* ---------- the invoice (view / print) ---------- */
 async function openBillView(billId){
   var billRes = await sb.from("bills").select("*, bill_items(*)").eq("id", billId).single();
   if(billRes.error){ toast("Could not load bill."); return; }
   var b = billRes.data;
-  var p = profileById(b.customer_id);
-  var itemsHtml = (b.bill_items||[]).map(function(it){
-    return '<tr><td>'+esc(it.product_name)+'</td><td>'+esc(it.product_code||"")+'</td><td>'+it.quantity+'</td><td>'+fmtMoney(it.unit_price)+'</td><td>'+fmtMoney(it.total)+'</td></tr>';
+  var p = billProfile(b);                                            /* only used for bills issued before details were copied onto the bill */
+  var lines = [];
+  var add = function(t, strong){ if(t) lines.push('<div' + (strong ? ' style="font-weight:600;"' : '') + '>' + esc(t) + '</div>'); };
+  add(billCustomerName(b), true);
+  add(b.business_name || (p && p.company_name));
+  add(b.billing_address);
+  add([b.city || (p && p.city), b.state || (p && p.state)].filter(Boolean).join(", ") + (b.pincode ? " - " + b.pincode : ""));
+  add(b.customer_phone ? "Mobile: " + b.customer_phone : (p && p.phone ? "Mobile: " + p.phone : ""));
+  add(b.customer_email || (p && p.email));
+  add(b.gst_number ? "GSTIN: " + b.gst_number : "");
+  var itemsHtml = (b.bill_items||[]).slice().sort(function(a, c){ return String(a.created_at).localeCompare(String(c.created_at)); }).map(function(it){
+    return '<tr><td>'+esc(it.product_name)+'</td><td>'+esc(it.product_code||"")+'</td><td>'+it.quantity+'</td><td>'+fmtMoney2(it.unit_price)+'</td><td>'+fmtMoney2(it.total)+'</td></tr>';
   }).join("");
   qs("#bill-view-body").innerHTML =
     '<div style="display:flex;justify-content:space-between;margin-bottom:18px;">' +
@@ -2713,19 +2906,16 @@ async function openBillView(billId){
       '<div style="text-align:right;"><div><strong>'+esc(b.bill_number)+'</strong></div><div style="font-size:12.5px;color:var(--text-muted);">'+fmtDate(b.bill_date)+'</div></div>' +
     '</div>' +
     '<div class="field-row" style="margin-bottom:14px;">' +
-      '<div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Bill To</div>' +
-        '<div>'+esc(p?(p.first_name||"")+" "+(p.last_name||""):"—")+'</div>' +
-        '<div>'+esc(p?p.company_name||"":"")+'</div>' +
-        '<div>'+esc(p?p.phone||p.email||"":"")+'</div></div>' +
+      '<div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Bill To' + (b.customer_type === "offline" ? ' · Offline customer' : '') + '</div>' + lines.join("") + '</div>' +
       '<div style="text-align:right;"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Payment Status</div>' +
         '<select id="biv-status" data-bill-id="'+b.id+'"><option>Pending</option><option>Partial</option><option>Paid</option></select></div>' +
     '</div>' +
     '<div class="table-wrap"><table><thead><tr><th>Product</th><th>Code</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody>'+itemsHtml+'</tbody></table></div>' +
     '<div class="totals-box">' +
-      '<div class="row"><span>Subtotal</span><span>'+fmtMoney(b.subtotal)+'</span></div>' +
-      '<div class="row"><span>Discount</span><span>-'+fmtMoney(b.discount)+'</span></div>' +
-      '<div class="row"><span>Tax</span><span>+'+fmtMoney(b.tax)+'</span></div>' +
-      '<div class="row grand"><span>Grand Total</span><span>'+fmtMoney(b.grand_total)+'</span></div>' +
+      '<div class="row"><span>Subtotal</span><span>'+fmtMoney2(b.subtotal)+'</span></div>' +
+      '<div class="row"><span>Discount</span><span>-'+fmtMoney2(b.discount)+'</span></div>' +
+      '<div class="row"><span>Tax</span><span>+'+fmtMoney2(b.tax)+'</span></div>' +
+      '<div class="row grand"><span>Grand Total</span><span>'+fmtMoney2(b.grand_total)+'</span></div>' +
     '</div>' +
     (b.notes ? '<div style="margin-top:14px;font-size:12.5px;"><strong>Notes:</strong> '+esc(b.notes)+'</div>' : "");
   qs("#biv-status").value = b.payment_status;
@@ -2738,7 +2928,6 @@ async function openBillView(billId){
   });
   openModal("modal-bill-view");
 }
-
 })();
 </script>
 </body>
