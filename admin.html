@@ -1374,9 +1374,12 @@ function readStockForm(){
   });
   if(out.errors.length) return out;
   if(parsed.available.value === null){
-    out.errors.push("Enter the Available Stock Quantity (use 0 if there is none).");
-    out.fields.available = true;
-    return out;
+    if(mode === "made_to_order"){ parsed.available.value = 0; }          /* Made to Order needs no quantity */
+    else {
+      out.errors.push("Enter the Available Stock Quantity (use 0 if there is none).");
+      out.fields.available = true;
+      return out;
+    }
   }
   var reserved  = parsed.reserved.value  === null ? 0 : parsed.reserved.value;
   var threshold = parsed.threshold.value === null ? 5 : parsed.threshold.value;
@@ -1421,7 +1424,7 @@ function initStockForm(p){
   } else if(p){
     qs("#pf-stock-mode").value = "simple";      /* existing product with no quantity tracking yet */
   } else {
-    qs("#pf-stock-mode").value = "tracked";
+    qs("#pf-stock-mode").value = "made_to_order";     /* a new product starts as Made to Order (any design, any colour) */
   }
   applyStockMode();
 }
