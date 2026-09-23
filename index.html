@@ -783,7 +783,9 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .connect-row .icon-circle{width:44px;height:44px;border-radius:50%;border:1px solid var(--line-strong);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .connect-row .icon-circle .icon{width:18px;height:18px;color:var(--emerald);}
 .connect-row b{display:block;font-size:10.5px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
-.connect-row span{overflow-wrap:anywhere;min-width:0;font-family:var(--font-display);font-size:clamp(19px,1.9vw,23px);line-height:1.35;color:var(--text);}
+.connect-row span,.connect-row address{overflow-wrap:anywhere;min-width:0;font-family:var(--font-display);font-size:clamp(19px,1.9vw,23px);line-height:1.35;color:var(--text);font-style:normal;}
+.connect-row a{text-decoration:none;}
+.connect-row a:hover,.connect-row a:focus-visible{text-decoration:underline;}
 .connect-actions{
   padding:clamp(28px,4.4vw,60px);display:flex;flex-direction:column;gap:14px;justify-content:center;
   background:var(--surface-alt);position:relative;
@@ -1198,19 +1200,19 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
         <div class="connect-info">
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-map-pin"/></svg></div>
-            <div><b>Head Office</b><span>204, Zaveri Complex, Zaveri Bazaar, Mumbai, Maharashtra 400002, India</span></div>
+            <div><b>Head Office</b><address>Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064</address></div>
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-phone"/></svg></div>
-            <div><b>Phone</b><span>+91 22 4000 1234</span></div>
+            <div><b>Phone</b><span><a href="tel:+919321245814" aria-label="Call Nisha Art Jewellery at +91 93212 45814">+91 93212 45814</a></span></div>
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-whatsapp"/></svg></div>
-            <div><b>WhatsApp</b><span>+91 98765 43210</span></div>
+            <div><b>WhatsApp</b><span><a href="https://wa.me/919867808890?text=Hello%20Nisha%20Art%20Jewellery%2C%20I%E2%80%99m%20interested%20in%20your%20jewellery%20collection.%20Please%20share%20the%20B2B%20details." target="_blank" rel="noopener" aria-label="Chat with Nisha Art Jewellery on WhatsApp at +91 98678 08890">+91 98678 08890</a></span></div>
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-mail"/></svg></div>
-            <div><b>Email</b><span>wholesale@nishaartjewellery.com</span></div>
+            <div><b>Email</b><span><a href="mailto:nishaartjewellery@gmail.com" aria-label="Email Nisha Art Jewellery">nishaartjewellery@gmail.com</a></span></div>
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-clock"/></svg></div>
@@ -1346,10 +1348,10 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
     <div>
       <h4>Contact</h4>
       <ul class="footer-links">
-        <li>+91 22 4000 1234</li>
-        <li>+91 98765 43210 (WhatsApp)</li>
-        <li>wholesale@nishaartjewellery.com</li>
-        <li>Zaveri Bazaar, Mumbai, India</li>
+        <li><a href="tel:+919321245814" aria-label="Call Nisha Art Jewellery">+91 93212 45814</a></li>
+        <li><a href="https://wa.me/919867808890?text=Hello%20Nisha%20Art%20Jewellery%2C%20I%E2%80%99m%20interested%20in%20your%20jewellery%20collection.%20Please%20share%20the%20B2B%20details." target="_blank" rel="noopener" aria-label="Chat with Nisha Art Jewellery on WhatsApp">+91 98678 08890 (WhatsApp)</a></li>
+        <li><a href="mailto:nishaartjewellery@gmail.com" aria-label="Email Nisha Art Jewellery">nishaartjewellery@gmail.com</a></li>
+        <li><address style="display:inline;font-style:normal;">Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064</address></li>
       </ul>
     </div>
   </div>
@@ -1648,7 +1650,7 @@ async function loadColors(){
 }
 
 var SEARCH_PHRASES = ["Search Necklace...","Search Earrings...","Search Bracelets...","Search Bangles...","Search Kundan...","Search Rings..."];
-var WHATSAPP_NUMBER = "919876543210";
+var WHATSAPP_NUMBER = "919867808890";
 
 /* NOTE: these pools are now only the fallback picture for PRODUCTS that have no uploaded photo.
    Category pictures come from Supabase (categories.image_url, managed in Admin → Categories).
@@ -2881,7 +2883,7 @@ document.body.addEventListener("click", function(e){
         break;
       case "select-color": selectColor(actionBtn.dataset.color); break;
       case "whatsapp-generic":
-        openExternal(waLink("Hello Nisha Art Jewellery, I would like to enquire about your jewellery collection."));
+        openExternal(waLink("Hello Nisha Art Jewellery, I’m interested in your jewellery collection. Please share the B2B details."));
         break;
       case "request-video":
         toast("Video request sent — our team will share it shortly (demo).");
@@ -2907,9 +2909,9 @@ document.body.addEventListener("click", function(e){
         if(state.userId) sb.from("watchlist").delete().eq("user_id", state.userId).eq("product_id", id).then(function(){});
         renderWatchlist(); updateCounts();
         break;
-      case "call-us": window.location.href = "tel:+912240001234"; break;
-      case "email-us": window.location.href = "mailto:wholesale@nishaartjewellery.com"; break;
-      case "open-maps": openExternal("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("Zaveri Bazaar, Mumbai, Maharashtra 400002, India")); break;
+      case "call-us": window.location.href = "tel:+919321245814"; break;
+      case "email-us": window.location.href = "mailto:nishaartjewellery@gmail.com"; break;
+      case "open-maps": openExternal("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("Nisha Art Jewellery, Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad West, Mumbai 400064")); break;
       case "social": e.preventDefault(); toast("Social links are for demonstration only."); break;
       case "toggle-zoom": qs("#pd-gallery-main").classList.toggle("zoomed"); break;
     }
