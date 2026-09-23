@@ -369,15 +369,18 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 }
 
 .hero-art{position:relative;display:flex;align-items:center;justify-content:center;}
+/* Wide jharokha arch sized to the landscape bridal-set photograph (1536x1024) so the tikka,
+   necklace, pendant, both earrings and the bangles all sit inside the arch uncropped */
 .hero-photo-frame{
-  position:relative;width:100%;max-width:420px;aspect-ratio:4/5.2;
+  position:relative;width:100%;max-width:560px;aspect-ratio:4/3;
   border-radius:999px 999px 0 0;overflow:hidden;background:var(--surface-alt);
   /* double arch: a cream mat, then a champagne hairline */
   box-shadow:0 0 0 10px var(--pearl), 0 0 0 11px rgba(200,169,107,0.75), 0 40px 70px -34px rgba(40,34,22,0.38);
   opacity:0;animation:heroPhotoIn 1.5s var(--ease) .25s forwards;
 }
-.hero-photo-frame img{width:100%;height:100%;object-fit:cover;display:block;transform-origin:50% 60%;animation:heroKen 24s ease-in-out 1.5s infinite alternate;}
-@keyframes heroKen{from{transform:scale(1);}to{transform:scale(1.07);}}
+.hero-photo-frame img{width:100%;height:100%;object-fit:cover;object-position:70% 50%;display:block;transform-origin:50% 55%;animation:heroKen 24s ease-in-out 1.5s infinite alternate;}
+/* gentle drift only: a deeper zoom would push the earrings and bangles out of the arch */
+@keyframes heroKen{from{transform:scale(1);}to{transform:scale(1.03);}}
 @keyframes heroPhotoIn{from{opacity:0;transform:translateY(24px) scale(0.985);}to{opacity:1;transform:none;}}
 .hero-photo-glow{
   position:absolute;left:50%;top:52%;width:130%;max-width:600px;aspect-ratio:1/1;
@@ -430,7 +433,7 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero::after{display:none;}
   /* mobile: campaign image leads, copy follows */
   .hero-art{order:-1;padding:10px 0 0;}
-  .hero-photo-frame{max-width:216px;box-shadow:0 0 0 7px var(--pearl), 0 0 0 8px rgba(200,169,107,0.75), 0 30px 50px -28px rgba(40,34,22,0.4);}
+  .hero-photo-frame{width:calc(100% - 16px);max-width:500px;box-shadow:0 0 0 7px var(--pearl), 0 0 0 8px rgba(200,169,107,0.75), 0 30px 50px -28px rgba(40,34,22,0.4);}
   .hero-photo-glow{width:150%;}
   .hero-copy{text-align:left;}
   .hero-copy h1{font-size:clamp(40px,11.4vw,54px);max-width:12ch;}
@@ -519,7 +522,6 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   /* Phone hero: a little tighter so the category rail is reached sooner */
   .hero{padding:20px 0 44px;}
   .hero-grid{gap:26px;}
-  .hero-photo-frame{max-width:196px;}
   .hero-copy h1{font-size:clamp(34px,10vw,42px);}
   .hero-copy p{font-size:15px;margin-bottom:24px;}
   .hero-copy p.eyebrow{margin-bottom:18px;}
@@ -1132,7 +1134,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <div class="hero-art" aria-hidden="true">
         <div class="hero-photo-glow"></div>
         <div class="hero-photo-frame">
-          <img src="https://images.unsplash.com/photo-1611107683227-e9060eccd846?auto=format&fit=crop&w=1200&q=80" alt="Gold necklace jewellery flatlay" loading="lazy" onerror="this.style.visibility='hidden'">
+          <img src="images/hero-silver-ad-bridal-set.jpg" alt="Silver polish white American diamond bridal set: necklace, maang tikka, earrings and bangles" width="1536" height="1024" fetchpriority="high" decoding="async" onerror="this.style.visibility='hidden'">
           <span class="media-tint"></span>
           <span class="hero-shine"></span>
         </div>
