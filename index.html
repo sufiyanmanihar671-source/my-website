@@ -226,21 +226,23 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 }
 .header-icon-btn:hover{background:var(--surface-alt);color:var(--accent);}
 .badge-dot{position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--champagne);border:2px solid var(--surface);}
-/* Currency selector (header) */
-.cur-select{position:relative;}
+/* Currency selector (floating capsule, bottom-right above the Video Call button) */
+.cur-select{position:fixed;z-index:71;right:24px;bottom:100px;}
 .currency-pill{
-  display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.14em;
-  padding:0 12px 0 14px;min-height:38px;border:1px solid var(--line-strong);border-radius:0;color:var(--text);background:transparent;cursor:pointer;
-  transition:border-color .35s var(--ease),color .35s var(--ease);
+  display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:0.12em;
+  padding:0 14px 0 12px;min-height:40px;border:1px solid var(--emerald);border-radius:999px;color:var(--emerald);background:var(--ivory);cursor:pointer;
+  box-shadow:0 14px 34px -10px rgba(40,34,22,0.55);
+  transition:transform .5s var(--ease),box-shadow .5s var(--ease),color .35s var(--ease);
 }
-.currency-pill:hover,.currency-pill[aria-expanded="true"]{border-color:var(--emerald);color:var(--accent);}
+.currency-pill:hover,.currency-pill[aria-expanded="true"]{transform:translateY(-2px);box-shadow:0 20px 40px -10px rgba(40,34,22,0.6);color:var(--accent);}
 .currency-pill .cur-caret{width:11px;height:11px;transition:transform .3s var(--ease);}
-.currency-pill[aria-expanded="true"] .cur-caret{transform:rotate(180deg);}
+.currency-pill .cur-caret{transform:rotate(180deg);}
+.currency-pill[aria-expanded="true"] .cur-caret{transform:none;}
 #currency-pill-flag{display:inline-flex;align-items:center;}
 .cur-flag{width:20px;height:15px;object-fit:cover;flex:none;display:inline-block;box-shadow:0 0 0 1px rgba(43,43,43,0.16);}
 .cur-flag-emoji{width:auto;height:auto;box-shadow:none;font-size:15px;line-height:1;letter-spacing:0;}
 .cur-menu{
-  position:absolute;right:0;top:calc(100% + 8px);width:340px;max-width:calc(100vw - 32px);max-height:min(72vh,500px);overflow-y:auto;
+  position:absolute;right:0;bottom:calc(100% + 10px);width:340px;max-width:calc(100vw - 32px);max-height:min(62vh,480px);overflow-y:auto;
   background:var(--surface-card);border:1px solid var(--line);border-top:2px solid var(--champagne);border-radius:0;box-shadow:var(--shadow-pop);
   z-index:85;display:none;
 }
@@ -266,12 +268,11 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 @media(max-width:1000px){
   :root{--header-h:64px;}
   .desktop-nav,.desktop-only{display:none !important;}
-  /* compact flag + code button; the list drops down as a full-width panel under the header
-     (the header's backdrop-filter would trap a position:fixed sheet inside it) */
-  .cur-select{position:static;}
-  .currency-pill{padding:0 9px;min-height:36px;gap:6px;letter-spacing:0.08em;}
+  /* floating currency capsule sits above the Video Call button, clear of the bottom nav */
+  .cur-select{right:16px;bottom:calc(150px + env(safe-area-inset-bottom));}
+  .currency-pill{padding:0 10px;min-height:36px;gap:6px;letter-spacing:0.08em;}
   .currency-pill .cur-caret{display:none;}
-  .cur-menu{left:0;right:0;top:100%;width:auto;max-width:none;max-height:min(75vh,520px);border-left:0;border-right:0;margin-top:0;}
+  .cur-menu{max-height:min(55vh,440px);}
   .cur-menu-close{display:flex;}
   .header-inner{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;}
   .header-inner > nav{display:none;}
@@ -1053,14 +1054,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 
     <div class="header-actions">
       <button class="header-icon-btn mobile-only" data-action="open-mobile-search" aria-label="Search"><svg class="icon"><use href="#i-search"/></svg></button>
-      <div class="cur-select" id="cur-select">
-        <button class="currency-pill" id="currency-pill" type="button" data-action="toggle-currency" aria-haspopup="listbox" aria-expanded="false" aria-controls="cur-menu" aria-label="Change currency">
-          <span id="currency-pill-flag"><svg class="icon" style="width:14px;height:14px"><use href="#i-globe"/></svg></span>
-          <span id="currency-pill-label">INR</span>
-          <svg class="icon cur-caret"><use href="#i-chevron-down"/></svg>
-        </button>
-        <div class="cur-menu" id="cur-menu" role="listbox" aria-label="Choose currency"></div>
-      </div>
       <button class="header-icon-btn" data-action="open-login" id="login-header-btn" aria-label="Login">
         <svg class="icon"><use href="#i-user"/></svg>
       </button>
@@ -1383,6 +1376,15 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
   <svg class="icon"><use href="#i-video"/></svg>
   <small>Video Call</small>
 </button>
+<!-- floating currency selector: sits above the Video Call button; its list opens upward -->
+<div class="cur-select float-currency" id="cur-select">
+  <button class="currency-pill" id="currency-pill" type="button" data-action="toggle-currency" aria-haspopup="listbox" aria-expanded="false" aria-controls="cur-menu" aria-label="Change currency">
+    <span id="currency-pill-flag"><svg class="icon" style="width:14px;height:14px"><use href="#i-globe"/></svg></span>
+    <span id="currency-pill-label">INR</span>
+    <svg class="icon cur-caret"><use href="#i-chevron-down"/></svg>
+  </button>
+  <div class="cur-menu" id="cur-menu" role="listbox" aria-label="Choose currency"></div>
+</div>
 
 <!-- ============ MOBILE BOTTOM NAV ============ -->
 <nav class="mobile-nav" aria-label="Primary mobile">
