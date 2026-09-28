@@ -69,6 +69,7 @@ a{color:inherit;}
   --line:var(--border);
   --line-strong:var(--border-strong);
   --success:#1F6B4E;
+  --danger:#A23B32;
   --whatsapp:#2FA84F;
   --footer-bg:var(--accent);
 
@@ -933,9 +934,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--emerald);box-shadow:0 0 0 3px rgba(15,76,79,0.09);}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media(max-width:420px){.field-row{grid-template-columns:1fr;gap:0;}}
-.otp-row{display:flex;gap:10px;}
-.otp-row input{flex:1;}
-.otp-row .btn{min-height:50px;}
 .field-hint{font-size:12.5px;color:var(--text-muted);margin-top:8px;}
 .divider-text{display:flex;align-items:center;gap:16px;margin:28px 0;color:var(--text-muted);font-size:10.5px;text-transform:uppercase;letter-spacing:0.22em;}
 .divider-text::before,.divider-text::after{content:'';flex:1;height:1px;background:var(--line);}
@@ -945,6 +943,121 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 .confirm-state .icon-circle .icon{width:28px;height:28px;color:var(--emerald);stroke-width:1.6;}
 .confirm-state h4{font-size:32px;margin-bottom:10px;}
 .confirm-state p{margin-left:auto;margin-right:auto;margin-bottom:26px;}
+
+/* ============ ACCOUNT MENU (header) ============ */
+.acct-wrap{position:relative;}
+.acct-avatar{
+  display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;overflow:hidden;
+  background:var(--emerald);color:var(--ivory);font-size:12px;font-weight:600;letter-spacing:0.04em;line-height:1;
+  box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--champagne);
+}
+.acct-avatar[hidden]{display:none;}
+.acct-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+.acct-avatar-lg{width:44px;height:44px;font-size:15px;flex:none;}
+.acct-menu{
+  position:absolute;right:0;top:calc(100% + 10px);width:290px;max-width:calc(100vw - 24px);z-index:85;
+  background:var(--surface-card);border:1px solid var(--line);border-top:2px solid var(--champagne);box-shadow:var(--shadow-pop);
+  animation:acctIn .35s var(--ease);
+}
+.acct-menu[hidden]{display:none;}
+@keyframes acctIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+.acct-head{display:flex;align-items:center;gap:14px;padding:18px 18px 16px;border-bottom:1px solid var(--line);}
+.acct-id{min-width:0;}
+.acct-name{font-family:var(--font-display);font-size:21px;line-height:1.15;color:var(--heading);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.acct-email{font-size:12.5px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:3px;}
+.acct-item{
+  display:flex;align-items:center;gap:12px;width:100%;padding:15px 18px;text-align:left;
+  font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:500;color:var(--text);
+  transition:background-color .25s var(--ease),color .25s var(--ease);
+}
+.acct-item .icon{width:17px;height:17px;}
+.acct-item:hover,.acct-item:focus-visible{background:var(--surface-alt);color:var(--accent);outline:none;}
+.drawer-links li.mnu-account-info{padding:6px 12px 12px;font-size:12.5px;color:var(--text-muted);overflow-wrap:anywhere;}
+.mnu-account-info b{display:block;font-family:var(--font-display);font-size:22px;font-weight:400;color:var(--heading);margin-bottom:2px;}
+
+/* ============ ACCOUNT / LOGIN PAGE ============ */
+.auth-page{
+  position:relative;padding:clamp(40px,6vw,88px) 0 clamp(64px,8vw,110px);border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(900px 520px at 12% 0%, rgba(200,169,107,0.14), transparent 62%),
+    linear-gradient(180deg, var(--surface-alt) 0%, var(--surface) 100%);
+}
+.auth-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,500px);max-width:1060px;margin:0 auto;box-shadow:var(--shadow-lift);}
+/* brand panel: deep teal with the site's arch motif in champagne hairlines */
+.auth-brand{
+  position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;
+  min-height:600px;padding:clamp(40px,5vw,64px);color:var(--ivory);
+  background:radial-gradient(640px 420px at 88% 0%, rgba(216,192,138,0.16), transparent 62%), var(--emerald);
+}
+.auth-brand::before,.auth-brand::after{
+  content:'';position:absolute;z-index:-1;pointer-events:none;
+  border:1px solid rgba(216,192,138,0.36);border-bottom:none;border-radius:999px 999px 0 0;
+  /* the legs fade out before they reach the list below */
+  -webkit-mask-image:linear-gradient(180deg,#000 30%,transparent 68%);mask-image:linear-gradient(180deg,#000 30%,transparent 68%);
+}
+/* arches sit right of the copy (copy never runs past ~60% of the panel) */
+.auth-brand::before{width:54%;height:86%;right:-16%;top:8%;}
+.auth-brand::after{width:38%;height:68%;right:-8%;top:22%;border-color:rgba(216,192,138,0.2);}
+.auth-brand-eyebrow{display:flex;align-items:center;gap:14px;margin:0 0 22px;max-width:none;font-size:11px;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;color:var(--champagne-soft);}
+.auth-brand-eyebrow::before{content:'';width:32px;height:1px;background:var(--champagne);flex-shrink:0;}
+.auth-brand-name{font-family:var(--font-display);font-size:clamp(42px,4.6vw,60px);line-height:1.02;font-weight:400;letter-spacing:-0.01em;color:var(--pearl);}
+.auth-brand-name em{display:block;color:var(--champagne-soft);}
+.auth-brand-tag{margin-top:18px;max-width:32ch;font-size:11.5px;font-weight:500;letter-spacing:0.22em;line-height:1.8;text-transform:uppercase;color:rgba(250,245,234,0.8);}
+.auth-brand-points{list-style:none;display:grid;gap:12px;margin:36px 0 0;padding:26px 0 0;border-top:1px solid rgba(216,192,138,0.3);}
+.auth-brand-points li{display:flex;align-items:center;gap:12px;font-size:14.5px;color:rgba(250,245,234,0.86);}
+.auth-brand-points li::before{content:'';width:6px;height:6px;background:var(--champagne);transform:rotate(45deg);flex-shrink:0;}
+.auth-card{position:relative;background:var(--surface-card);padding:clamp(32px,4.4vw,56px);}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--champagne);}
+.auth-panel{animation:authIn .6s var(--ease);}
+.auth-panel[hidden]{display:none;}
+@keyframes authIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.auth-title{font-size:clamp(32px,3.2vw,42px);margin:0 0 8px;}
+.auth-sub{font-size:14.5px;margin-bottom:28px;}
+.auth-google{
+  display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;padding:0 20px;
+  background:var(--pearl);border:1px solid var(--line-strong);color:var(--text);font-size:14.5px;font-weight:500;letter-spacing:0.01em;
+  transition:border-color .35s var(--ease),box-shadow .35s var(--ease);
+}
+.auth-google:hover{border-color:var(--emerald);box-shadow:0 12px 26px -18px rgba(40,34,22,0.5);}
+.auth-google[disabled]{opacity:0.55;cursor:progress;}
+.auth-google-g{width:20px;height:20px;flex:none;}
+.auth-card .divider-text{margin:24px 0;}
+.pw-wrap{position:relative;}
+.field .pw-wrap input{padding-right:54px;}
+.pw-toggle{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--text-muted);transition:color .25s var(--ease);}
+.pw-toggle:hover{color:var(--accent);}
+.pw-toggle .icon{width:19px;height:19px;}
+.field input.is-invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(162,59,50,0.08);}
+.auth-row-end{display:flex;justify-content:flex-end;margin:-6px 0 22px;}
+.auth-link{padding:2px 0;font-size:13.5px;font-weight:500;color:var(--accent);text-decoration:underline;text-decoration-color:var(--champagne);text-underline-offset:4px;transition:color .25s var(--ease);}
+.auth-link:hover{color:var(--forest);}
+.auth-switch{margin:26px 0 0;max-width:none;text-align:center;font-size:14px;}
+.auth-hint{margin:-8px 0 22px;}
+.auth-alert{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;padding:14px 16px;font-size:14px;line-height:1.5;border:1px solid;border-left-width:3px;}
+.auth-alert[hidden]{display:none;}
+.auth-alert .icon{width:18px;height:18px;margin-top:1px;}
+.auth-alert .auth-link{font-size:inherit;}
+.auth-alert.is-error{background:#FBF1EE;border-color:#EBCBC3;border-left-color:var(--danger);color:#7A2E26;}
+.auth-alert.is-success{background:#EEF5F1;border-color:#C9DED3;border-left-color:var(--success);color:#1B4D3A;}
+.btn.is-busy{cursor:progress;}
+@media(max-width:900px){
+  .auth-grid{grid-template-columns:1fr;max-width:520px;}
+  .auth-brand{min-height:0;padding:30px 28px 28px;}
+  .auth-brand::before{width:40%;height:160%;right:-12%;top:14%;}
+  .auth-brand::after{display:none;}
+  .auth-brand-eyebrow{margin-bottom:14px;font-size:10px;}
+  .auth-brand-name{font-size:clamp(32px,8.4vw,40px);}
+  .auth-brand-name em{display:inline;}
+  .auth-brand-tag{margin-top:10px;font-size:10px;letter-spacing:0.18em;}
+  .auth-brand-points{display:none;}
+}
+@media(max-width:700px){
+  /* phones: the floating Chat / Currency / Video buttons would sit on top of the form fields */
+  body:has(#view-auth.active) .float-btn,body:has(#view-auth.active) .cur-select{display:none;}
+  .auth-page{padding:18px 0 48px;}
+  .auth-grid{box-shadow:var(--shadow-card);}
+  .auth-card{padding:28px 20px 32px;}
+}
 
 /* Currency converter modal */
 .converter-result{background:var(--surface-alt);border-radius:0;padding:22px;text-align:center;margin-top:20px;border-top:1px solid var(--champagne);}
@@ -1019,6 +1132,9 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><polyline points="12 6.5 12 12 16 14.5"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><polyline points="4 12.5 9.5 18 20 6"/></symbol>
 <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle class="icon-fill" cx="12" cy="7.6" r="0.9" stroke="none"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M9.9 5.2A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-2.9 3.9M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.9 9.9 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><line x1="3" y1="3" x2="21" y2="21"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9.5 20.5h-4a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1h4"/><polyline points="15.5 16.5 20 12 15.5 7.5"/><line x1="20" y1="12" x2="9" y2="12"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></symbol>
 <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/><line x1="10.5" y1="7.7" x2="10.5" y2="13.3"/><line x1="7.7" y1="10.5" x2="13.3" y2="10.5"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3.5 6.5 5.5 6.5 20.5 6.5"/><path d="M8.5 6.5V4.5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v2"/><path d="M6.5 6.5 7.3 20a1 1 0 0 0 1 1h7.4a1 1 0 0 0 1-1l0.8-13.5"/></symbol>
@@ -1054,9 +1170,22 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 
     <div class="header-actions">
       <button class="header-icon-btn mobile-only" data-action="open-mobile-search" aria-label="Search"><svg class="icon"><use href="#i-search"/></svg></button>
-      <button class="header-icon-btn" data-action="open-login" id="login-header-btn" aria-label="Login">
-        <svg class="icon"><use href="#i-user"/></svg>
-      </button>
+      <div class="acct-wrap" id="acct-wrap">
+        <button class="header-icon-btn" data-action="account" id="login-header-btn" aria-label="Login" aria-expanded="false">
+          <svg class="icon" id="acct-icon"><use href="#i-user"/></svg>
+          <span class="acct-avatar" id="acct-avatar" hidden></span>
+        </button>
+        <div class="acct-menu" id="acct-menu" role="menu" aria-label="Account" hidden>
+          <div class="acct-head">
+            <span class="acct-avatar acct-avatar-lg" id="acct-menu-avatar"></span>
+            <div class="acct-id">
+              <div class="acct-name" id="acct-name"></div>
+              <div class="acct-email" id="acct-email"></div>
+            </div>
+          </div>
+          <button type="button" class="acct-item" role="menuitem" data-action="logout"><svg class="icon"><use href="#i-logout"/></svg>Logout</button>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -1090,7 +1219,8 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       </ul>
       <div class="drawer-rule"></div>
       <ul class="drawer-links drawer-links-sub">
-        <li><button data-action="open-login" class="mnu-item">Login / Register</button></li>
+        <li id="mnu-account-info" class="mnu-account-info" hidden></li>
+        <li><button data-action="open-login" class="mnu-item" id="mnu-account-btn">Login / Register</button></li>
       </ul>
     </div>
   </div>
@@ -1306,7 +1436,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 <!-- ============================================================ -->
 <!-- WATCH LIST VIEW -->
 <!-- ============================================================ -->
-<section class="view" id="view-watchlist" data-view="watchlist">
+<section class="view" id="view-watchlist" data-view="watchlist" data-auth="required">
   <div class="container page-top" style="padding-top:32px;padding-bottom:60px;">
     <div class="breadcrumb"><button data-nav="home">Home</button><span class="sep">/</span><span class="current">Watch List</span></div>
     <div class="list-page-head">
@@ -1319,6 +1449,138 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <p>Your watch list is empty. Save pieces from their detail page to find them here.</p>
       <button class="btn btn-outline" data-nav="discover" style="margin-top:10px;">Browse Categories</button>
     </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- ACCOUNT / LOGIN VIEW (Supabase Auth) -->
+<!-- ============================================================ -->
+<section class="view" id="view-auth" data-view="auth">
+  <div class="auth-page">
+    <div class="container"><div class="auth-grid">
+      <aside class="auth-brand">
+        <p class="auth-brand-eyebrow">B2B Access</p>
+        <div class="auth-brand-name">Nisha Art <em>Jewellery</em></div>
+        <div class="auth-brand-tag">B2B Jewellery Manufacturer &amp; Wholesale Supplier</div>
+        <ul class="auth-brand-points">
+          <li>Wholesale prices across the catalogue</li>
+          <li>Save pieces to your watch list</li>
+          <li>Made to order — any design, any colour</li>
+        </ul>
+      </aside>
+
+      <div class="auth-card">
+        <div class="auth-alert" id="auth-alert" role="alert" hidden></div>
+
+        <!-- Login -->
+        <div class="auth-panel" data-auth-panel="login">
+          <h1 class="auth-title">Welcome back</h1>
+          <p class="auth-sub">Log in to view wholesale prices and your saved pieces.</p>
+          <button type="button" class="auth-google" data-action="auth-google"><svg class="auth-google-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span>Continue with Google</span></button>
+          <div class="divider-text">or</div>
+          <form id="auth-login-form" novalidate>
+            <div class="field">
+              <label for="auth-login-email">Email</label>
+              <input type="email" id="auth-login-email" autocomplete="email" inputmode="email" placeholder="you@company.com" required>
+            </div>
+            <div class="field">
+              <label for="auth-login-password">Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="auth-login-password" autocomplete="current-password" placeholder="Your password" required>
+                <button type="button" class="pw-toggle" data-action="toggle-password" data-target="auth-login-password" aria-label="Show password" aria-pressed="false"><svg class="icon"><use href="#i-eye"/></svg></button>
+              </div>
+            </div>
+            <div class="auth-row-end"><button type="button" class="auth-link" data-auth-go="forgot">Forgot Password?</button></div>
+            <button type="submit" class="btn btn-primary btn-block" data-label="Login">Login</button>
+          </form>
+          <p class="auth-switch">Don't have an account? <button type="button" class="auth-link" data-auth-go="signup">Create Account</button></p>
+        </div>
+
+        <!-- Sign up -->
+        <div class="auth-panel" data-auth-panel="signup" hidden>
+          <h1 class="auth-title">Create your account</h1>
+          <p class="auth-sub">For retailers, wholesalers and jewellery businesses.</p>
+          <button type="button" class="auth-google" data-action="auth-google"><svg class="auth-google-g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span>Continue with Google</span></button>
+          <div class="divider-text">or</div>
+          <form id="auth-signup-form" novalidate>
+            <div class="field">
+              <label for="auth-signup-name">Full Name</label>
+              <input type="text" id="auth-signup-name" autocomplete="name" placeholder="Priya Shah" maxlength="80" required>
+            </div>
+            <div class="field">
+              <label for="auth-signup-email">Email</label>
+              <input type="email" id="auth-signup-email" autocomplete="email" inputmode="email" placeholder="you@company.com" required>
+            </div>
+            <div class="field">
+              <label for="auth-signup-password">Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="auth-signup-password" autocomplete="new-password" placeholder="At least 8 characters" required>
+                <button type="button" class="pw-toggle" data-action="toggle-password" data-target="auth-signup-password" aria-label="Show password" aria-pressed="false"><svg class="icon"><use href="#i-eye"/></svg></button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="auth-signup-confirm">Confirm Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="auth-signup-confirm" autocomplete="new-password" placeholder="Re-enter your password" required>
+                <button type="button" class="pw-toggle" data-action="toggle-password" data-target="auth-signup-confirm" aria-label="Show password" aria-pressed="false"><svg class="icon"><use href="#i-eye"/></svg></button>
+              </div>
+            </div>
+            <p class="field-hint auth-hint">Use at least 8 characters, with letters and numbers.</p>
+            <button type="submit" class="btn btn-primary btn-block" data-label="Create Account">Create Account</button>
+          </form>
+          <p class="auth-switch">Already have an account? <button type="button" class="auth-link" data-auth-go="login">Login</button></p>
+        </div>
+
+        <!-- Forgot password -->
+        <div class="auth-panel" data-auth-panel="forgot" hidden>
+          <h1 class="auth-title">Reset your password</h1>
+          <p class="auth-sub">Enter your account email and we'll send you a link to create a new password.</p>
+          <form id="auth-forgot-form" novalidate>
+            <div class="field">
+              <label for="auth-forgot-email">Email</label>
+              <input type="email" id="auth-forgot-email" autocomplete="email" inputmode="email" placeholder="you@company.com" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" data-label="Send Reset Link">Send Reset Link</button>
+          </form>
+          <p class="auth-switch"><button type="button" class="auth-link" data-auth-go="login">Back to Login</button></p>
+        </div>
+
+        <!-- New password (opened from the reset email link) -->
+        <div class="auth-panel" data-auth-panel="reset" hidden>
+          <h1 class="auth-title">Create a new password</h1>
+          <p class="auth-sub">Choose a new password for your account.</p>
+          <form id="auth-reset-form" novalidate>
+            <div class="field">
+              <label for="auth-reset-password">New Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="auth-reset-password" autocomplete="new-password" placeholder="At least 8 characters" required>
+                <button type="button" class="pw-toggle" data-action="toggle-password" data-target="auth-reset-password" aria-label="Show password" aria-pressed="false"><svg class="icon"><use href="#i-eye"/></svg></button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="auth-reset-confirm">Confirm Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="auth-reset-confirm" autocomplete="new-password" placeholder="Re-enter your new password" required>
+                <button type="button" class="pw-toggle" data-action="toggle-password" data-target="auth-reset-confirm" aria-label="Show password" aria-pressed="false"><svg class="icon"><use href="#i-eye"/></svg></button>
+              </div>
+            </div>
+            <p class="field-hint auth-hint">Use at least 8 characters, with letters and numbers.</p>
+            <button type="submit" class="btn btn-primary btn-block" data-label="Update Password">Update Password</button>
+          </form>
+        </div>
+
+        <!-- Check your email -->
+        <div class="auth-panel" data-auth-panel="sent" hidden>
+          <div class="confirm-state">
+            <div class="icon-circle"><svg class="icon"><use href="#i-mail"/></svg></div>
+            <h4 id="auth-sent-title">Check your email</h4>
+            <p id="auth-sent-text"></p>
+            <button type="button" class="btn btn-primary" data-auth-go="login">Back to Login</button>
+            <p class="auth-switch" id="auth-sent-resend" hidden>Didn't get it? <button type="button" class="auth-link" data-action="auth-resend">Resend email</button></p>
+          </div>
+        </div>
+      </div>
+    </div></div>
   </div>
 </section>
 
@@ -1351,7 +1613,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <h4>B2B</h4>
       <ul class="footer-links">
         <li><button data-action="open-login">Login</button></li>
-        <li><button data-action="open-login" data-tab="register">Business Registration</button></li>
+        <li><button data-action="open-login" data-tab="signup">Create Account</button></li>
         <li><button data-action="open-videocall">Video Call</button></li>
       </ul>
     </div>
@@ -1395,85 +1657,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 
 <!-- ============ TOAST CONTAINER ============ -->
 <div class="toast-wrap" id="toast-wrap"></div>
-
-<!-- ============================================================ -->
-<!-- LOGIN / REGISTER MODAL -->
-<!-- ============================================================ -->
-<div class="modal-overlay" id="login-modal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h3 id="login-modal-title">B2B Access</h3>
-      <button class="modal-close" data-action="close-login"><svg class="icon"><use href="#i-x"/></svg></button>
-    </div>
-    <div class="modal-tabs">
-      <button class="modal-tab active" data-login-tab="login">Sign In</button>
-      <button class="modal-tab" data-login-tab="register">Register Business</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12.5px;margin-bottom:20px;">Nisha Art Jewellery is a B2B platform for wholesale buyers, retailers and boutiques. Sign in or register your business to view prices.</p>
-
-      <!-- Sign in pane -->
-      <div id="login-pane-login">
-        <div class="field">
-          <label>Mobile Number</label>
-          <input type="tel" id="login-identifier" placeholder="+91 98765 43210">
-        </div>
-        <div id="login-otp-row" style="display:none;">
-          <div class="field otp-row">
-            <input type="text" id="login-otp" placeholder="Enter OTP" maxlength="6">
-            <button class="btn btn-outline btn-sm" data-action="resend-otp">Resend</button>
-          </div>
-          <p class="field-hint">Enter the OTP sent to your mobile number.</p>
-        </div>
-        <button class="btn btn-primary btn-block" id="login-primary-btn" data-action="send-otp">Send OTP</button>
-      </div>
-
-      <!-- Register pane -->
-      <div id="login-pane-register" style="display:none;">
-        <div class="field-row">
-          <div class="field"><label>First Name</label><input type="text" id="reg-first-name" placeholder="Priya"></div>
-          <div class="field"><label>Last Name</label><input type="text" id="reg-last-name" placeholder="Shah"></div>
-        </div>
-        <div class="field"><label>Company Name</label><input type="text" id="reg-company" placeholder="Shah Jewellers Pvt. Ltd."></div>
-        <div class="field">
-          <label>Business Type</label>
-          <select id="reg-business-type">
-            <option>Retailer</option><option>Wholesaler</option><option>Boutique</option><option>Reseller</option><option>Jewellery Shop Owner</option><option>Other</option>
-          </select>
-        </div>
-        <div class="field-row">
-          <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="you@company.com"></div>
-          <div class="field"><label>Phone</label><input type="tel" id="reg-phone" placeholder="+91 98765 43210"></div>
-        </div>
-        <div class="field"><label>WhatsApp Number</label><input type="tel" id="reg-whatsapp" placeholder="+91 98765 43210"></div>
-        <div class="field-row">
-          <div class="field"><label>Country</label><input type="text" id="reg-country" placeholder="India"></div>
-          <div class="field"><label>State</label><input type="text" id="reg-state" placeholder="Maharashtra"></div>
-        </div>
-        <div class="field"><label>City</label><input type="text" id="reg-city" placeholder="Mumbai"></div>
-        <div class="field"><label>Business Details</label><textarea rows="3" id="reg-details" placeholder="Tell us about your business — store type, years in business, expected order volume..."></textarea></div>
-        <div id="reg-otp-row" style="display:none;">
-          <div class="field otp-row">
-            <input type="text" id="reg-otp" placeholder="Enter OTP" maxlength="6">
-            <button class="btn btn-outline btn-sm" data-action="resend-register-otp">Resend</button>
-          </div>
-          <p class="field-hint">Enter the OTP sent to your phone to complete registration.</p>
-        </div>
-        <button class="btn btn-primary btn-block" id="register-primary-btn" data-action="submit-register">Submit Registration</button>
-      </div>
-
-      <!-- Confirmation -->
-      <div id="login-pane-confirm" style="display:none;">
-        <div class="confirm-state">
-          <div class="icon-circle"><svg class="icon"><use href="#i-check"/></svg></div>
-          <h4 id="login-confirm-title">You're signed in</h4>
-          <p id="login-confirm-text">Prices are now visible across the catalogue.</p>
-          <button class="btn btn-primary" data-action="close-login">Continue Browsing</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ============================================================ -->
 <!-- VIDEO CALL BOOKING MODAL -->
@@ -1583,7 +1766,18 @@ var TINTS = ["var(--accent)","var(--accent-soft)","var(--charcoal)","var(--accen
    ====================================================================== */
 var SUPABASE_URL = "https://qmgbmcxzqmcyupakpejw.supabase.co";
 var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtZ2JtY3h6cW1jeXVwYWtwZWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NzI2OTcsImV4cCI6MjEwNTI0ODY5N30.bxa2J5BSVphcSf9KwCoLV_jcixgQ8y6c9Ycc4_8lyYI";
-var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* Read any auth result in the URL (Google return, email-confirm / reset link, errors)
+   before supabase-js consumes and clears it, then subscribe at once so no event is missed. */
+var AUTH_URL = readAuthUrl();
+var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  /* session is kept in localStorage and refreshed automatically, so a login survives page reloads;
+     implicit flow lets a reset link work even when it is opened on another device */
+  auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:"implicit" }
+});
+sb.auth.onAuthStateChange(function(event, session){
+  /* deferred: supabase-js must not be awaited from inside this callback */
+  setTimeout(function(){ onAuthEvent(event, session); }, 0);
+});
 
 var CATEGORIES = [];
 var SUBCAT_ID_LOOKUP = {};
@@ -1728,7 +1922,8 @@ var state = {
   geoSource:"none",        /* override | cache | ip | locale | none */
   detectedCurrency:"INR",  /* currency of the detected country */
   watchlist:[],
-  pendingLoginTab:"login",
+  authMode:"login",        /* panel shown on the account page */
+  authReturn:null,         /* where to go back to after logging in */
   selectedColorId:null
 };
 
@@ -1747,19 +1942,9 @@ async function loadState(){
   try{ localStorage.removeItem("naj_inquiries"); localStorage.removeItem("naj_inquiry_colors"); }catch(e){ /* ignore */ }
   try{
     var sessionRes = await sb.auth.getSession();
-    var session = sessionRes.data && sessionRes.data.session;
-    if(session){
-      state.isLoggedIn = true;
-      state.userId = session.user.id;
-      var wl = await sb.from("watchlist").select("product_id").eq("user_id", state.userId);
-      state.watchlist = (wl.data||[]).map(function(r){ return r.product_id; });
-    } else {
-      state.isLoggedIn = false;
-      state.userId = null;
-      state.watchlist = [];
-    }
+    await applySession(sessionRes.data && sessionRes.data.session);
   }catch(e){
-    state.isLoggedIn = false; state.userId = null; state.watchlist = [];
+    await applySession(null);
   }
 }
 /* ======================================================================
@@ -2524,11 +2709,19 @@ function updateConverterResult(){
    ====================================================================== */
 function closeAllModalsAndPanels(){
   closeCurrencyMenu(false);
+  closeAccountMenu(false);
   qsa(".modal-overlay.open").forEach(function(m){ m.classList.remove("open"); });
   qs("#mobile-search-panel").classList.remove("open");
 }
 function showView(name, opts){
   opts = opts || {};
+  /* protected pages: mark a view with data-auth="required" and signed-out visitors
+     are sent to the login page, then brought back here after logging in */
+  var target = qs('.view[data-view="'+name+'"]');
+  if(target && target.dataset.auth==="required" && !state.isLoggedIn){
+    requireAuth("Please log in to continue.", { view:name });
+    return;
+  }
   state.view = name;
   qsa(".view").forEach(function(v){ v.classList.toggle("active", v.dataset.view===name); });
   qsa("[data-nav]").forEach(function(btn){
@@ -2610,29 +2803,6 @@ function goNav(name){
 function openModal(id){ closeAllModalsAndPanels(); qs(id).classList.add("open"); }
 function closeModal(id){ qs(id).classList.remove("open"); }
 
-function openLoginModal(tab){
-  openModal("#login-modal");
-  setLoginTab(tab || "login");
-  qs("#login-pane-confirm").style.display = "none";
-  qs("#login-pane-login").style.display = tab==="register" ? "none" : "block";
-  qs("#login-pane-register").style.display = tab==="register" ? "block" : "none";
-  otpSent = false; pendingLoginPhone = null;
-  qs("#login-otp-row").style.display = "none";
-  qs("#login-primary-btn").textContent = "Send OTP";
-  qs("#login-otp").value = "";
-  registerOtpSent = false; pendingRegisterPhone = null;
-  qs("#reg-otp-row").style.display = "none";
-  qs("#register-primary-btn").textContent = "Submit Registration";
-  qs("#reg-otp").value = "";
-}
-function setLoginTab(tab){
-  state.pendingLoginTab = tab;
-  qsa("[data-login-tab]").forEach(function(b){ b.classList.toggle("active", b.dataset.loginTab===tab); });
-  qs("#login-pane-login").style.display = tab==="login" ? "block":"none";
-  qs("#login-pane-register").style.display = tab==="register" ? "block":"none";
-  qs("#login-pane-confirm").style.display = "none";
-}
-
 function openVideoCallModal(collectionPrefill){
   openModal("#videocall-modal");
   qs("#videocall-form-pane").style.display = "block";
@@ -2647,45 +2817,515 @@ function openCurrencyModal(){
 
 
 /* ======================================================================
-   LOGIN / VIDEO CALL CONFIRM HELPERS
+   AUTH — Supabase Auth: Google OAuth + email/password
+   Passwords go straight to Supabase Auth (bcrypt-hashed there); nothing
+   here stores them. The session lives in supabase-js' own storage.
    ====================================================================== */
-var otpSent = false;
-var registerOtpSent = false;
-var pendingLoginPhone = null;
-var pendingRegisterPhone = null;
-function normalizePhone(v){
-  v = (v||"").replace(/[\s\-()]/g, "");
-  if(!v) return null;
-  if(v[0] !== "+"){
-    if(/^\d{10}$/.test(v)) v = "+91"+v;
-    else if(/^\d+$/.test(v)) v = "+"+v;
-  }
-  return /^\+\d{8,15}$/.test(v) ? v : null;
+/* where Google / email links return to: the site root (…/my-website/) */
+var SITE_URL = location.origin + location.pathname.replace(/index\.html$/, "");
+var OAUTH_PENDING_KEY = "naj_oauth_pending";   /* sessionStorage: a Google redirect is in progress */
+var AUTH_RETURN_KEY = "naj_auth_return";       /* sessionStorage: page to reopen after the redirect */
+var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+var authUser = null;
+var authRecovery = false;      /* opened from a password-reset link */
+var appReady = false;          /* init() has rendered the first view */
+var watchlistLoad = Promise.resolve();
+var pendingResend = null;      /* { kind:"signup"|"reset", email } for the "Resend email" link */
+
+function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
+function ssSet(k, v){ try{ sessionStorage.setItem(k, v); }catch(e){ /* ignore */ } }
+function ssDel(k){ try{ sessionStorage.removeItem(k); }catch(e){ /* ignore */ } }
+
+function readAuthUrl(){
+  var out = { error:null, errorCode:null, errorDescription:"", type:null, hasToken:false };
+  try{
+    var q = new URLSearchParams(location.search), h = new URLSearchParams(location.hash.replace(/^#/, ""));
+    var g = function(k){ return h.get(k) || q.get(k); };
+    out.error = g("error");
+    out.errorCode = g("error_code");
+    out.errorDescription = g("error_description") || "";
+    out.type = g("type");
+    out.hasToken = !!(h.get("access_token") || q.get("code"));
+  }catch(e){ /* ignore */ }
+  return out;
 }
-function updateLoginIcon(){
-  var btn = qs("#login-header-btn");
-  var existing = qs(".badge-dot", btn);
-  if(state.isLoggedIn && !existing){
-    var dot = document.createElement("span");
-    dot.className = "badge-dot";
-    btn.appendChild(dot);
-    btn.setAttribute("aria-label","Account");
-  } else if(!state.isLoggedIn && existing){
-    existing.parentNode.removeChild(existing);
-    btn.setAttribute("aria-label","Login");
+/* drop auth leftovers from the address bar, keep anything else (e.g. ?geo=) */
+function cleanAuthUrl(){
+  try{
+    var p = new URLSearchParams(location.search);
+    ["error","error_code","error_description","code","type"].forEach(function(k){ p.delete(k); });
+    var h = location.hash;
+    if(/(access_token|refresh_token|error|type)=/.test(h)) h = "";
+    var q = p.toString();
+    history.replaceState(null, "", location.pathname + (q ? "?"+q : "") + h);
+  }catch(e){ /* ignore */ }
+}
+
+/* ---------- session state ---------- */
+function onAuthEvent(event, session){
+  if(event==="PASSWORD_RECOVERY"){
+    authRecovery = true;
+    applySession(session);
+    if(appReady) showAuth("reset", { skipReturn:true });
+    return;
+  }
+  applySession(event==="SIGNED_OUT" ? null : session);
+}
+async function loadWatchlist(uid){
+  try{
+    var wl = await sb.from("watchlist").select("product_id").eq("user_id", uid);
+    if(state.userId===uid) state.watchlist = (wl.data||[]).map(function(r){ return r.product_id; });
+  }catch(e){ /* watch list stays empty */ }
+}
+/* single place that turns a Supabase session (or null) into page state */
+async function applySession(session){
+  var user = (session && session.user) || null;
+  var uid = user ? user.id : null;
+  authUser = user;
+  if(uid !== state.userId){
+    state.isLoggedIn = !!user;
+    state.userId = uid;
+    state.watchlist = [];
+    watchlistLoad = uid ? loadWatchlist(uid) : Promise.resolve();
+    updateAccountUI();
+    await watchlistLoad;
+    if(appReady){
+      var cur = qs('.view[data-view="'+state.view+'"]');
+      if(!user && cur && cur.dataset.auth==="required") goHome();
+      else { updateCounts(); renderCurrentView(); }
+    }
+    return true;
+  }
+  updateAccountUI();
+  await watchlistLoad;
+  return false;
+}
+function userDisplayName(u){
+  var m = (u && u.user_metadata) || {};
+  var n = String(m.full_name || m.name || "").replace(/\s+/g, " ").trim();
+  if(n) return n.slice(0, 80);
+  return u && u.email ? u.email.split("@")[0] : "Account";
+}
+function userFirstName(u){ return userDisplayName(u).split(" ")[0]; }
+function userInitials(u){
+  var parts = userDisplayName(u).split(" ").filter(Boolean);
+  var s = (parts[0] ? parts[0].charAt(0) : "") + (parts.length>1 ? parts[parts.length-1].charAt(0) : "");
+  return (s || "A").toUpperCase();
+}
+function setAvatar(el, u){
+  var m = (u && u.user_metadata) || {};
+  var url = m.avatar_url || m.picture || "";
+  var ini = userInitials(u);
+  el.textContent = ini;
+  if(/^https:\/\//.test(url)){
+    var img = document.createElement("img");
+    img.alt = ""; img.referrerPolicy = "no-referrer";
+    img.onload = function(){ el.textContent = ""; el.appendChild(img); };
+    img.src = url;
   }
 }
-function showLoginConfirm(kind){
-  qs("#login-pane-login").style.display = "none";
-  qs("#login-pane-register").style.display = "none";
-  qs("#login-pane-confirm").style.display = "block";
-  if(kind==="login"){
-    qs("#login-confirm-title").textContent = "You're signed in";
-    qs("#login-confirm-text").textContent = "Prices are now visible across the catalogue.";
+function updateAccountUI(){
+  var btn = qs("#login-header-btn"), av = qs("#acct-avatar"), icon = qs("#acct-icon");
+  var info = qs("#mnu-account-info"), mbtn = qs("#mnu-account-btn");
+  var u = authUser;
+  if(u){
+    var name = userDisplayName(u), email = u.email || "";
+    btn.setAttribute("aria-label", "Account menu: "+name);
+    btn.setAttribute("aria-haspopup", "menu");
+    setAvatar(av, u); av.hidden = false; icon.style.display = "none";
+    setAvatar(qs("#acct-menu-avatar"), u);
+    qs("#acct-name").textContent = name;
+    qs("#acct-email").textContent = email;
+    info.innerHTML = "<b>"+esc(name)+"</b>"+esc(email); info.hidden = false;
+    mbtn.textContent = "Logout"; mbtn.dataset.action = "logout";
   } else {
-    qs("#login-confirm-title").textContent = "Registration submitted";
-    qs("#login-confirm-text").textContent = "Our team will review your business details and reach out within 24 hours.";
+    closeAccountMenu(false);
+    btn.setAttribute("aria-label", "Login");
+    btn.removeAttribute("aria-haspopup");
+    av.hidden = true; av.textContent = ""; icon.style.display = "";
+    info.hidden = true; info.innerHTML = "";
+    mbtn.textContent = "Login / Register"; mbtn.dataset.action = "open-login";
   }
+}
+
+/* ---------- account menu (header) ---------- */
+function accountMenuOpen(){ var m = qs("#acct-menu"); return !!(m && !m.hidden); }
+function openAccountMenu(){
+  if(!authUser) return;
+  closeCurrencyMenu(false);
+  qs("#acct-menu").hidden = false;
+  qs("#login-header-btn").setAttribute("aria-expanded", "true");
+  var first = qs("#acct-menu .acct-item");
+  if(first) first.focus({ preventScroll:true });
+}
+function closeAccountMenu(returnFocus){
+  var m = qs("#acct-menu");
+  if(!m || m.hidden) return;
+  m.hidden = true;
+  qs("#login-header-btn").setAttribute("aria-expanded", "false");
+  if(returnFocus) qs("#login-header-btn").focus();
+}
+document.addEventListener("click", function(e){
+  if(accountMenuOpen() && !e.target.closest("#acct-wrap")) closeAccountMenu(false);
+});
+document.addEventListener("keydown", function(e){
+  if(e.key==="Escape" && accountMenuOpen()) closeAccountMenu(true);
+});
+
+/* ---------- account page navigation ---------- */
+function currentRoute(){
+  return { view:state.view, productId:state.currentProductId, cat:state.discoverCat, sub:state.discoverSub };
+}
+function goToRoute(r){
+  if(!r || !r.view || r.view==="auth") return goHome();
+  if(r.view==="product") return (r.productId && productById(r.productId)) ? viewProduct(r.productId) : goHome();
+  if(r.view==="discover") return goDiscover(r.cat, r.sub);
+  showView(r.view);
+}
+/* after logging in: back to the page the visitor came from */
+function leaveAuth(){
+  var r = state.authReturn;
+  state.authReturn = null;
+  goToRoute(r);
+}
+function showAuth(mode, opts){
+  opts = opts || {};
+  /* already logged in: show the account menu instead (after this click finishes, or the
+     outside-click handler would close it again) */
+  if(state.isLoggedIn && (mode==="login" || mode==="signup")){ setTimeout(openAccountMenu, 0); return; }
+  if(state.view!=="auth"){
+    if(!opts.skipReturn) state.authReturn = currentRoute();
+    showView("auth");
+  }
+  setAuthPanel(mode);
+}
+/* gate for anything that needs an account; returns true when already logged in */
+function requireAuth(message, returnTo){
+  if(state.isLoggedIn) return true;
+  state.authReturn = returnTo || currentRoute();
+  showAuth("login", { skipReturn:true });
+  if(message) showAuthAlert("info", message);
+  return false;
+}
+function setAuthPanel(mode){
+  state.authMode = mode;
+  qsa("[data-auth-panel]").forEach(function(p){ p.hidden = p.dataset.authPanel!==mode; });
+  hideAuthAlert();
+  qsa("#view-auth .is-invalid").forEach(clearInvalidField);
+  qsa("#view-auth .pw-toggle").forEach(function(b){ setPasswordVisible(b, false); });
+  if(window.matchMedia && window.matchMedia("(pointer:fine)").matches){
+    var panel = qs('[data-auth-panel="'+mode+'"]');
+    var first = panel && qsa("input", panel).filter(function(i){ return !i.value; })[0];
+    if(first) setTimeout(function(){ first.focus({ preventScroll:true }); }, 60);
+  }
+}
+/* panel links keep the email the visitor already typed */
+function goAuthPanel(mode){
+  var from = qs('[data-auth-panel="'+state.authMode+'"] input[type="email"]');
+  var to = qs('[data-auth-panel="'+mode+'"] input[type="email"]');
+  if(from && to && from.value.trim() && !to.value.trim()) to.value = from.value.trim();
+  setAuthPanel(mode);
+}
+
+/* ---------- messages ---------- */
+function showAuthAlert(kind, msg, actionHtml){
+  var el = qs("#auth-alert");
+  el.className = "auth-alert " + (kind==="error" ? "is-error" : "is-success");
+  el.innerHTML = '<svg class="icon"><use href="#i-'+(kind==="error" ? "info" : "check")+'"/></svg><div>'+esc(msg)+(actionHtml||"")+'</div>';
+  el.hidden = false;
+}
+function hideAuthAlert(){ var el = qs("#auth-alert"); el.hidden = true; el.innerHTML = ""; }
+function isNetworkError(err){
+  if(navigator.onLine===false) return true;
+  if(!err) return false;
+  return err.name==="AuthRetryableFetchError" || err.status===0 || /failed to fetch|networkerror|load failed|network request failed/i.test(err.message || "");
+}
+/* friendly text only: raw Supabase messages are never shown */
+function authErrorMessage(err, ctx){
+  var code = (err && (err.code || err.error_code)) || "";
+  var msg = String((err && err.message) || "").toLowerCase();
+  if(isNetworkError(err)) return "Network error. Please check your internet connection and try again.";
+  if(code==="invalid_credentials" || msg.indexOf("invalid login credentials")>-1) return "Incorrect email or password.";
+  if(code==="email_not_confirmed" || msg.indexOf("email not confirmed")>-1) return "Please confirm your email address first — check your inbox for the confirmation link.";
+  if(code==="user_already_exists" || code==="email_exists" || msg.indexOf("already registered")>-1) return "An account with this email already exists. Please log in, or reset your password.";
+  if(code==="weak_password" || msg.indexOf("password should")>-1) return "Password is too weak. Use at least 8 characters with letters and numbers.";
+  if(code==="same_password") return "Your new password must be different from your current password.";
+  if(code==="email_address_invalid") return "Please enter a valid email address.";
+  if(code==="signup_disabled" || code==="email_provider_disabled") return "New account registration is currently unavailable. Please contact us.";
+  if(code==="over_email_send_rate_limit" || code==="over_request_rate_limit" || err && err.status===429) return "Too many attempts. Please wait a few minutes and try again.";
+  if(code==="email_address_not_authorized" || msg.indexOf("sending") > -1 && msg.indexOf("email") > -1) return "We couldn't send the email right now. Please try again later or contact us on WhatsApp.";
+  if(code==="session_not_found" || code==="session_expired" || code==="refresh_token_not_found" || code==="bad_jwt")
+    return ctx==="reset" ? "Your reset link has expired. Please request a new one." : "Your session has expired. Please log in again.";
+  return "Something went wrong. Please try again.";
+}
+
+/* ---------- form helpers ---------- */
+function markInvalid(input, msg){
+  input.classList.add("is-invalid");
+  input.setAttribute("aria-invalid", "true");
+  showAuthAlert("error", msg);
+  input.focus();
+  return false;
+}
+function clearInvalidField(input){ input.classList.remove("is-invalid"); input.removeAttribute("aria-invalid"); }
+function passwordProblem(pw){
+  if(pw.length < 8) return "Password is too weak. Use at least 8 characters.";
+  if(!/[A-Za-z]/.test(pw) || !/\d/.test(pw)) return "Password is too weak. Include both letters and numbers.";
+  if(pw.length > 72) return "Password is too long. Use 72 characters or fewer.";
+  return null;
+}
+function setBusy(btn, on){
+  if(!btn) return;
+  btn.disabled = on;
+  btn.classList.toggle("is-busy", on);
+  btn.setAttribute("aria-busy", on ? "true" : "false");
+  if(btn.dataset.label) btn.textContent = on ? "Please wait…" : btn.dataset.label;
+}
+function setPasswordVisible(btn, show){
+  var input = qs("#"+btn.dataset.target);
+  if(!input) return;
+  input.type = show ? "text" : "password";
+  btn.setAttribute("aria-pressed", show ? "true" : "false");
+  btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  qs("use", btn).setAttribute("href", show ? "#i-eye-off" : "#i-eye");
+}
+function togglePassword(btn){
+  var input = qs("#"+btn.dataset.target);
+  if(input) setPasswordVisible(btn, input.type==="password");
+}
+function showSent(kind, email){
+  pendingResend = { kind:kind, email:email };
+  setAuthPanel("sent");
+  if(kind==="signup"){
+    qs("#auth-sent-title").textContent = "Account created successfully";
+    qs("#auth-sent-text").textContent = "We've sent a confirmation link to "+email+". Open it to activate your account — you'll be logged in automatically.";
+  } else {
+    qs("#auth-sent-title").textContent = "Password reset email sent";
+    qs("#auth-sent-text").textContent = "If an account exists for "+email+", you'll receive a link to create a new password shortly. Check your spam folder too.";
+  }
+  qs("#auth-sent-resend").hidden = false;
+}
+
+/* ---------- actions ---------- */
+async function onLoginSubmit(e){
+  e.preventDefault();
+  var form = e.currentTarget, emailEl = qs("#auth-login-email"), pwEl = qs("#auth-login-password");
+  var email = emailEl.value.trim().toLowerCase(), pw = pwEl.value;
+  qsa(".is-invalid", form).forEach(clearInvalidField); hideAuthAlert();
+  if(!EMAIL_RE.test(email)) return markInvalid(emailEl, "Please enter a valid email address.");
+  if(!pw) return markInvalid(pwEl, "Please enter your password.");
+  var btn = qs('button[type="submit"]', form);
+  setBusy(btn, true);
+  try{
+    var res = await sb.auth.signInWithPassword({ email:email, password:pw });
+    if(res.error) throw res.error;
+    pwEl.value = "";
+    await applySession(res.data.session);
+    toast("Login successful. Welcome back, "+userFirstName(authUser)+"!");
+    leaveAuth();
+  }catch(err){
+    var extra = "";
+    if(err && (err.code==="email_not_confirmed" || /email not confirmed/i.test(err.message||""))){
+      pendingResend = { kind:"signup", email:email };
+      extra = ' <button type="button" class="auth-link" data-action="auth-resend">Resend confirmation email</button>';
+    }
+    showAuthAlert("error", authErrorMessage(err, "login"), extra);
+  }finally{ setBusy(btn, false); }
+}
+async function onSignupSubmit(e){
+  e.preventDefault();
+  var form = e.currentTarget;
+  var nameEl = qs("#auth-signup-name"), emailEl = qs("#auth-signup-email"), pwEl = qs("#auth-signup-password"), cfEl = qs("#auth-signup-confirm");
+  var name = nameEl.value.replace(/\s+/g, " ").trim(), email = emailEl.value.trim().toLowerCase(), pw = pwEl.value;
+  qsa(".is-invalid", form).forEach(clearInvalidField); hideAuthAlert();
+  if(name.length < 2) return markInvalid(nameEl, "Please enter your full name.");
+  if(!EMAIL_RE.test(email)) return markInvalid(emailEl, "Please enter a valid email address.");
+  var weak = passwordProblem(pw);
+  if(weak) return markInvalid(pwEl, weak);
+  if(cfEl.value !== pw) return markInvalid(cfEl, "Passwords do not match.");
+  var btn = qs('button[type="submit"]', form);
+  setBusy(btn, true);
+  try{
+    var res = await sb.auth.signUp({ email:email, password:pw, options:{ data:{ full_name:name }, emailRedirectTo:SITE_URL } });
+    if(res.error) throw res.error;
+    var user = res.data && res.data.user;
+    /* Supabase hides existing accounts behind a user with no identities */
+    if(user && Array.isArray(user.identities) && user.identities.length===0){
+      showAuthAlert("error", "An account with this email already exists. Please log in, or reset your password.");
+      return;
+    }
+    pwEl.value = ""; cfEl.value = "";
+    if(res.data.session){
+      await applySession(res.data.session);
+      toast("Account created successfully. Welcome, "+userFirstName(authUser)+"!");
+      leaveAuth();
+    } else {
+      showSent("signup", email);
+    }
+  }catch(err){
+    showAuthAlert("error", authErrorMessage(err, "signup"));
+  }finally{ setBusy(btn, false); }
+}
+async function onForgotSubmit(e){
+  e.preventDefault();
+  var form = e.currentTarget, emailEl = qs("#auth-forgot-email"), email = emailEl.value.trim().toLowerCase();
+  qsa(".is-invalid", form).forEach(clearInvalidField); hideAuthAlert();
+  if(!EMAIL_RE.test(email)) return markInvalid(emailEl, "Please enter a valid email address.");
+  var btn = qs('button[type="submit"]', form);
+  setBusy(btn, true);
+  try{
+    var res = await sb.auth.resetPasswordForEmail(email, { redirectTo:SITE_URL });
+    if(res.error) throw res.error;
+    showSent("reset", email);
+  }catch(err){
+    showAuthAlert("error", authErrorMessage(err, "forgot"));
+  }finally{ setBusy(btn, false); }
+}
+async function onResetSubmit(e){
+  e.preventDefault();
+  var form = e.currentTarget, pwEl = qs("#auth-reset-password"), cfEl = qs("#auth-reset-confirm"), pw = pwEl.value;
+  qsa(".is-invalid", form).forEach(clearInvalidField); hideAuthAlert();
+  var weak = passwordProblem(pw);
+  if(weak) return markInvalid(pwEl, weak);
+  if(cfEl.value !== pw) return markInvalid(cfEl, "Passwords do not match.");
+  var btn = qs('button[type="submit"]', form);
+  setBusy(btn, true);
+  try{
+    var s = await sb.auth.getSession();
+    if(!s.data || !s.data.session){
+      showAuthAlert("error", "Your reset link has expired. Please request a new one.", ' <button type="button" class="auth-link" data-auth-go="forgot">Send a new link</button>');
+      return;
+    }
+    var res = await sb.auth.updateUser({ password:pw });
+    if(res.error) throw res.error;
+    pwEl.value = ""; cfEl.value = "";
+    authRecovery = false;
+    toast("Password updated successfully. You're now logged in.");
+    leaveAuth();
+  }catch(err){
+    showAuthAlert("error", authErrorMessage(err, "reset"));
+  }finally{ setBusy(btn, false); }
+}
+/* is a provider switched on in Supabase? null = couldn't tell */
+async function providerEnabled(name){
+  try{
+    var r = await fetch(SUPABASE_URL+"/auth/v1/settings", { headers:{ apikey:SUPABASE_ANON_KEY } });
+    if(!r.ok) return null;
+    var j = await r.json();
+    return !!(j.external && j.external[name]);
+  }catch(e){ return null; }
+}
+async function signInWithGoogle(btn){
+  hideAuthAlert();
+  qsa('[data-action="auth-google"]').forEach(function(b){ b.disabled = true; });
+  var redirecting = false;
+  try{
+    if(await providerEnabled("google")===false){
+      showAuthAlert("error", "Google login isn't available yet. Please log in with your email and password.");
+      return;
+    }
+    ssSet(OAUTH_PENDING_KEY, "1");
+    ssSet(AUTH_RETURN_KEY, JSON.stringify(state.authReturn || { view:"home" }));
+    var res = await sb.auth.signInWithOAuth({
+      provider:"google",
+      options:{ redirectTo:SITE_URL, skipBrowserRedirect:true, queryParams:{ prompt:"select_account" } }
+    });
+    if(res.error || !res.data || !res.data.url) throw res.error || new Error("no url");
+    redirecting = true;
+    location.assign(res.data.url);
+  }catch(err){
+    ssDel(OAUTH_PENDING_KEY); ssDel(AUTH_RETURN_KEY);
+    showAuthAlert("error", isNetworkError(err) ? authErrorMessage(err) : "Google login failed. Please try again.");
+  }finally{
+    if(!redirecting) qsa('[data-action="auth-google"]').forEach(function(b){ b.disabled = false; });
+  }
+}
+async function resendAuthEmail(btn){
+  if(!pendingResend) return;
+  btn.disabled = true;
+  try{
+    var p = pendingResend, res;
+    if(p.kind==="signup") res = await sb.auth.resend({ type:"signup", email:p.email, options:{ emailRedirectTo:SITE_URL } });
+    else res = await sb.auth.resetPasswordForEmail(p.email, { redirectTo:SITE_URL });
+    if(res.error) throw res.error;
+    showAuthAlert("success", "Email sent again to "+p.email+".");
+  }catch(err){
+    showAuthAlert("error", authErrorMessage(err, "resend"));
+  }finally{ btn.disabled = false; }
+}
+async function logout(){
+  closeAllModalsAndPanels();
+  var res;
+  try{ res = await sb.auth.signOut({ scope:"local" }); }catch(e){ res = { error:e }; }
+  if(res && res.error && isNetworkError(res.error)){
+    toast("Network error. Please check your connection and try again.");
+    return;
+  }
+  await applySession(null);
+  toast("Logout successful.");
+  if(state.view==="auth") goHome();
+}
+
+/* back from Google, an email link, or an auth error in the URL */
+function handleAuthRedirect(){
+  var info = AUTH_URL;
+  var oauth = ssGet(OAUTH_PENDING_KEY)==="1";
+  var ret = null;
+  try{ ret = JSON.parse(ssGet(AUTH_RETURN_KEY) || "null"); }catch(e){ ret = null; }
+  ssDel(OAUTH_PENDING_KEY); ssDel(AUTH_RETURN_KEY);
+  if(info.error || info.hasToken || info.type) cleanAuthUrl();
+
+  if(info.error){
+    var desc = info.errorDescription.toLowerCase();
+    var msg;
+    if(oauth){
+      msg = (info.error==="access_denied" && !/signup|not allowed|disabled/.test(desc))
+        ? "Google login was cancelled."
+        : "Google login failed. Please try again.";
+    } else if(info.errorCode==="otp_expired" || /expired|invalid/.test(desc)){
+      msg = "This email link is invalid or has expired. Please request a new one.";
+    } else {
+      msg = "We couldn't complete that sign-in. Please try again.";
+    }
+    state.authReturn = ret;
+    showAuth(oauth ? "login" : (info.type==="recovery" ? "forgot" : "login"), { skipReturn:true });
+    showAuthAlert("error", msg);
+    return;
+  }
+  if(authRecovery || info.type==="recovery"){
+    if(state.isLoggedIn) showAuth("reset", { skipReturn:true });
+    else { showAuth("forgot", { skipReturn:true }); showAuthAlert("error", "This reset link is invalid or has expired. Please request a new one."); }
+    return;
+  }
+  if(state.isLoggedIn && (oauth || info.hasToken)){
+    toast(info.type==="signup"
+      ? "Email confirmed. Welcome to Nisha Art Jewellery, "+userFirstName(authUser)+"!"
+      : "Login successful. Welcome, "+userFirstName(authUser)+"!");
+    if(ret) goToRoute(ret);
+  } else if(oauth){
+    state.authReturn = ret;
+    showAuth("login", { skipReturn:true });
+    showAuthAlert("error", "Google login failed. Please try again.");
+  }
+}
+/* browser Back from Google's page restores this page from cache */
+window.addEventListener("pageshow", function(e){
+  if(!e.persisted) return;
+  qsa('[data-action="auth-google"]').forEach(function(b){ b.disabled = false; });
+  if(ssGet(OAUTH_PENDING_KEY)==="1"){
+    ssDel(OAUTH_PENDING_KEY); ssDel(AUTH_RETURN_KEY);
+    if(!state.isLoggedIn){ showAuth("login", { skipReturn:true }); showAuthAlert("error", "Google login was cancelled."); }
+  }
+});
+
+function initAuthForms(){
+  qs("#auth-login-form").addEventListener("submit", onLoginSubmit);
+  qs("#auth-signup-form").addEventListener("submit", onSignupSubmit);
+  qs("#auth-forgot-form").addEventListener("submit", onForgotSubmit);
+  qs("#auth-reset-form").addEventListener("submit", onResetSubmit);
+  qs("#view-auth").addEventListener("input", function(e){
+    if(e.target.classList && e.target.classList.contains("is-invalid")) clearInvalidField(e.target);
+  });
 }
 
 /* ======================================================================
@@ -2706,122 +3346,18 @@ document.body.addEventListener("click", function(e){
       case "view-product": if(id) viewProduct(id); break;
       case "set-sub": state.discoverSub = actionBtn.dataset.sub || null; renderDiscover(); break;
 
+      case "account":
+        if(!state.isLoggedIn){ showAuth("login"); break; }
+        if(accountMenuOpen()) closeAccountMenu(true); else openAccountMenu();
+        break;
       case "open-login":
-        if(state.isLoggedIn){
-          (async function(){
-            await sb.auth.signOut();
-            state.isLoggedIn = false; state.userId = null; state.watchlist = [];
-            updateLoginIcon(); updateCounts(); renderCurrentView();
-            toast("You have been signed out.");
-          })();
-        } else {
-          openLoginModal(actionBtn.dataset.tab || "login");
-        }
+        if(state.isLoggedIn){ closeAllModalsAndPanels(); setTimeout(openAccountMenu, 0); break; }
+        showAuth(actionBtn.dataset.tab || "login");
         break;
-      case "close-login": closeModal("#login-modal"); break;
-      case "send-otp":
-        if(!otpSent){
-          var loginPhone = normalizePhone(qs("#login-identifier").value.trim());
-          if(!loginPhone){ toast("Enter a valid mobile number with country code."); break; }
-          (function(){
-            actionBtn.disabled = true;
-            sb.auth.signInWithOtp({ phone: loginPhone }).then(function(res){
-              actionBtn.disabled = false;
-              if(res.error){ toast(res.error.message || "Could not send OTP."); return; }
-              otpSent = true; pendingLoginPhone = loginPhone;
-              qs("#login-otp-row").style.display = "block";
-              qs("#login-primary-btn").textContent = "Verify & Sign In";
-              toast("OTP sent to "+loginPhone);
-            });
-          })();
-        } else {
-          var loginCode = qs("#login-otp").value.trim();
-          if(!loginCode){ toast("Enter the OTP sent to your phone."); break; }
-          (function(){
-            actionBtn.disabled = true;
-            sb.auth.verifyOtp({ phone: pendingLoginPhone, token: loginCode, type: "sms" }).then(async function(res){
-              actionBtn.disabled = false;
-              if(res.error){ toast(res.error.message || "Invalid OTP."); return; }
-              state.isLoggedIn = true; state.userId = res.data.user.id;
-              var wl = await sb.from("watchlist").select("product_id").eq("user_id", state.userId);
-              state.watchlist = (wl.data||[]).map(function(r){ return r.product_id; });
-              otpSent = false; pendingLoginPhone = null;
-              qs("#login-otp-row").style.display = "none";
-              qs("#login-primary-btn").textContent = "Send OTP";
-              qs("#login-otp").value = "";
-              updateLoginIcon();
-              showLoginConfirm("login");
-              renderCurrentView(); updateCounts();
-            });
-          })();
-        }
-        break;
-      case "resend-otp":
-        if(!pendingLoginPhone){ toast("Enter your mobile number first."); break; }
-        sb.auth.signInWithOtp({ phone: pendingLoginPhone }).then(function(res){
-          toast(res.error ? (res.error.message||"Could not resend OTP.") : "OTP resent.");
-        });
-        break;
-      case "submit-register":
-        if(!registerOtpSent){
-          var regPhone = normalizePhone(qs("#reg-phone").value.trim());
-          if(!regPhone){ toast("Enter a valid phone number with country code."); break; }
-          if(!qs("#reg-first-name").value.trim() || !qs("#reg-company").value.trim()){ toast("Please fill in your name and company."); break; }
-          var regEmailCheck = qs("#reg-email").value.trim();
-          if(regEmailCheck && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(regEmailCheck)){ toast("Enter a valid email address or leave it blank."); break; }
-          (function(){
-            actionBtn.disabled = true;
-            sb.auth.signInWithOtp({ phone: regPhone, options:{ shouldCreateUser: true } }).then(function(res){
-              actionBtn.disabled = false;
-              if(res.error){ toast(res.error.message || "Could not send OTP."); return; }
-              registerOtpSent = true; pendingRegisterPhone = regPhone;
-              qs("#reg-otp-row").style.display = "block";
-              qs("#register-primary-btn").textContent = "Verify & Submit";
-              toast("OTP sent to "+regPhone);
-            });
-          })();
-        } else {
-          var regCode = qs("#reg-otp").value.trim();
-          if(!regCode){ toast("Enter the OTP sent to your phone."); break; }
-          (function(){
-            actionBtn.disabled = true;
-            sb.auth.verifyOtp({ phone: pendingRegisterPhone, token: regCode, type: "sms" }).then(async function(res){
-              actionBtn.disabled = false;
-              if(res.error){ toast(res.error.message || "Invalid OTP."); return; }
-              var uid = res.data.user.id;
-              var profile = {
-                id: uid,
-                first_name: qs("#reg-first-name").value.trim(),
-                last_name: qs("#reg-last-name").value.trim(),
-                company_name: qs("#reg-company").value.trim(),
-                business_type: qs("#reg-business-type").value,
-                email: qs("#reg-email").value.trim(),
-                phone: pendingRegisterPhone,
-                whatsapp_number: qs("#reg-whatsapp").value.trim(),
-                country: qs("#reg-country").value.trim(),
-                state: qs("#reg-state").value.trim(),
-                city: qs("#reg-city").value.trim(),
-                business_details: qs("#reg-details").value.trim()
-              };
-              var up = await sb.from("profiles").upsert(profile);
-              if(up.error){ toast("Signed in, but saving business details failed. Please update your profile later."); }
-              state.isLoggedIn = true; state.userId = uid;
-              registerOtpSent = false; pendingRegisterPhone = null;
-              qs("#reg-otp-row").style.display = "none";
-              qs("#register-primary-btn").textContent = "Submit Registration";
-              updateLoginIcon();
-              showLoginConfirm("register");
-              renderCurrentView(); updateCounts();
-            });
-          })();
-        }
-        break;
-      case "resend-register-otp":
-        if(!pendingRegisterPhone){ toast("Enter your phone number first."); break; }
-        sb.auth.signInWithOtp({ phone: pendingRegisterPhone, options:{ shouldCreateUser: true } }).then(function(res){
-          toast(res.error ? (res.error.message||"Could not resend OTP.") : "OTP resent.");
-        });
-        break;
+      case "logout": logout(); break;
+      case "auth-google": signInWithGoogle(actionBtn); break;
+      case "auth-resend": resendAuthEmail(actionBtn); break;
+      case "toggle-password": togglePassword(actionBtn); break;
 
       case "open-videocall": openVideoCallModal(actionBtn.dataset.collection || ""); break;
       case "close-videocall": closeModal("#videocall-modal"); break;
@@ -2909,7 +3445,7 @@ document.body.addEventListener("click", function(e){
         break;
       case "toggle-watchlist":
         if(id){
-          if(!state.isLoggedIn){ toast("Please sign in to save items."); openLoginModal("login"); break; }
+          if(!requireAuth("Please log in to save pieces to your watch list.")) break;
           var idx = state.watchlist.indexOf(id);
           if(idx>-1){
             state.watchlist.splice(idx,1); toast("Removed from watch list.");
@@ -2948,10 +3484,10 @@ document.body.addEventListener("click", function(e){
   }
 });
 
-/* login tabs */
+/* account page: switch between login / sign up / forgot password */
 document.body.addEventListener("click", function(e){
-  var t = e.target.closest("[data-login-tab]");
-  if(t) setLoginTab(t.dataset.loginTab);
+  var t = e.target.closest("[data-auth-go]");
+  if(t) goAuthPanel(t.dataset.authGo);
 });
 
 /* search inputs */
@@ -3005,7 +3541,8 @@ async function init(){
   renderNewArrivals();
   updateCounts();
   refreshCurrencyUI();
-  updateLoginIcon();
+  updateAccountUI();
+  initAuthForms();
   initSearchInputs();
   initCurrencyInputs();
   renderHeroSparkles();
@@ -3021,12 +3558,8 @@ async function init(){
     });
   }
 
-  sb.auth.onAuthStateChange(function(event){
-    if(event === "SIGNED_OUT"){
-      state.isLoggedIn = false; state.userId = null; state.watchlist = [];
-      updateLoginIcon(); updateCounts(); renderCurrentView();
-    }
-  });
+  appReady = true;
+  handleAuthRedirect();
 }
 
 if(document.readyState==="loading"){
