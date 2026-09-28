@@ -1,0 +1,13 @@
+-- Remove the "New Arrivals" feature from the database.
+-- New Arrivals was never a category: it was only the products.is_new flag, shown as a
+-- storefront section / page and a "NEW" badge, and managed by a checkbox + filter in admin.
+-- No view, function, index or constraint uses the column, and no category or subcategory
+-- row is involved, so dropping the column touches nothing else on any product.
+--
+-- ORDER MATTERS: apply only after the index.html / admin.html that no longer read or
+-- write is_new are live on GitHub Pages (the old storefront selects is_new explicitly).
+--
+-- For the record, the 15 products flagged as new when this ran:
+-- NAJ-1001, NAJ-1004, NAJ-1103, NAJ-1201, NAJ-1205, NAJ-1303, NAJ-1401, NAJ-1501,
+-- NAJ-1602, NAJ-1701, NAJ-1802, NAJ-1902, NAJ-2101, NAJ-2401, NAJ-2701
+alter table public.products drop column if exists is_new;

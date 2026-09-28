@@ -358,7 +358,6 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .hero-mto-label::before{content:'';width:6px;height:6px;background:var(--champagne);transform:rotate(45deg);flex-shrink:0;}
 .hero-mto-title{font-family:var(--font-display);font-size:clamp(24px,2.5vw,32px);font-weight:500;line-height:1.15;letter-spacing:0.005em;color:var(--heading);}
 .hero-mto-dot{color:var(--champagne);margin:0 0.1em;}
-.hero-mto-text{font-size:15.5px;line-height:1.65;color:var(--text-body);margin-top:10px;text-wrap:balance;}
 .hero-points{list-style:none;display:flex;gap:0;margin:44px 0 0;padding:0;border-top:1px solid var(--line-strong);}
 .hero-point{
   flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:24px 20px 0;
@@ -443,7 +442,6 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .hero-actions .btn{width:100%;}
   .hero-mto{margin-top:28px;padding-left:18px;}
   .hero-mto-title{font-size:clamp(22px,6.4vw,28px);}
-  .hero-mto-text{font-size:15px;}
   .hero-points{margin-top:40px;}
   .hero-point{padding:22px 10px 0;font-size:10px;letter-spacing:0.14em;}
 }
@@ -460,7 +458,7 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:clamp(32px,4.5vw,56px);flex-wrap:wrap;}
 .section-head h2{font-size:clamp(34px,4.6vw,56px);margin:0;letter-spacing:-0.012em;}
 .section-head p{margin:8px 0 0;}
-/* home rhythm: cream hero → pearl collections → ivory arrivals → pearl about → ivory contact */
+/* home rhythm: cream hero → ivory collections → pearl about → ivory contact */
 #view-home > .section:nth-of-type(1){background:var(--surface-card);}
 #about-section{background:var(--surface-card);}
 
@@ -541,14 +539,6 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 @media(max-width:1080px){.product-grid{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:760px){.product-grid{grid-template-columns:repeat(2,1fr);gap:14px 10px;}}
 
-.carousel-row{
-  display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
-  padding:2px 20px 26px;margin:0 -20px;scroll-padding-left:20px;scrollbar-width:none;
-}
-.carousel-row::-webkit-scrollbar{display:none;}
-.carousel-row .product-card{flex:0 0 68%;scroll-snap-align:start;}
-@media(min-width:481px){.carousel-row .product-card{flex-basis:44%;}}
-
 .product-card{
   position:relative;display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--line);
   border-radius:var(--radius-s);overflow:hidden;
@@ -567,12 +557,10 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   content:'';position:absolute;inset:12px;border:1px solid rgba(250,248,243,0.75);pointer-events:none;
   opacity:0;transform:scale(1.025);transition:opacity .7s var(--ease),transform .7s var(--ease);
 }
-.card-badges{position:absolute;top:12px;left:12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;z-index:2;}
 .pill{
   display:inline-flex;align-items:center;gap:7px;font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;
   font-weight:500;line-height:1;padding:7px 10px;border-radius:0;
 }
-.pill-new{background:var(--emerald);color:var(--ivory);}
 .pill-stock-in,.pill-stock-few,.pill-stock-mto,.pill-stock-out{background:rgba(250,248,243,0.94);border:1px solid rgba(231,226,216,0.9);}
 .pill-stock-in{color:var(--forest);}
 .pill-stock-few{color:#8A6420;}
@@ -618,9 +606,7 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
   .price-lock{padding:12px 0 6px;font-size:10px;letter-spacing:0.1em;}
   .price-lock::after{display:none;}
   .price-value{font-size:21px;padding:10px 0 4px;}
-  .card-badges{top:8px;left:8px;}
   .pill{font-size:8.5px;padding:6px 8px;letter-spacing:0.14em;}
-  .carousel-row .card-foot{flex-direction:row;align-items:center;justify-content:space-between;}
 }
 
 /* Sub-category chips */
@@ -1103,9 +1089,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 .fade-up{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
 .fade-up.in{opacity:1;transform:translateY(0);}
 
-.new-arrivals-desktop{display:grid;}
-.new-arrivals-mobile{display:none;}
-@media(max-width:760px){.new-arrivals-desktop{display:none;}.new-arrivals-mobile{display:flex;}}
 @media(max-width:1000px){.header-icon-btn.mobile-only{display:flex;}}
 </style>
 </head>
@@ -1154,7 +1137,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <ul class="desktop-nav" id="desktop-nav">
         <li><button data-nav="home">Home</button></li>
         <li><button data-nav="discover">Categories</button></li>
-        <li><button data-nav="new-arrivals">New Arrivals</button></li>
         <li><button data-nav="about">About Us</button></li>
         <li><button data-nav="contact">Contact Us</button></li>
       </ul>
@@ -1213,7 +1195,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <ul class="drawer-links">
         <li><button data-nav="home" class="mnu-item">Home</button></li>
         <li><button data-nav="discover" class="mnu-item">Categories</button></li>
-        <li><button data-nav="new-arrivals" class="mnu-item">New Arrivals</button></li>
         <li><button data-nav="about" class="mnu-item">About Us</button></li>
         <li><button data-nav="contact" class="mnu-item">Contact Us</button></li>
       </ul>
@@ -1245,8 +1226,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
         </div>
         <div class="hero-mto">
           <div class="hero-mto-label">Made to Order</div>
-          <div class="hero-mto-title">Any Design <span class="hero-mto-dot">•</span> Any Product</div>
-          <div class="hero-mto-text">Get your jewellery made on request in 7–10&nbsp;days.</div>
+          <div class="hero-mto-title">Any Design <span class="hero-mto-dot">•</span> Any Colour</div>
         </div>
         <ul class="hero-points" aria-label="Business highlights">
           <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.2 3.5h11.6L22 9.2 12 21 2 9.2Z"/><path d="M2 9.2h20"/><path d="m8.6 3.5 3.4 5.7 3.4-5.7"/><path d="M7.4 9.2 12 21l4.6-11.8"/></svg><span>Manufacturer &amp; B2B Supplier</span></li>
@@ -1280,21 +1260,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
     </div>
   </div>
 
-  <!-- NEW ARRIVALS -->
-  <div class="section" id="new-arrivals-section">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">JUST IN</p>
-          <h2>New Arrivals</h2>
-        </div>
-        <button class="link-cta desktop-only" data-nav="new-arrivals">View all <svg class="icon"><use href="#i-chevron-right"/></svg></button>
-      </div>
-      <div class="product-grid new-arrivals-desktop" id="new-arrivals-desktop"></div>
-      <div class="carousel-row new-arrivals-mobile" id="new-arrivals-mobile"></div>
-    </div>
-  </div>
-
   <!-- ABOUT -->
   <div class="section" id="about-section">
     <div class="container about-grid">
@@ -1309,7 +1274,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
         <ul class="about-points">
           <li><svg class="icon"><use href="#i-check"/></svg> Consistent quality across every batch</li>
           <li><svg class="icon"><use href="#i-check"/></svg> Elegant, trend-led designs</li>
-          <li><svg class="icon"><use href="#i-check"/></svg> Explore 500+ unique jewellery designs, thoughtfully crafted for modern B2B buyers.</li>
+          <li><svg class="icon"><use href="#i-check"/></svg> Any Design • Any Colour • Made to Order</li>
           <li><svg class="icon"><use href="#i-check"/></svg> Dedicated retailer partnerships</li>
           <li><svg class="icon"><use href="#i-check"/></svg> Personal, professional service</li>
           <li><svg class="icon"><use href="#i-check"/></svg> Built for wholesale &amp; bulk business</li>
@@ -1354,7 +1319,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
           <button class="btn btn-primary" data-action="whatsapp-generic"><svg class="icon" style="width:15px;height:15px;"><use href="#i-whatsapp"/></svg> WhatsApp</button>
           <button class="btn btn-outline" data-action="call-us"><svg class="icon" style="width:15px;height:15px;"><use href="#i-phone"/></svg> Call Us</button>
           <button class="btn btn-outline" data-action="email-us"><svg class="icon" style="width:15px;height:15px;"><use href="#i-mail"/></svg> Email Us</button>
-          <button class="btn btn-outline" data-action="open-maps"><svg class="icon" style="width:15px;height:15px;"><use href="#i-map-pin"/></svg> Open in Maps</button>
         </div>
       </div>
       <div class="map-card">
@@ -1405,21 +1369,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
         <p>No pieces match this selection yet. Try another sub-category.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================ -->
-<!-- NEW ARRIVALS FULL VIEW -->
-<!-- ============================================================ -->
-<section class="view" id="view-new-arrivals" data-view="new-arrivals">
-  <div class="container page-top" style="padding-top:32px;">
-    <div class="breadcrumb">
-      <button data-nav="home">Home</button><span class="sep">/</span><span class="current">New Arrivals</span>
-    </div>
-    <div class="section-head">
-      <div><p class="eyebrow">JUST IN</p><h2>New Arrivals</h2></div>
-    </div>
-    <div class="product-grid" id="new-arrivals-full-grid"></div>
   </div>
 </section>
 
@@ -1604,7 +1553,6 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
       <ul class="footer-links">
         <li><button data-nav="home">Home</button></li>
         <li><button data-nav="discover">Categories</button></li>
-        <li><button data-nav="new-arrivals">New Arrivals</button></li>
         <li><button data-nav="about">About Us</button></li>
         <li><button data-nav="contact">Contact Us</button></li>
       </ul>
@@ -1803,7 +1751,7 @@ async function loadCategories(){
 
 async function loadProducts(){
   var res = await sb.from("products")
-    .select("id,code,name,category_id,subcategory_id,material,description,price,stock_status,stock_state,is_new,motif,tint,subcategories(name),product_images(url,sort_order,is_primary)")
+    .select("id,code,name,category_id,subcategory_id,material,description,price,stock_status,stock_state,motif,tint,subcategories(name),product_images(url,sort_order,is_primary)")
     .eq("active", true);
   var rows = res.data || [];
   PRODUCTS.length = 0;
@@ -1817,7 +1765,7 @@ async function loadProducts(){
       sub: p.subcategories ? p.subcategories.name : null,
       material: p.material, desc: p.description, price: Number(p.price),
       stock: !!p.stock_status, stockState: normalizeStockKey(p.stock_state, !!p.stock_status),
-      colors: [], badge: p.is_new ? "NEW" : "",
+      colors: [],
       motif: p.motif, tint: p.tint || TINTS[i % TINTS.length], images: imgs
     });
   });
@@ -2094,11 +2042,10 @@ function cardAvailabilityHtml(p){
   return '<div class="card-avail">' + stockPillHtml(key) + (key === "made_to_order" ? '<span class="card-avail-note">' + MTO_NOTE + '</span>' : '') + '</div>';
 }
 function productCardHtml(p){
-  var badges = p.badge==="NEW" ? '<div class="card-badges"><span class="pill pill-new">New</span></div>' : "";
   var photo = productPhoto(p, 640);
   return '' +
   '<div class="product-card">' +
-    '<div class="card-media">'+badges+imgTag(photo,p.name,640)+'<span class="media-tint"></span></div>' +
+    '<div class="card-media">'+imgTag(photo,p.name,640)+'<span class="media-tint"></span></div>' +
     '<div class="card-body">' +
       '<div class="card-name">'+esc(p.name)+'</div>' +
       '<div class="card-code">'+esc(p.code)+'</div>' +
@@ -2114,17 +2061,6 @@ function productCardHtml(p){
 function renderGrid(el, list){
   if(!el) return;
   el.innerHTML = list.map(productCardHtml).join("");
-}
-
-/* ======================================================================
-   RENDER: NEW ARRIVALS (home + full view)
-   ====================================================================== */
-function newArrivals(){ return PRODUCTS.filter(function(p){ return p.badge==="NEW"; }); }
-function renderNewArrivals(){
-  var list = newArrivals();
-  renderGrid(qs("#new-arrivals-desktop"), list);
-  renderGrid(qs("#new-arrivals-mobile"), list);
-  renderGrid(qs("#new-arrivals-full-grid"), list);
 }
 
 /* ======================================================================
@@ -2278,7 +2214,7 @@ function renderProductDetail(p, keepColorId){
     '<div class="pd-note"><svg class="icon"><use href="#i-zoom"/></svg> Tap the image to zoom in.</div>' +
   '</div>' +
   '<div class="pd-info">' +
-    '<div class="pd-eyebrow"><span class="pill pill-new" style="'+(p.badge==="NEW"?"":"display:none;")+'">New</span>' +
+    '<div class="pd-eyebrow">' +
       stockPillHtml(detailStockKey(p), "pd-stock-pill") + '</div>' +
     '<h1>'+esc(p.name)+'</h1>' +
     '<div class="pd-code">'+esc(p.code)+'</div>' +
@@ -2732,9 +2668,8 @@ function showView(name, opts){
   renderCurrentView();
 }
 function renderCurrentView(){
-  if(state.view==="home"){ renderCategoryRails(); renderNewArrivals(); }
+  if(state.view==="home"){ renderCategoryRails(); }
   else if(state.view==="discover"){ renderDiscover(); }
-  else if(state.view==="new-arrivals"){ renderNewArrivals(); }
   else if(state.view==="product"){
     var p = productById(state.currentProductId);
     if(p) renderProductDetail(p);
@@ -2791,7 +2726,6 @@ document.addEventListener("visibilitychange", function(){
 function goNav(name){
   if(name==="home") return goHome();
   if(name==="discover") return goDiscover(null,null);
-  if(name==="new-arrivals") return showView("new-arrivals");
   if(name==="watchlist") return showView("watchlist");
   if(name==="about"){ showView("home"); setTimeout(function(){ var el=qs("#about-section"); if(el) el.scrollIntoView({behavior:"smooth"}); }, 60); return; }
   if(name==="contact"){ showView("home"); setTimeout(function(){ var el=qs("#contact-section"); if(el) el.scrollIntoView({behavior:"smooth"}); }, 60); return; }
@@ -3466,7 +3400,6 @@ document.body.addEventListener("click", function(e){
         break;
       case "call-us": window.location.href = "tel:+919321245814"; break;
       case "email-us": window.location.href = "mailto:nishaartjewellery@gmail.com"; break;
-      case "open-maps": openExternal("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("Nisha Art Jewellery, Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad West, Mumbai 400064")); break;
       case "social": e.preventDefault(); toast("Social links are for demonstration only."); break;
       case "toggle-zoom": qs("#pd-gallery-main").classList.toggle("zoomed"); break;
     }
@@ -3538,7 +3471,6 @@ async function init(){
   if(early) applyGeo(early);
   resolveCurrency();
   renderCategoryRails();
-  renderNewArrivals();
   updateCounts();
   refreshCurrencyUI();
   updateAccountUI();
@@ -3602,12 +3534,12 @@ if(document.readyState==="loading"){
 
   /* Static blocks */
   [".section-head", ".about-grid > *", ".connect-grid", ".cat-rail#home-cat-rail",
-   ".carousel-row", ".list-page-head", ".empty-state"].forEach(function(sel){
+   ".list-page-head", ".empty-state"].forEach(function(sel){
     Array.prototype.forEach.call(document.querySelectorAll(sel), function(el, i){ tag(el, sel.indexOf("about-grid")>-1 ? i : 0); });
   });
 
   /* Blocks the app re-renders: stagger each new child as it appears */
-  ["#new-arrivals-desktop", "#new-arrivals-full-grid", "#discover-product-grid",
+  ["#discover-product-grid",
    "#discover-cat-rail", "#pd-root", "#watchlist-list"].forEach(function(sel){
     var host = document.querySelector(sel);
     if(!host) return;

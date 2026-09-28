@@ -341,13 +341,12 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
           <option value="made_to_order">Made to Order</option><option value="out_of_stock">Out of Stock</option>
         </select>
         <select id="product-filter-colour" aria-label="Colour"><option value="">All Colours</option></select>
-        <select id="product-filter-new" aria-label="New"><option value="">New: any</option><option value="1">New only</option><option value="0">Not new</option></select>
         <select id="product-filter-active" aria-label="Active"><option value="">Active: any</option><option value="1">Active</option><option value="0">Hidden</option></select>
         <button type="button" class="btn btn-outline btn-sm" id="product-filter-clear">Clear</button>
         <span class="spacer"></span>
       </div>
       <div class="card table-wrap"><table id="products-table"><thead><tr>
-        <th></th><th>Name</th><th>Code</th><th>Category</th><th>Sub</th><th>Price</th><th>Stock Status</th><th>Available Qty</th><th>Colours</th><th>New</th><th>Active</th><th></th>
+        <th></th><th>Name</th><th>Code</th><th>Category</th><th>Sub</th><th>Price</th><th>Stock Status</th><th>Available Qty</th><th>Colours</th><th>Active</th><th></th>
       </tr></thead><tbody></tbody></table></div>
       <div class="pager" id="products-pager"></div>
     </section>
@@ -445,7 +444,6 @@ tr.is-off td:last-child,tr.is-off td:nth-child(5){opacity:1;}
     </div>
     <div class="field"><label>Description</label><textarea rows="2" id="pf-description"></textarea></div>
     <div class="field-row">
-      <div class="checkbox-row"><input type="checkbox" id="pf-isnew"><label for="pf-isnew" style="margin:0;">Mark as NEW</label></div>
       <div class="checkbox-row"><input type="checkbox" id="pf-active" checked><label for="pf-active" style="margin:0;">Active (visible on site)</label></div>
     </div>
 
@@ -1068,10 +1066,10 @@ function stockKeyOf(p){
 
 var PRODUCTS_CACHE = [];       /* rows of the page currently shown */
 var EDITING_PRODUCT = null;    /* the product open in the edit form (fresh from the database) */
-var PQ = { page:1, size:25, search:"", cat:"", sub:"", stock:"", colour:"", isNew:"", active:"", total:0 };
+var PQ = { page:1, size:25, search:"", cat:"", sub:"", stock:"", colour:"", active:"", total:0 };
 var pReq = 0, pSearchTimer = null;
 var PRODUCT_SELECT = "*, subcategories(name), product_images(id,url,sort_order,is_primary), product_stock(*), product_colors(id,stock_status,is_active)";
-var PRODUCT_COLS = 12;
+var PRODUCT_COLS = 11;
 
 async function openProductsSection(){
   loadColourFilterOptions();
@@ -1103,10 +1101,9 @@ function readProductFilters(){
   PQ.sub = qs("#product-filter-sub").value;
   PQ.stock = qs("#product-filter-stock").value;
   PQ.colour = qs("#product-filter-colour").value;
-  PQ.isNew = qs("#product-filter-new").value;
   PQ.active = qs("#product-filter-active").value;
 }
-function productFiltersActive(){ return !!(PQ.search || PQ.cat || PQ.sub || PQ.stock || PQ.colour || PQ.isNew || PQ.active); }
+function productFiltersActive(){ return !!(PQ.search || PQ.cat || PQ.sub || PQ.stock || PQ.colour || PQ.active); }
 
 async function loadProducts(){
   var my = ++pReq;                                         /* ignore answers of superseded requests */
@@ -1127,7 +1124,6 @@ async function loadProducts(){
   if(PQ.cat)    q = q.eq("category_id", PQ.cat);
   if(PQ.sub)    q = q.eq("subcategory_id", PQ.sub);
   if(PQ.stock)  q = q.eq("stock_state", PQ.stock);
-  if(PQ.isNew !== "")  q = q.eq("is_new", PQ.isNew === "1");
   if(PQ.active !== "") q = q.eq("active", PQ.active === "1");
   if(ids) q = q.in("id", ids);
   var res = await q.order("created_at", { ascending:false }).range(from, to);
@@ -1177,7 +1173,6 @@ function renderProductsTable(){
       '<td>'+stockPill(stockKeyOf(p))+'</td>' +
       '<td>'+qtyCell+'</td>' +
       '<td>'+colorCell+'</td>' +
-      '<td>'+(p.is_new ? '<span class="pill pill-amber">NEW</span>' : '')+'</td>' +
       '<td>'+(p.active ? '<span class="pill pill-green">Active</span>' : '<span class="pill pill-grey">Hidden</span>')+'</td>' +
       '<td><button class="icon-btn" data-edit-product="'+esc(p.id)+'">Edit</button> <button class="icon-btn danger" data-delete-product="'+esc(p.id)+'">Delete</button></td>' +
     '</tr>';
@@ -1197,12 +1192,12 @@ function renderProductsPager(){
 function applyProductFilters(){ readProductFilters(); PQ.page = 1; loadProducts(); }
 qs("#product-search").addEventListener("input", function(){ clearTimeout(pSearchTimer); pSearchTimer = setTimeout(applyProductFilters, 300); });
 qs("#product-filter-cat").addEventListener("change", function(){ refreshProductFilterSubs(); applyProductFilters(); });
-["product-filter-sub","product-filter-stock","product-filter-colour","product-filter-new","product-filter-active"].forEach(function(id){
+["product-filter-sub","product-filter-stock","product-filter-colour","product-filter-active"].forEach(function(id){
   qs("#" + id).addEventListener("change", applyProductFilters);
 });
 qs("#product-filter-clear").addEventListener("click", function(){
   qs("#product-search").value = "";
-  ["product-filter-cat","product-filter-sub","product-filter-stock","product-filter-colour","product-filter-new","product-filter-active"].forEach(function(id){ qs("#" + id).value = ""; });
+  ["product-filter-cat","product-filter-sub","product-filter-stock","product-filter-colour","product-filter-active"].forEach(function(id){ qs("#" + id).value = ""; });
   refreshProductFilterSubs(); applyProductFilters();
 });
 qs("#products-pager").addEventListener("click", function(e){
@@ -1250,14 +1245,13 @@ async function openProductModal(id){
     qs("#pf-material").value = p.material || "";
     qs("#pf-price").value = p.price;
     qs("#pf-description").value = p.description || "";
-    qs("#pf-isnew").checked = !!p.is_new;
     qs("#pf-active").checked = !!p.active;
     currentProductImages = (p.product_images || []).slice().sort(function(a, b){ return (a.sort_order || 0) - (b.sort_order || 0); });
   } else {
     qs("#pf-name").value = ""; qs("#pf-code").value = ""; qs("#pf-category").value = CATS[0] ? CATS[0].id : "";
     refreshProductSubcatOptions();
     qs("#pf-material").value = ""; qs("#pf-price").value = ""; qs("#pf-description").value = "";
-    qs("#pf-isnew").checked = false; qs("#pf-active").checked = true;
+    qs("#pf-active").checked = true;
     currentProductImages = [];
   }
   initStockForm(p);
@@ -1292,7 +1286,7 @@ function validateProductForm(){
     payload: {
       name: name, code: code, category_id: category || null, subcategory_id: sub,
       material: qs("#pf-material").value.trim(), description: qs("#pf-description").value.trim(),
-      price: price, is_new: qs("#pf-isnew").checked, active: qs("#pf-active").checked
+      price: price, active: qs("#pf-active").checked
     }
   };
 }
