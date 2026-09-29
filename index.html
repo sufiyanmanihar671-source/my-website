@@ -71,7 +71,7 @@ a{color:inherit;}
   --success:#1F6B4E;
   --danger:#A23B32;
   --whatsapp:#2FA84F;
-  --footer-bg:var(--accent);
+  --footer-bg:var(--surface);        /* ivory, same as the header: the charcoal logo sits on it in both */
 
   --radius-s:2px;
   --radius-m:2px;
@@ -137,7 +137,7 @@ button{cursor:pointer;border:none;background:none;color:inherit;-webkit-tap-high
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
   outline:2px solid var(--emerald);outline-offset:3px;
 }
-footer :focus-visible{outline-color:var(--champagne-soft);}
+footer :focus-visible{outline-color:var(--accent);}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:0.001ms !important;animation-iteration-count:1 !important;animation-delay:0ms !important;transition-duration:0.001ms !important;transition-delay:0ms !important;}
 }
@@ -804,32 +804,32 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 @media(max-width:680px){.map-embed{padding-top:78%;}.map-caption{flex-direction:column;align-items:flex-start;}.map-caption .btn{width:100%;}}
 
 /* ============ FOOTER ============ */
-footer{background:var(--footer-bg);color:var(--ivory);padding:clamp(64px,8vw,100px) 0 32px;margin-top:0;position:relative;}
+footer{background:var(--footer-bg);color:var(--text);border-top:1px solid var(--line-strong);padding:clamp(64px,8vw,100px) 0 32px;margin-top:0;position:relative;}
 footer::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(240px,50%);height:1px;background:linear-gradient(90deg,transparent,var(--champagne),transparent);}
 .footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:clamp(32px,5vw,72px);}
 @media(max-width:820px){.footer-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:520px){.footer-grid{grid-template-columns:1fr;gap:38px;}}
-footer h4{color:var(--champagne-soft);font-size:10.5px;letter-spacing:0.26em;text-transform:uppercase;font-family:var(--font-body);font-weight:500;margin-bottom:24px;}
-footer .logo-mark{color:var(--ivory);}
+footer h4{color:var(--eyebrow);font-size:10.5px;letter-spacing:0.26em;text-transform:uppercase;font-family:var(--font-body);font-weight:500;margin-bottom:24px;}
+footer .logo-mark{color:var(--heading);}
 footer .logo-img{height:92px;width:auto;aspect-ratio:478/408;object-fit:contain;border-radius:0;}
 @media(max-width:520px){footer .logo-img{height:80px;}}
-footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
+footer p{color:var(--text-body);font-size:14.5px;line-height:1.7;}
 .footer-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;}
-.footer-links li{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.5;}
-.footer-links button,.footer-links a{color:rgba(250,248,243,0.72);font-size:14.5px;text-decoration:none;text-align:left;padding:2px 0;position:relative;transition:color .35s var(--ease),padding .4s var(--ease);}
-.footer-links button:hover,.footer-links a:hover{color:var(--ivory);padding-left:8px;}
+.footer-links li{color:var(--text-body);font-size:14.5px;line-height:1.5;}
+.footer-links button,.footer-links a{color:var(--text-body);font-size:14.5px;text-decoration:none;text-align:left;padding:2px 0;position:relative;transition:color .35s var(--ease),padding .4s var(--ease);}
+.footer-links button:hover,.footer-links a:hover{color:var(--accent);padding-left:8px;}
 .footer-links button::before{content:'';position:absolute;left:0;top:50%;width:0;height:1px;background:var(--champagne);transition:width .4s var(--ease);}
 .footer-links button:hover::before{width:5px;}
 .footer-social{display:flex;gap:12px;margin-top:26px;}
 .social-btn{
-  width:44px;height:44px;border-radius:50%;border:1px solid rgba(216,192,138,0.4);display:flex;align-items:center;justify-content:center;
-  font-size:10.5px;letter-spacing:0.08em;color:rgba(250,248,243,0.86);font-weight:500;text-decoration:none;
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;
+  font-size:10.5px;letter-spacing:0.08em;color:var(--text);font-weight:500;text-decoration:none;
   transition:background-color .4s var(--ease),border-color .4s var(--ease),color .4s var(--ease),transform .4s var(--ease);
 }
-.social-btn:hover{background:var(--champagne-soft);border-color:var(--champagne-soft);color:var(--charcoal);transform:translateY(-3px);}
-.footer-bottom{border-top:1px solid rgba(216,192,138,0.18);margin-top:clamp(44px,6vw,72px);padding-top:26px;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(250,248,243,0.5);text-align:center;}
-.footer-bottom a.footer-legal{color:inherit;text-decoration:underline;text-decoration-color:rgba(216,192,138,0.5);text-underline-offset:3px;}
-.footer-bottom a.footer-legal:hover{color:var(--champagne-soft);}
+.social-btn:hover{background:var(--accent);border-color:var(--accent);color:var(--ivory);transform:translateY(-3px);}
+.footer-bottom{border-top:1px solid var(--line);margin-top:clamp(44px,6vw,72px);padding-top:26px;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-body);text-align:center;}
+.footer-bottom a.footer-legal{color:inherit;text-decoration:underline;text-decoration-color:var(--champagne);text-underline-offset:3px;}
+.footer-bottom a.footer-legal:hover{color:var(--accent);}
 @media(max-width:1000px){footer{padding-bottom:calc(112px + env(safe-area-inset-bottom));}}
 
 /* ============ FLOATING BUTTONS ============ */
@@ -1554,7 +1554,7 @@ footer p{color:rgba(250,248,243,0.68);font-size:14.5px;line-height:1.7;}
 <footer>
   <div class="container footer-grid">
     <div>
-      <img class="logo-img" src="images/logo-nisha-jewels-ivory.svg" width="478" height="408" alt="Nisha Jewels" loading="lazy">
+      <img class="logo-img" src="images/logo-nisha-jewels-charcoal.svg" width="478" height="408" alt="Nisha Jewels" loading="lazy">
       <p style="margin-top:14px;max-width:32ch;">Premium artificial &amp; imitation jewellery, wholesaled to retailers and boutiques worldwide.</p>
       <div class="footer-social">
         <a href="#" class="social-btn" data-action="social" aria-label="Instagram">IG</a>
