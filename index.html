@@ -735,6 +735,16 @@ footer :focus-visible{outline-color:var(--champagne-soft);}
 .pd-spec-row{display:flex;justify-content:space-between;align-items:baseline;padding:17px 0;border-bottom:1px solid var(--line);font-size:15px;gap:20px;}
 .pd-spec-row span:first-child{color:var(--text-muted);font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;}
 .pd-spec-row span:last-child{color:var(--text);font-weight:400;text-align:right;}
+/* B2B order policy (site-wide, from store_settings): same small-caps + champagne rule language as the hero Made to Order note */
+.pd-policy{margin:-6px 0 30px;padding:18px 20px 16px 22px;background:var(--surface-alt);border-left:2px solid var(--champagne);}
+.pd-policy-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:10.5px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--emerald);}
+.pd-policy-head::before{content:'';width:6px;height:6px;background:var(--champagne);transform:rotate(45deg);flex-shrink:0;}
+.pd-policy-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:9px 0;border-bottom:1px solid var(--line-strong);}
+.pd-policy-row:last-of-type{border-bottom:none;}
+.pd-policy-row > span:first-child{font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);}
+.pd-policy-row > span:last-child{font-family:var(--font-display);font-size:21px;line-height:1.2;color:var(--heading);text-align:right;}
+.pd-policy-approx{display:block;font-family:var(--font-body);font-size:12px;color:var(--text-muted);}
+.pd-policy-note{margin:8px 0 0;max-width:none;font-size:13px;line-height:1.55;color:var(--text-body);}
 .pd-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0;}
 @media(max-width:480px){.pd-actions{grid-template-columns:1fr;}}
 .pd-actions .btn{width:100%;min-height:54px;}
@@ -1778,8 +1788,46 @@ function productPhoto(p, w){
   return photoUrl(categoryPhotoKey(p.cat), w, p.code || p.id);
 }
 
+/* ---------- site-wide B2B order policy (admin: Order Policy) ----------
+   The minimum is for the whole order (mix & match), never per product. */
+var ORDER_POLICY_KEY = "naj_order_policy";
+var ORDER_POLICY = { mov:5000, mix:true };
+function setOrderPolicy(row){
+  var mov = Number(row && row.min_order_value);
+  if(!isFinite(mov) || mov < 0) return false;
+  ORDER_POLICY = { mov:mov, mix: row.mix_and_match !== false };
+  return true;
+}
+async function loadOrderPolicy(){
+  try{
+    var res = await sb.from("store_settings").select("min_order_value,mix_and_match").eq("id", true).maybeSingle();
+    if(res.error) throw res.error;
+    if(setOrderPolicy(res.data)) safeSet(ORDER_POLICY_KEY, res.data);
+  }catch(e){
+    setOrderPolicy(safeGet(ORDER_POLICY_KEY, null));   /* offline / failed: last value we saw, else the default */
+  }
+}
+function formatOrderValue(inr){
+  try{ return new Intl.NumberFormat("en-IN", { style:"currency", currency:"INR", maximumFractionDigits: inr % 1 ? 2 : 0 }).format(inr); }
+  catch(e){ return "₹" + String(Math.round(inr)).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+}
+function orderPolicyHtml(){
+  var mov = ORDER_POLICY.mov;
+  var movText = mov > 0 ? formatOrderValue(mov) : "No minimum";
+  var approx = (mov > 0 && state.currency !== "INR") ? '<span class="pd-policy-approx">≈ '+esc(formatPrice(mov))+'</span>' : "";
+  var note = mov > 0
+    ? movText + " minimum applies to the total order value, not to individual products."
+    : "There is no minimum order value.";
+  return '<div class="pd-policy" role="note" aria-label="B2B order policy">' +
+    '<div class="pd-policy-head">B2B Order Policy</div>' +
+    '<div class="pd-policy-row"><span>Minimum Order Value</span><span>'+esc(movText)+approx+'</span></div>' +
+    '<div class="pd-policy-row"><span>Mix &amp; Match</span><span>'+(ORDER_POLICY.mix ? "Allowed" : "Not allowed")+'</span></div>' +
+    '<p class="pd-policy-note">'+esc(note)+'</p>' +
+  '</div>';
+}
+
 async function loadCatalog(){
-  await Promise.all([loadCategories(), loadCurrencies(), loadProducts()]);
+  await Promise.all([loadCategories(), loadCurrencies(), loadProducts(), loadOrderPolicy()]);
   await loadColors();
 }
 
@@ -2227,6 +2275,7 @@ function renderProductDetail(p, keepColorId){
       '<div class="pd-spec-row"><span>Product Code</span><span>'+esc(p.code)+'</span></div>' +
       '<div class="pd-spec-row"><span>Stock Status</span><span id="pd-spec-stock">'+STOCK_STATES[detailStockKey(p)].label+'</span></div>' +
     '</div>' +
+    orderPolicyHtml() +
     '<div class="pd-actions">' +
       '<button class="btn btn-primary" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon" style="width:14px;height:14px;"><use href="#i-whatsapp"/></svg> Chat With Us</button>' +
       '<button class="btn btn-outline" data-action="call-us"><svg class="icon" style="width:14px;height:14px;"><use href="#i-phone"/></svg> Call Us</button>' +
