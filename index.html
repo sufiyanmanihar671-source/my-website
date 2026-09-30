@@ -328,42 +328,48 @@ footer :focus-visible{outline-color:var(--accent);}
 #about-section,#contact-section{scroll-margin-top:calc(var(--header-h) + 12px);}
 
 /* ============ HERO — the campaign ============ */
+/* Full-bleed campaign photograph: model + jewellery on the left, dark studio space on the right.
+   The copy is real HTML text in the right half on every screen — phones included (no stacking). */
 .hero{
-  position:relative;padding:clamp(56px,6.5vw,104px) 0 clamp(64px,7vw,112px);overflow:hidden;
-  color:var(--text);
-  background:
-    radial-gradient(900px 520px at 88% 8%, rgba(200,169,107,0.18), transparent 62%),
-    linear-gradient(180deg, var(--surface-alt) 0%, var(--surface) 100%);
-  border-bottom:1px solid var(--line);
+  position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;
+  min-height:clamp(480px,40vw,680px);padding:clamp(48px,5vw,88px) 0;
+  background:#1F150C;                 /* the photograph's own dark ground */
+  color:var(--ivory);
 }
-/* faint concentric arches behind the frame */
-.hero::before,.hero::after{
-  content:'';position:absolute;pointer-events:none;border:1px solid rgba(200,169,107,0.34);
-  border-radius:999px 999px 0 0;border-bottom:none;
+.hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;}
+.hero-media img{
+  position:absolute;top:0;left:0;width:100%;height:100%;max-width:none;
+  object-fit:cover;object-position:0% 32%;          /* anchored left: the model is never cropped for the copy */
+  opacity:0;animation:heroPhotoIn 1.4s var(--ease) .1s forwards;
 }
-.hero::before{width:min(58vw,760px);height:min(78vw,1000px);right:-6%;top:-14%;}
-.hero::after{width:min(46vw,600px);height:min(64vw,820px);right:0%;top:-4%;border-color:rgba(200,169,107,0.22);}
-.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.08fr 0.92fr;gap:clamp(40px,6vw,96px);align-items:center;}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:40px;}}
-.hero .eyebrow{color:var(--eyebrow);}
+/* soft falloff behind the copy, so ivory text reads even where the lace sleeve reaches */
+.hero-media::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg, rgba(31,21,12,0) 40%, rgba(31,21,12,0.34) 56%, rgba(31,21,12,0.62) 100%);
+}
+@keyframes heroPhotoIn{from{opacity:0;}to{opacity:1;}}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);align-items:center;width:100%;}
+.hero-copy{grid-column:2;}
+.hero .eyebrow{color:var(--champagne-soft);}
 .hero-copy h1{
-  color:var(--heading);
-  font-size:clamp(42px,5.6vw,80px);line-height:1.02;font-weight:400;letter-spacing:-0.015em;
-  max-width:16ch;margin-bottom:0.42em;
+  color:var(--ivory);
+  font-size:clamp(40px,4.8vw,72px);line-height:1.04;font-weight:400;letter-spacing:-0.015em;
+  max-width:15ch;margin-bottom:0.55em;
 }
-.hero-copy h1 em{color:var(--emerald);}
-.hero-copy p{font-size:17px;line-height:1.7;max-width:46ch;margin-bottom:38px;color:var(--text-body);}
-.hero-copy p.eyebrow{font-size:11px;max-width:none;margin-bottom:26px;color:var(--eyebrow);}
+.hero-copy h1 em{color:var(--champagne-soft);}
+.hero-copy p{font-size:17px;line-height:1.7;max-width:44ch;margin-bottom:34px;color:rgba(250,245,234,0.84);}
+.hero-copy p.eyebrow{font-size:11px;max-width:none;margin-bottom:24px;color:var(--champagne-soft);}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap;}
-/* Made to Order message: a champagne rule, a small-caps label, a serif line and a quiet supporting sentence */
-.hero-mto{position:relative;margin:34px 0 0;padding:2px 0 2px 22px;border-left:2px solid var(--champagne);max-width:46ch;}
-.hero-mto-label{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--emerald);margin-bottom:10px;}
-.hero-mto-label::before{content:'';width:6px;height:6px;background:var(--champagne);transform:rotate(45deg);flex-shrink:0;}
-.hero-mto-title{font-family:var(--font-display);font-size:clamp(24px,2.5vw,32px);font-weight:500;line-height:1.15;letter-spacing:0.005em;color:var(--heading);}
-.hero-mto-dot{color:var(--champagne);margin:0 0.1em;}
-.hero-points{list-style:none;display:flex;gap:0;margin:44px 0 0;padding:0;border-top:1px solid var(--line-strong);}
+/* hero button: the site's own champagne accent with deep charcoal text (its teal primary would vanish on the dark photo);
+   hover sweeps to the site's ivory, like the other buttons' sweep */
+.hero .btn-primary{background:var(--champagne-soft);border-color:var(--champagne-soft);color:var(--charcoal);--btn-sweep:var(--ivory);}
+.hero .btn-primary:hover{color:var(--charcoal);border-color:var(--ivory);}
+
+/* Highlights strip directly under the hero: always one row of three */
+.hero-features{background:var(--surface-card);border-bottom:1px solid var(--line);}
+.hero-points{list-style:none;display:flex;gap:0;margin:0;padding:clamp(24px,3vw,38px) 0;}
 .hero-point{
-  flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:24px 20px 0;
+  flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:4px 20px;
   font-size:11px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;line-height:1.7;color:var(--heading);
 }
 .hero-point + .hero-point{border-left:1px solid var(--line);}
@@ -371,52 +377,8 @@ footer :focus-visible{outline-color:var(--accent);}
   flex-shrink:0;width:34px;height:34px;color:var(--accent);
   fill:none;stroke:currentColor;stroke-width:0.9;stroke-linecap:round;stroke-linejoin:round;
 }
-
-.hero-art{position:relative;display:flex;align-items:center;justify-content:center;}
-/* Wide jharokha arch sized to the landscape bridal-set photograph (1536x1024) so the tikka,
-   necklace, pendant, both earrings and the bangles all sit inside the arch uncropped */
-.hero-photo-frame{
-  position:relative;width:100%;max-width:560px;aspect-ratio:4/3;
-  border-radius:999px 999px 0 0;overflow:hidden;background:var(--surface-alt);
-  /* double arch: a cream mat, then a champagne hairline */
-  box-shadow:0 0 0 10px var(--pearl), 0 0 0 11px rgba(200,169,107,0.75), 0 40px 70px -34px rgba(40,34,22,0.38);
-  opacity:0;animation:heroPhotoIn 1.5s var(--ease) .25s forwards;
-}
-.hero-photo-frame img{width:100%;height:100%;object-fit:cover;object-position:70% 50%;display:block;transform-origin:50% 55%;animation:heroKen 24s ease-in-out 1.5s infinite alternate;}
-/* gentle drift only: a deeper zoom would push the earrings and bangles out of the arch */
-@keyframes heroKen{from{transform:scale(1);}to{transform:scale(1.03);}}
-@keyframes heroPhotoIn{from{opacity:0;transform:translateY(24px) scale(0.985);}to{opacity:1;transform:none;}}
-.hero-photo-glow{
-  position:absolute;left:50%;top:52%;width:130%;max-width:600px;aspect-ratio:1/1;
-  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle, rgba(216,192,138,0.20) 0%, rgba(216,192,138,0.06) 42%, transparent 68%);
-}
-.hero-shine{
-  position:absolute;inset:-60% -60%;pointer-events:none;
-  background:linear-gradient(115deg, transparent 44%, rgba(255,255,255,0.16) 49%, rgba(255,255,255,0.03) 52%, transparent 58%);
-  animation:heroShineSweep 9s ease-in-out 2.5s infinite;
-}
-@keyframes heroShineSweep{
-  0%{transform:translate(-60%,-60%);}
-  40%,100%{transform:translate(60%,60%);}
-}
-/* A few fine glints only — jewellery light, not confetti */
-.hero-sparkles{position:absolute;inset:-4%;pointer-events:none;z-index:2;}
-.spark{
-  position:absolute;border-radius:50%;
-  background:radial-gradient(circle, #fff 0%, var(--champagne-soft) 42%, rgba(216,192,138,0) 72%);
-  opacity:0;animation-name:sparkTwinkle;animation-iteration-count:infinite;animation-timing-function:ease-in-out;
-  max-width:4px;max-height:4px;
-}
-.spark:nth-child(n+8){display:none;}
-@keyframes sparkTwinkle{
-  0%,100%{opacity:0;transform:scale(0.3);}
-  50%{opacity:0.8;transform:scale(1);}
-}
 @media (prefers-reduced-motion: reduce){
-  .hero-photo-frame{opacity:1;}
-  .hero-photo-frame img,.hero-shine,.spark{animation:none;}
-  .spark{display:none;}
+  .hero-media img{opacity:1;animation:none;}
 }
 
 /* Hero entrance choreography (CSS only) */
@@ -427,26 +389,17 @@ footer :focus-visible{outline-color:var(--accent);}
 .hero-copy > *:nth-child(4){animation-delay:.48s;}
 .hero-copy > *:nth-child(5){animation-delay:.60s;}
 .hero-copy > *:nth-child(6){animation-delay:.72s;}
-.hero-copy > .hero-mto{animation-delay:.54s;}
-.hero-copy > .hero-points{animation-delay:.60s;}
 @keyframes riseIn{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
 
 @media(max-width:900px){
-  .hero{padding:28px 0 60px;}
-  .hero::before{width:120vw;height:150vw;right:-40%;top:-10%;}
-  .hero::after{display:none;}
-  /* mobile: campaign image leads, copy follows */
-  .hero-art{order:-1;padding:10px 0 0;}
-  .hero-photo-frame{width:calc(100% - 16px);max-width:500px;box-shadow:0 0 0 7px var(--pearl), 0 0 0 8px rgba(200,169,107,0.75), 0 30px 50px -28px rgba(40,34,22,0.4);}
-  .hero-photo-glow{width:150%;}
-  .hero-copy{text-align:left;}
-  .hero-copy h1{font-size:clamp(40px,11.4vw,54px);max-width:12ch;}
-  .hero-copy p{font-size:16px;margin-bottom:30px;}
-  .hero-actions .btn{width:100%;}
-  .hero-mto{margin-top:28px;padding-left:18px;}
-  .hero-mto-title{font-size:clamp(22px,6.4vw,28px);}
-  .hero-points{margin-top:40px;}
-  .hero-point{padding:22px 10px 0;font-size:10px;letter-spacing:0.14em;}
+  /* tablet & phone: still a horizontal banner — model left, copy right.
+     The photo keeps the banner's full height and slides left, so face and jewellery stay in the left column. */
+  .hero{min-height:56vw;padding:40px 0 44px;}
+  .hero-grid{grid-template-columns:44% 1fr;gap:16px;}
+  .hero-media img{width:auto;min-width:125%;transform:translateX(-10%);}
+  .hero-media::after{background:linear-gradient(90deg, rgba(31,21,12,0) 34%, rgba(31,21,12,0.5) 48%, rgba(31,21,12,0.78) 100%);}
+  .hero-copy h1{font-size:clamp(30px,5.6vw,46px);max-width:none;}
+  .hero-point{padding:4px 10px;font-size:10px;letter-spacing:0.14em;}
 }
 
 /* Neutral vignette on photographs: grounds the image, never recolours it */
@@ -522,19 +475,18 @@ footer :focus-visible{outline-color:var(--accent);}
   .section-head{margin-bottom:26px;}
   .section-head h2{font-size:30px;}
 
-  /* Phone hero: a little tighter so the category rail is reached sooner */
-  .hero{padding:20px 0 44px;}
-  .hero-grid{gap:26px;}
-  .hero-copy h1{font-size:clamp(34px,10vw,42px);}
-  .hero-copy p{font-size:15px;margin-bottom:24px;}
-  .hero-copy p.eyebrow{margin-bottom:18px;}
-  .hero-mto{margin-top:24px;}
-  .hero-mto-label{font-size:10.5px;letter-spacing:0.24em;}
-  .hero-points{flex-direction:column;margin-top:28px;}
-  .hero-point{padding:18px 0;gap:10px;font-size:11px;letter-spacing:0.18em;border-bottom:1px solid var(--line);}
-  .hero-point + .hero-point{border-left:none;}
-  .hero-point:last-child{border-bottom:none;padding-bottom:0;}
-  .hero-point-icon{width:30px;height:30px;}
+  /* Phone hero: compact horizontal banner (model left, copy right), like the campaign mock-up */
+  .hero{min-height:78vw;padding:24px 0 26px;}
+  .hero-grid{grid-template-columns:44% 1fr;gap:12px;}
+  .hero-media img{transform:translateX(-18%);}
+  .hero-copy p.eyebrow{font-size:8.5px;letter-spacing:0.22em;gap:8px;margin-bottom:10px;}
+  .hero-copy p.eyebrow::before{width:14px;}
+  .hero-copy h1{font-size:clamp(23px,7.4vw,32px);line-height:1.08;margin-bottom:0.6em;}
+  .hero-actions .btn{width:100%;min-height:38px;padding:0 10px;font-size:9.5px;letter-spacing:0.12em;}
+  /* highlights: one row of three; labels may wrap to two lines */
+  .hero-points{padding:20px 0;}
+  .hero-point{padding:2px 6px;gap:9px;font-size:9.5px;letter-spacing:0.12em;line-height:1.5;}
+  .hero-point-icon{width:26px;height:26px;}
 }
 
 /* ============ PRODUCT GRID / CARDS ============ */
@@ -1231,33 +1183,28 @@ footer p{color:var(--text-body);font-size:14.5px;line-height:1.7;}
 
   <!-- HERO -->
   <div class="hero">
+    <div class="hero-media">
+      <img src="images/hero-campaign.jpg" alt="Model wearing an American Diamond necklace with a teardrop pendant and matching drop earrings" width="1600" height="700" fetchpriority="high">
+    </div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <p class="eyebrow">B2B WHOLESALE JEWELLERY</p>
         <h1>Premium jewellery, <em>crafted</em> for your business.</h1>
-        <p>Discover elegant artificial jewellery collections designed for wholesalers, retailers and jewellery businesses — browse the catalogue, then take the conversation to WhatsApp or a video call.</p>
         <div class="hero-actions">
           <button class="btn btn-primary" data-nav="discover">Explore Categories</button>
         </div>
-        <div class="hero-mto">
-          <div class="hero-mto-label">Made to Order</div>
-          <div class="hero-mto-title">Any Design <span class="hero-mto-dot">•</span> Any Colour</div>
-        </div>
-        <ul class="hero-points" aria-label="Business highlights">
-          <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.2 3.5h11.6L22 9.2 12 21 2 9.2Z"/><path d="M2 9.2h20"/><path d="m8.6 3.5 3.4 5.7 3.4-5.7"/><path d="M7.4 9.2 12 21l4.6-11.8"/></svg><span>Manufacturer &amp; B2B Supplier</span></li>
-          <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="3.5" width="8" height="7.5" rx="0.8"/><rect x="2.5" y="13" width="8" height="7.5" rx="0.8"/><rect x="13.5" y="13" width="8" height="7.5" rx="0.8"/><path d="M8 6.5h8M2.5 16h8M13.5 16h8"/></svg><span>Bulk Orders Welcome</span></li>
-          <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="14" r="7.5"/><ellipse cx="10" cy="14" rx="3" ry="7.5"/><path d="M2.5 14h15"/><path d="M23 1 20 9.5 16.8 5.7 14.5 3Z"/><path d="M23 1 16.8 5.7"/></svg><span>Worldwide Shipping</span></li>
-        </ul>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="hero-photo-glow"></div>
-        <div class="hero-photo-frame">
-          <img src="images/hero-silver-ad-bridal-set.jpg" alt="Silver polish white American diamond bridal set: necklace, maang tikka, earrings and bangles" width="1536" height="1024" fetchpriority="high" decoding="async" onerror="this.style.visibility='hidden'">
-          <span class="media-tint"></span>
-          <span class="hero-shine"></span>
-        </div>
-        <div class="hero-sparkles" id="hero-sparkles"></div>
-      </div>
+    </div>
+  </div>
+
+  <!-- HERO HIGHLIGHTS -->
+  <div class="hero-features">
+    <div class="container">
+      <ul class="hero-points" aria-label="Business highlights">
+        <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.2 3.5h11.6L22 9.2 12 21 2 9.2Z"/><path d="M2 9.2h20"/><path d="m8.6 3.5 3.4 5.7 3.4-5.7"/><path d="M7.4 9.2 12 21l4.6-11.8"/></svg><span>Made to Order</span></li>
+        <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="3.5" width="8" height="7.5" rx="0.8"/><rect x="2.5" y="13" width="8" height="7.5" rx="0.8"/><rect x="13.5" y="13" width="8" height="7.5" rx="0.8"/><path d="M8 6.5h8M2.5 16h8M13.5 16h8"/></svg><span>Bulk Orders Welcome</span></li>
+        <li class="hero-point"><svg class="hero-point-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="14" r="7.5"/><ellipse cx="10" cy="14" rx="3" ry="7.5"/><path d="M2.5 14h15"/><path d="M23 1 20 9.5 16.8 5.7 14.5 3Z"/><path d="M23 1 16.8 5.7"/></svg><span>Worldwide Shipping</span></li>
+      </ul>
     </div>
   </div>
 
