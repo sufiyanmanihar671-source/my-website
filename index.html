@@ -430,37 +430,51 @@ footer :focus-visible{outline-color:var(--color-white);}
 .cat-section .section-head h2{color:#292724;}
 .cat-rail{
   --cat-card:#FFFDF8;--cat-border:#DDD4C5;--cat-gold:#C6A15B;--cat-text:#45413C;--cat-dark:#292724;
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(30px,3vw,44px) clamp(16px,2vw,28px);
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,2vw,28px);
   overflow:visible;padding:0;
 }
 @media(max-width:1000px){.cat-rail{grid-template-columns:repeat(3,minmax(0,1fr));}}
-@media(max-width:640px){.cat-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 16px;}}
-.cat-card{display:flex;flex-direction:column;align-items:stretch;gap:14px;width:auto;min-width:0;background:none;text-align:center;padding:0;}
-/* (class name kept from the earlier round design; the frame is now a true 1:1 square) */
-.cat-circle{
-  display:block;position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:6px;
-  background:var(--cat-card);border:1px solid var(--cat-border);
-  transition:border-color .5s var(--ease),transform .6s var(--ease);
+@media(max-width:640px){.cat-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 14px;}}
+/* Browse card (main categories and subcategories): square photo, then the name and a chevron */
+.cat-card{
+  display:flex;flex-direction:column;align-items:stretch;width:auto;min-width:0;padding:0;text-align:left;cursor:pointer;
+  background:var(--cat-card);border:1px solid var(--cat-border);border-radius:14px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(36,35,33,0.04);-webkit-tap-highlight-color:transparent;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease);
 }
-.cat-circle img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s var(--ease-soft);}
+/* (class name kept from the earlier round design; the photo frame is a true 1:1 square) */
+.cat-circle{display:block;position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--cat-card);}
+.cat-circle img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .9s var(--ease-soft);}
 .cat-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-family:var(--font-display);font-size:clamp(40px,5vw,64px);font-weight:500;color:var(--cat-dark);opacity:0.5;background:var(--cat-card);}
+.cat-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-top:1px solid var(--cat-border);}
+.cat-label{display:block;min-width:0;font-family:var(--font-display);font-size:clamp(17px,1.4vw,20px);font-weight:500;line-height:1.2;color:var(--cat-dark);letter-spacing:0.005em;overflow-wrap:anywhere;}
+.cat-arrow{width:16px;height:16px;color:var(--cat-gold);flex-shrink:0;transition:transform .35s var(--ease);}
 @media (hover:hover){
-  .cat-card:hover .cat-circle{border-color:var(--cat-gold);transform:translateY(-3px);}
+  .cat-card:hover{transform:translateY(-3px);border-color:var(--cat-gold);box-shadow:0 12px 26px -16px rgba(36,35,33,0.30);}
   .cat-card:hover .cat-circle img{transform:scale(1.04);}
-  .cat-card:hover .cat-label::after{width:28px;}
+  .cat-card:hover .cat-arrow{transform:translateX(3px);}
 }
-.cat-card.active .cat-circle{border-color:var(--cat-gold);}
-.cat-label{
-  display:block;font-family:var(--font-display);font-size:clamp(17px,1.5vw,20px);font-weight:500;line-height:1.25;
-  color:var(--cat-text);letter-spacing:0.005em;overflow-wrap:anywhere;
-}
-.cat-label::after{content:'';display:block;height:1px;width:0;background:var(--cat-gold);margin:8px auto 0;transition:width .6s var(--ease);}
-.cat-card.active .cat-label{color:var(--cat-dark);}
-.cat-card.active .cat-label::after{width:28px;}
+.cat-card:active{transform:scale(0.98);}
+.cat-card:focus-visible{outline:2px solid var(--cat-dark);outline-offset:3px;}
+.cat-card.active{border-color:var(--cat-gold);}
+/* browse header on the Categories page: back link, title, short description */
+.browse-head{margin-bottom:clamp(24px,3vw,36px);}
+.browse-back{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;padding:6px 0;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-muted);transition:color .3s var(--ease);}
+.browse-back:hover{color:var(--text);}
+.browse-back[hidden]{display:none;}
+.browse-head h2{margin-bottom:0.2em;}
+#discover-cat-desc{margin:6px 0 0;max-width:60ch;}
+#discover-cat-desc[hidden]{display:none;}
+#discover-cat-rail[hidden],#discover-product-area[hidden],#discover-empty[hidden]{display:none;}
+/* each level change fades the new cards in */
+.browse-in{animation:browseIn .4s var(--ease) both;}
+@keyframes browseIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 @media(max-width:640px){
-  /* phones: two square categories per row */
-  .cat-card{gap:11px;}
-  .cat-label{font-size:16px;}
+  /* phones: two cards per row */
+  .cat-card{border-radius:12px;}
+  .cat-foot{padding:10px 11px;gap:6px;}
+  .cat-label{font-size:15.5px;}
+  .cat-arrow{width:14px;height:14px;}
 
   .section{padding:52px 0;}
   .section-head{margin-bottom:26px;}
@@ -554,21 +568,6 @@ footer :focus-visible{outline-color:var(--color-white);}
   .pill{font-size:8.5px;padding:6px 8px;letter-spacing:0.14em;}
 }
 
-/* Sub-category chips */
-.chip-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,44px);}
-.chip{
-  padding:0 20px;min-height:42px;border:1px solid var(--line-strong);border-radius:0;font-size:11px;letter-spacing:0.16em;
-  text-transform:uppercase;font-weight:500;color:var(--text-muted);
-  transition:background-color .4s var(--ease),border-color .4s var(--ease),color .4s var(--ease);
-}
-.chip:hover{border-color:var(--emerald);color:var(--heading);}
-.chip.active{background:var(--accent);border-color:var(--accent);color:var(--text-inverse);}
-@media(max-width:640px){
-  .chip-row{flex-wrap:nowrap;overflow-x:auto;margin:0 -20px clamp(28px,4vw,44px);padding:2px 20px 6px;scrollbar-width:none;}
-  .chip-row::-webkit-scrollbar{display:none;}
-  .chip{flex:0 0 auto;}
-}
-
 .breadcrumb{display:flex;align-items:center;gap:12px;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:26px;flex-wrap:wrap;}
 .breadcrumb button{color:var(--text-muted);letter-spacing:inherit;text-transform:inherit;font-size:inherit;padding:6px 0;transition:color .3s var(--ease);}
 .breadcrumb button:hover{color:var(--accent);}
@@ -581,7 +580,7 @@ footer :focus-visible{outline-color:var(--color-white);}
 
 /* Inner-page headings */
 .page-top h2{font-size:clamp(32px,4.4vw,52px);}
-#discover-cat-title{font-size:clamp(38px,5.4vw,68px);}
+#discover-cat-title{font-size:clamp(34px,4.6vw,56px);}
 
 /* ============ PRODUCT DETAIL ============ */
 .pd-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(40px,6.5vw,104px);align-items:start;}
@@ -1303,33 +1302,19 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 <!-- ============================================================ -->
 <section class="view" id="view-discover" data-view="discover">
   <div class="container page-top" style="padding-top:32px;">
-    <div class="breadcrumb">
-      <button data-nav="home">Home</button>
-      <span class="sep">/</span>
-      <span class="current" id="discover-crumb">Categories</span>
+    <!-- Categories → Subcategories → Products (rendered by renderDiscover) -->
+    <div class="breadcrumb" id="discover-breadcrumb"></div>
+    <div class="browse-head">
+      <button type="button" class="browse-back" id="discover-back" hidden></button>
+      <h2 id="discover-cat-title">All Categories</h2>
+      <p id="discover-cat-desc" hidden></p>
     </div>
-
-    <div id="discover-top-search" style="margin-bottom:30px;max-width:420px;">
-      <div class="search-box">
-        <svg class="icon"><use href="#i-search"/></svg>
-        <input type="text" id="search-input-discover" placeholder="Search Necklace..." autocomplete="off">
-      </div>
-      <div class="search-suggest" id="search-suggest-discover"></div>
-    </div>
-
-    <div id="discover-category-list">
-      <h2 style="margin-bottom:26px;">All Categories</h2>
-      <div class="cat-rail" id="discover-cat-rail" style="flex-wrap:wrap;overflow:visible;"></div>
-    </div>
-
-    <div id="discover-product-area" style="display:none;">
-      <h2 id="discover-cat-title" style="margin-bottom:6px;"></h2>
-      <p id="discover-cat-desc" style="margin-bottom:20px;"></p>
-      <div class="chip-row" id="discover-sub-chips"></div>
+    <div class="cat-rail" id="discover-cat-rail"></div>
+    <div id="discover-product-area" hidden>
       <div class="product-grid" id="discover-product-grid"></div>
-      <div class="empty-state" id="discover-empty" style="display:none;">
+      <div class="empty-state" id="discover-empty" hidden>
         <svg class="icon"><use href="#i-search"/></svg>
-        <p>No pieces match this selection yet. Try another sub-category.</p>
+        <p>No products available in this collection yet.</p>
       </div>
     </div>
   </div>
@@ -1708,6 +1693,7 @@ async function loadCategories(){
     var mySubs = subs.filter(function(s){ return s.category_id === c.id; });
     mySubs.forEach(function(s){ SUBCAT_ID_LOOKUP[c.id+"::"+s.name] = s.id; });
     CATEGORIES.push({ id:c.id, name:c.name, motif:c.motif, desc:c.description, subs: mySubs.map(function(s){ return s.name; }),
+      subList: mySubs.map(function(s){ return { id:s.id, name:s.name }; }),
       image: /^https:\/\//i.test(c.image_url || "") ? c.image_url : null });      /* set from Admin → Categories */
   });
 }
@@ -1725,7 +1711,7 @@ async function loadProducts(){
     }).map(function(im){ return im.url; });
     PRODUCTS.push({
       id: p.id, code: p.code, name: p.name, cat: p.category_id,
-      sub: p.subcategories ? p.subcategories.name : null,
+      sub: p.subcategories ? p.subcategories.name : null, subId: p.subcategory_id || null,
       material: p.material, desc: p.description, price: Number(p.price),
       stock: !!p.stock_status, stockState: normalizeStockKey(p.stock_state, !!p.stock_status),
       colors: [],
@@ -2012,11 +1998,27 @@ function priceBlockHtml(product, size){
    ====================================================================== */
 /* The picture comes from the category's own image in Supabase (Admin → Categories). A category with no
    image shows a neutral initial instead — nothing is hard-coded here. */
-function categoryCardHtml(c, active){
-  var pic = c.image ? imgTag(c.image, c.name, 480) : '<span class="cat-ph" aria-hidden="true">'+esc(String(c.name||"").charAt(0).toUpperCase())+'</span>';
-  return '<button class="cat-card'+(active?" active":"")+'" data-action="go-category" data-cat="'+esc(c.id)+'">'+
+/* Browse card used at every level: square photo + name + chevron */
+function browseCardHtml(name, image, attrs, active){
+  var pic = image ? imgTag(image, name, 600) : '<span class="cat-ph" aria-hidden="true">'+esc(String(name||"").charAt(0).toUpperCase())+'</span>';
+  return '<button type="button" class="cat-card'+(active?" active":"")+'" '+attrs+'>'+
     '<span class="cat-circle">'+pic+'<span class="media-tint"></span></span>'+
-    '<span class="cat-label">'+esc(c.name)+'</span></button>';
+    '<span class="cat-foot"><span class="cat-label">'+esc(name)+'</span><svg class="icon cat-arrow" aria-hidden="true"><use href="#i-chevron-right"/></svg></span></button>';
+}
+function categoryCardHtml(c, active){
+  return browseCardHtml(c.name, c.image, 'data-action="go-category" data-cat="'+esc(c.id)+'"', active);
+}
+/* A subcategory's picture, from images that already exist: a real photo of one of its products,
+   else the picture its first product's card shows, else one from the category's photo set
+   (picked per subcategory, so sibling cards don't all repeat one image). */
+function subcategoryImage(c, s){
+  var prods = PRODUCTS.filter(function(p){ return p.subId===s.id; });
+  for(var i=0;i<prods.length;i++){ if(prods[i].images && prods[i].images.length) return prods[i].images[0]; }
+  if(prods.length) return productPhoto(prods[0], 600);
+  return photoUrl(categoryPhotoKey(c.id), 600, s.id);
+}
+function subcategoryCardHtml(c, s){
+  return browseCardHtml(s.name, subcategoryImage(c, s), 'data-action="go-subcategory" data-cat="'+esc(c.id)+'" data-sub="'+esc(s.id)+'"', false);
 }
 /* a category picture that fails to load (deleted file, bad address) falls back to the same neutral initial */
 document.addEventListener("error", function(e){
@@ -2030,8 +2032,6 @@ document.addEventListener("error", function(e){
 function renderCategoryRails(){
   var homeRail = qs("#home-cat-rail");
   if(homeRail) homeRail.innerHTML = CATEGORIES.map(function(c){ return categoryCardHtml(c,false); }).join("");
-  var discRail = qs("#discover-cat-rail");
-  if(discRail) discRail.innerHTML = CATEGORIES.map(function(c){ return categoryCardHtml(c, state.discoverCat===c.id); }).join("");
 }
 
 /* ======================================================================
@@ -2068,42 +2068,58 @@ function renderGrid(el, list){
    RENDER: DISCOVER (category listing + product grid)
    ====================================================================== */
 function renderDiscover(){
-  var listWrap = qs("#discover-category-list");
-  var prodWrap = qs("#discover-product-area");
-  var crumb = qs("#discover-crumb");
+  /* Categories page: CATEGORY → SUBCATEGORY → PRODUCTS (no other level) */
+  var crumb = qs("#discover-breadcrumb"), back = qs("#discover-back");
+  var title = qs("#discover-cat-title"), desc = qs("#discover-cat-desc");
+  var rail = qs("#discover-cat-rail"), prodArea = qs("#discover-product-area");
+  var c = state.discoverCat ? cat(state.discoverCat) : null;
+  if(state.discoverCat && !c){ state.discoverCat = null; state.discoverSub = null; }
+  var s = (c && state.discoverSub) ? (c.subList.filter(function(x){ return x.id===state.discoverSub; })[0] || null) : null;
+  if(c && state.discoverSub && !s) state.discoverSub = null;
+  var sep = '<span class="sep">/</span>';
+  var home = '<button data-nav="home">Home</button>' + sep;
 
-  if(!state.discoverCat){
-    listWrap.style.display = "block";
-    prodWrap.style.display = "none";
-    crumb.textContent = "Categories";
-    renderCategoryRails();
+  function show(el, on){ el.hidden = !on; }
+  function fadeIn(el){ el.classList.remove("browse-in"); void el.offsetWidth; el.classList.add("browse-in"); }
+
+  if(!c){                                                      /* 1. main categories */
+    crumb.innerHTML = home + '<span class="current">Categories</span>';
+    show(back, false);
+    title.textContent = "All Categories";
+    show(desc, false);
+    show(rail, true); show(prodArea, false);
+    rail.innerHTML = CATEGORIES.map(function(x){ return categoryCardHtml(x, false); }).join("");
+    fadeIn(rail);
     return;
   }
-  listWrap.style.display = "none";
-  prodWrap.style.display = "block";
-  var c = cat(state.discoverCat);
-  if(!c){ state.discoverCat=null; renderDiscover(); return; }
-  crumb.textContent = c.name;
-  qs("#discover-cat-title").textContent = c.name;
-  qs("#discover-cat-desc").textContent = c.desc;
-
-  var chipsHtml = '<button class="chip'+(!state.discoverSub?" active":"")+'" data-action="set-sub" data-sub="">All</button>';
-  chipsHtml += c.subs.map(function(s){
-    return '<button class="chip'+(state.discoverSub===s?" active":"")+'" data-action="set-sub" data-sub="'+esc(s)+'">'+esc(s)+'</button>';
-  }).join("");
-  qs("#discover-sub-chips").innerHTML = chipsHtml;
-
-  var base = PRODUCTS.filter(function(p){
-    if(p.cat!==c.id) return false;
-    if(state.discoverSub && p.sub!==state.discoverSub) return false;
-    return true;
-  });
-
-  var list = base;
-  var grid = qs("#discover-product-grid");
-  var empty = qs("#discover-empty");
-  if(list.length===0){ grid.style.display="none"; empty.style.display="block"; }
-  else { grid.style.display="grid"; empty.style.display="none"; renderGrid(grid, list); }
+  var catsLink = '<button data-nav="discover">Categories</button>' + sep;
+  if(!s && c.subList.length){                                  /* 2. this category's subcategories */
+    crumb.innerHTML = home + catsLink + '<span class="current">'+esc(c.name)+'</span>';
+    back.innerHTML = '<svg class="icon" style="width:14px;height:14px;transform:rotate(180deg)"><use href="#i-chevron-right"/></svg>Back to Categories';
+    back.setAttribute("data-nav", "discover"); back.removeAttribute("data-action"); back.removeAttribute("data-cat");
+    show(back, true);
+    title.textContent = c.name;
+    desc.textContent = c.desc || ""; show(desc, !!c.desc);
+    show(rail, true); show(prodArea, false);
+    rail.innerHTML = c.subList.map(function(x){ return subcategoryCardHtml(c, x); }).join("");
+    fadeIn(rail);
+    return;
+  }
+  /* 3. products of the chosen subcategory (a category without subcategories lists its products here directly) */
+  crumb.innerHTML = home + catsLink + (s ? '<button data-action="go-category" data-cat="'+esc(c.id)+'">'+esc(c.name)+'</button>' + sep + '<span class="current">'+esc(s.name)+'</span>'
+                                        : '<span class="current">'+esc(c.name)+'</span>');
+  back.innerHTML = '<svg class="icon" style="width:14px;height:14px;transform:rotate(180deg)"><use href="#i-chevron-right"/></svg>' + (s ? 'Back to '+esc(c.name) : 'Back to Categories');
+  if(s){ back.setAttribute("data-action", "go-category"); back.setAttribute("data-cat", c.id); back.removeAttribute("data-nav"); }
+  else { back.setAttribute("data-nav", "discover"); back.removeAttribute("data-action"); back.removeAttribute("data-cat"); }
+  show(back, true);
+  title.textContent = s ? c.name + " – " + s.name : c.name;
+  show(desc, false);
+  show(rail, false); show(prodArea, true);
+  var list = PRODUCTS.filter(function(p){ return p.cat===c.id && (!s || p.subId===s.id); });
+  var grid = qs("#discover-product-grid"), empty = qs("#discover-empty");
+  if(list.length===0){ grid.style.display="none"; show(empty, true); }
+  else { grid.style.display="grid"; show(empty, false); renderGrid(grid, list); }
+  fadeIn(prodArea);
 }
 
 /* ======================================================================
@@ -2315,7 +2331,7 @@ var placeholderIdx = 0;
 function cyclePlaceholders(){
   placeholderIdx = (placeholderIdx+1) % SEARCH_PHRASES.length;
   var val = SEARCH_PHRASES[placeholderIdx];
-  ["#search-input-desktop","#search-input-mobile","#search-input-discover"].forEach(function(sel){
+  ["#search-input-desktop","#search-input-mobile"].forEach(function(sel){
     var el = qs(sel);
     if(el && document.activeElement!==el) el.setAttribute("placeholder", val);
   });
@@ -2648,6 +2664,9 @@ function updateConverterResult(){
 function closeAllModalsAndPanels(){
   closeCurrencyMenu(false);
   closeAccountMenu(false);
+  /* a picked (or abandoned) search suggestion list closes when you move to another page;
+     the full-screen mobile search keeps its list, it closes with its panel */
+  qsa(".search-suggest.open").forEach(function(el){ if(el.id!=="search-suggest-mobile") el.classList.remove("open"); });
   qsa(".modal-overlay.open").forEach(function(m){ m.classList.remove("open"); });
   qs("#mobile-search-panel").classList.remove("open");
 }
@@ -3294,7 +3313,7 @@ document.body.addEventListener("click", function(e){
       case "go-home": goHome(); break;
       case "go-category": goDiscover(actionBtn.dataset.cat, null); break;
       case "view-product": if(id) viewProduct(id); break;
-      case "set-sub": state.discoverSub = actionBtn.dataset.sub || null; renderDiscover(); break;
+      case "go-subcategory": goDiscover(actionBtn.dataset.cat, actionBtn.dataset.sub); break;
 
       case "account":
         if(!state.isLoggedIn){ showAuth("login"); break; }
@@ -3443,7 +3462,6 @@ document.body.addEventListener("click", function(e){
 function initSearchInputs(){
   wireSearchInput(qs("#search-input-desktop"), qs("#search-suggest-desktop"));
   wireSearchInput(qs("#search-input-mobile"), qs("#search-suggest-mobile"));
-  wireSearchInput(qs("#search-input-discover"), qs("#search-suggest-discover"));
 }
 
 /* currency converter */
