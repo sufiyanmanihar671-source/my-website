@@ -422,57 +422,45 @@ footer :focus-visible{outline-color:var(--color-white);}
 #contact-section{background:var(--surface);}
 
 /* ============ COLLECTIONS (category rail) ============ */
+/* Categories: a square grid (home "Shop by Category" and the Categories page share this card).
+   4 columns on desktop, 3 on tablet, 2 on phones; never a sideways carousel. */
+.cat-section{background:#F7F3EA;}
+.cat-section .eyebrow{color:#C6A15B;}
+.cat-section .eyebrow::before{background:#C6A15B;}
+.cat-section .section-head h2{color:#292724;}
 .cat-rail{
-  display:flex;gap:clamp(16px,2.2vw,32px);overflow-x:auto;padding:10px 6px 30px;
-  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
-  scrollbar-width:thin;scrollbar-color:var(--champagne) transparent;
+  --cat-card:#FFFDF8;--cat-border:#DDD4C5;--cat-gold:#C6A15B;--cat-text:#45413C;--cat-dark:#292724;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(30px,3vw,44px) clamp(16px,2vw,28px);
+  overflow:visible;padding:0;
 }
-.cat-rail::-webkit-scrollbar{height:3px;}
-.cat-rail::-webkit-scrollbar-track{background:var(--line);}
-.cat-rail::-webkit-scrollbar-thumb{background:var(--champagne);border-radius:0;}
-.cat-card{
-  flex:0 0 auto;width:clamp(132px,14.5vw,184px);display:flex;flex-direction:column;align-items:stretch;gap:20px;
-  scroll-snap-align:start;background:none;text-align:center;padding:0;
-}
+@media(max-width:1000px){.cat-rail{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:640px){.cat-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 16px;}}
+.cat-card{display:flex;flex-direction:column;align-items:stretch;gap:14px;width:auto;min-width:0;background:none;text-align:center;padding:0;}
+/* (class name kept from the earlier round design; the frame is now a true 1:1 square) */
 .cat-circle{
-  display:block;position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;
-  border-radius:999px 999px 2px 2px;background:var(--surface-alt);border:1px solid var(--line);
-  outline:1px solid transparent;outline-offset:7px;
-  transition:outline-color .6s var(--ease),transform .7s var(--ease),box-shadow .7s var(--ease),border-color .5s var(--ease);
+  display:block;position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:6px;
+  background:var(--cat-card);border:1px solid var(--cat-border);
+  transition:border-color .5s var(--ease),transform .6s var(--ease);
 }
-.cat-circle img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.3s var(--ease-soft);}
-.cat-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-family:var(--font-display);font-size:clamp(40px,5vw,64px);font-weight:500;color:var(--emerald);opacity:0.55;background:linear-gradient(160deg,var(--surface-alt),var(--border));}
+.cat-circle img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s var(--ease-soft);}
+.cat-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-family:var(--font-display);font-size:clamp(40px,5vw,64px);font-weight:500;color:var(--cat-dark);opacity:0.5;background:var(--cat-card);}
 @media (hover:hover){
-  .cat-card:hover .cat-circle{outline-color:rgba(111,106,98,0.75);transform:translateY(-6px);box-shadow:var(--shadow-lift);}
-  .cat-card:hover .cat-circle img{transform:scale(1.07);}
-  .cat-card:hover .cat-label::after{width:34px;}
+  .cat-card:hover .cat-circle{border-color:var(--cat-gold);transform:translateY(-3px);}
+  .cat-card:hover .cat-circle img{transform:scale(1.04);}
+  .cat-card:hover .cat-label::after{width:28px;}
 }
-.cat-card.active .cat-circle{outline-color:var(--emerald);border-color:var(--emerald);}
+.cat-card.active .cat-circle{border-color:var(--cat-gold);}
 .cat-label{
-  display:block;font-family:var(--font-display);font-size:clamp(18px,1.6vw,21px);font-weight:500;line-height:1.2;
-  color:var(--text);letter-spacing:0.005em;
+  display:block;font-family:var(--font-display);font-size:clamp(17px,1.5vw,20px);font-weight:500;line-height:1.25;
+  color:var(--cat-text);letter-spacing:0.005em;overflow-wrap:anywhere;
 }
-.cat-label::after{content:'';display:block;height:1px;width:0;background:var(--champagne);margin:9px auto 0;transition:width .6s var(--ease);}
-.cat-card.active .cat-label{color:var(--heading);}
-.cat-card.active .cat-label::after{width:34px;}
-#discover-cat-rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:44px clamp(18px,2.4vw,36px);overflow:visible;padding:14px 10px 10px;}
-#discover-cat-rail .cat-card{width:auto;}
+.cat-label::after{content:'';display:block;height:1px;width:0;background:var(--cat-gold);margin:8px auto 0;transition:width .6s var(--ease);}
+.cat-card.active .cat-label{color:var(--cat-dark);}
+.cat-card.active .cat-label::after{width:28px;}
 @media(max-width:640px){
-  .cat-rail{gap:14px;padding:6px 4px 26px;margin:0 -20px;padding-left:20px;padding-right:20px;scroll-padding-left:20px;scrollbar-width:none;}
-  .cat-rail::-webkit-scrollbar{display:none;}
-  .cat-card{width:38vw;max-width:164px;gap:16px;}
-  .cat-circle{outline-offset:5px;}
-  .cat-label{font-size:18px;}
-  #discover-cat-rail{grid-template-columns:repeat(2,1fr);gap:34px 16px;margin:0;padding:10px 6px 0;}
-  #discover-cat-rail .cat-card{max-width:none;}
-
-  /* Home "Shop by Category": compact round thumbnails + name, swipe sideways */
-  #home-cat-rail{gap:16px;padding-top:4px;padding-bottom:18px;scroll-snap-type:x proximity;}
-  #home-cat-rail .cat-card{width:90px;max-width:none;gap:10px;}
-  #home-cat-rail .cat-circle{aspect-ratio:1/1;border-radius:50%;border:1.5px solid var(--line-strong);outline-offset:3px;}
-  #home-cat-rail .cat-label{font-family:var(--font-body);font-size:12px;font-weight:500;letter-spacing:0.02em;line-height:1.3;color:var(--text-body);}
-  #home-cat-rail .cat-label::after{display:none;}
-  #home-cat-rail .cat-card.active .cat-label{color:var(--heading);font-weight:600;}
+  /* phones: two square categories per row */
+  .cat-card{gap:11px;}
+  .cat-label{font-size:16px;}
 
   .section{padding:52px 0;}
   .section-head{margin-bottom:26px;}
@@ -824,18 +812,18 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 /* ============ MOBILE BOTTOM NAV ============ */
 .mobile-nav{
   display:none;position:fixed;left:0;right:0;bottom:0;z-index:65;
-  background:var(--surface-card);
-  border-top:1px solid var(--line-strong);padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  background:#FFFDF8;
+  border-top:1px solid #DDD4C5;padding:8px 6px calc(8px + env(safe-area-inset-bottom));
 }
 @media(max-width:1000px){.mobile-nav{display:flex;justify-content:space-around;}}
 .mnav-btn{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:50px;
-  color:var(--text-muted);font-size:10.5px;letter-spacing:0.02em;text-transform:none;font-weight:500;padding:4px 10px;position:relative;flex:1;
+  color:#292724;font-size:10.5px;letter-spacing:0.02em;text-transform:none;font-weight:500;padding:4px 10px;position:relative;flex:1 1 0;min-width:0;
   transition:color .35s var(--ease);
 }
 .mnav-btn .icon{width:21px;height:21px;stroke-width:1.4;}
-.mnav-btn::before{content:'';position:absolute;top:0;left:50%;width:22px;height:2px;background:var(--champagne);transform:translateX(-50%) scaleX(0);transition:transform .5s var(--ease);}
-.mnav-btn.active{color:var(--accent);}
+.mnav-btn::before{content:'';position:absolute;top:0;left:50%;width:22px;height:2px;background:#C6A15B;transform:translateX(-50%) scaleX(0);transition:transform .5s var(--ease);}
+.mnav-btn.active{color:#C6A15B;}
 .mnav-btn.active::before{transform:translateX(-50%) scaleX(1);}
 .mnav-count{position:absolute;top:2px;right:16%;background:var(--emerald);color:var(--ivory);font-size:9px;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
 
@@ -1099,6 +1087,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
 <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M9.9 5.2A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-2.9 3.9M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7a9.9 9.9 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><line x1="3" y1="3" x2="21" y2="21"/></symbol>
 <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9.5 20.5h-4a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1h4"/><polyline points="15.5 16.5 20 12 15.5 7.5"/><line x1="20" y1="12" x2="9" y2="12"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></symbol>
 <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/><line x1="10.5" y1="7.7" x2="10.5" y2="13.3"/><line x1="7.7" y1="10.5" x2="13.3" y2="10.5"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3.5 6.5 5.5 6.5 20.5 6.5"/><path d="M8.5 6.5V4.5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v2"/><path d="M6.5 6.5 7.3 20a1 1 0 0 0 1 1h7.4a1 1 0 0 0 1-1l0.8-13.5"/></symbol>
@@ -1222,7 +1211,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
   </div>
 
   <!-- CATEGORIES -->
-  <div class="section">
+  <div class="section cat-section">
     <div class="container">
       <div class="section-head">
         <div>
@@ -1573,7 +1562,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 <!-- ============ MOBILE BOTTOM NAV ============ -->
 <nav class="mobile-nav" aria-label="Primary mobile">
   <button class="mnav-btn" data-nav="home"><svg class="icon"><use href="#i-home"/></svg>Home</button>
-  <button class="mnav-btn" data-nav="discover"><svg class="icon"><use href="#i-compass"/></svg>Discover</button>
+  <button class="mnav-btn" data-nav="discover"><svg class="icon"><use href="#i-grid"/></svg>Categories</button>
   <button class="mnav-btn" data-nav="contact"><svg class="icon"><use href="#i-phone"/></svg>Contact Us</button>
 </nav>
 
@@ -2679,7 +2668,21 @@ function showView(name, opts){
   closeAllModalsAndPanels();
   window.scrollTo({top:0, behavior:"instant" in window ? "instant":"auto"});
   renderCurrentView();
+  syncMobileNav();
 }
+/* mobile bottom bar on the home page: "Contact Us" is active while the contact section crosses
+   the middle of the screen, "Home" otherwise (the desktop nav is left as it was) */
+var contactInView = false;
+function syncMobileNav(){
+  if(state.view!=="home") return;
+  qsa(".mnav-btn").forEach(function(b){ b.classList.toggle("active", b.dataset.nav === (contactInView ? "contact" : "home")); });
+}
+(function(){
+  var sec = qs("#contact-section");
+  if(!sec || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(function(entries){ contactInView = entries[0].isIntersecting; syncMobileNav(); },
+    { rootMargin:"-45% 0px -45% 0px" }).observe(sec);
+})();
 function renderCurrentView(){
   if(state.view==="home"){ renderCategoryRails(); }
   else if(state.view==="discover"){ renderDiscover(); }
