@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FFFFFF">
-<title>Nisha Art Jewellery — Wholesale Imitation Jewellery for Retailers</title>
+<title>Nisha Jewels — Wholesale Imitation Jewellery for Retailers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
-   NISHA ART JEWELLERY — VISUAL SYSTEM
+   NISHA JEWELS — VISUAL SYSTEM
    Warm ivory · Dark teal · Charcoal. Teal is an accent only (top rule, dividers,
    buttons, small marks). Champagne is a fine accent (hairlines, ornaments).
    Signature motif: the arch (jharokha) — hero frame and collection tiles.
@@ -414,7 +414,11 @@ footer :focus-visible{outline-color:var(--color-white);}
 .section-head p{margin:8px 0 0;}
 /* home rhythm: cream hero → ivory collections → pearl about → ivory contact */
 #view-home > .section:nth-of-type(1){background:var(--surface-card);}
-#about-section{background:var(--surface-alt);}
+/* About: its own refined palette; champagne gold only as a small accent (label, rules, ticks) */
+#about-section{
+  --about-bg:#F7F3EA;--about-dark:#292724;--about-gold:#C6A15B;--about-card:#FFFDF8;--about-border:#DDD4C5;--about-text:#45413C;
+  background:var(--about-bg);
+}
 #contact-section{background:var(--surface);}
 
 /* ============ COLLECTIONS (category rail) ============ */
@@ -712,19 +716,30 @@ footer :focus-visible{outline-color:var(--color-white);}
 }
 
 /* ============ ABOUT ============ */
-.about-grid{display:grid;grid-template-columns:0.92fr 1.08fr;gap:clamp(48px,7vw,112px);align-items:center;}
-@media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:44px;}}
-.about-art{
-  aspect-ratio:4/5;background:var(--surface-alt);border-radius:0;position:relative;
-  outline:1px solid var(--champagne);outline-offset:14px;
+.about-grid{display:grid;grid-template-columns:0.92fr 1.08fr;gap:clamp(40px,6vw,96px);align-items:center;}
+/* the photograph at its own proportions (780x900): never cropped, no overlay */
+.about-art{position:relative;background:var(--about-card);border:1px solid var(--about-border);border-radius:2px;overflow:hidden;line-height:0;}
+.about-art img{width:100%;height:auto;display:block;}
+#about-section .about-eyebrow{color:var(--about-gold);letter-spacing:0.32em;}
+#about-section .about-eyebrow::before,#about-section .about-eyebrow::after{content:'';width:clamp(32px,4vw,56px);height:1px;background:var(--about-gold);flex-shrink:0;}
+.about-grid h2{font-size:clamp(34px,4vw,54px);line-height:1.08;margin-bottom:0.55em;color:var(--about-dark);}
+.about-copy > p:not(.eyebrow){font-size:16.5px;line-height:1.75;max-width:58ch;color:var(--about-text);}
+.about-points{list-style:none;margin:32px 0 0;padding:28px 0 0;border-top:1px solid var(--about-border);display:grid;grid-template-columns:1fr 1fr;gap:18px 32px;}
+.about-points li{display:flex;gap:14px;align-items:flex-start;font-size:14.5px;line-height:1.55;color:var(--about-text);}
+.about-points .icon{width:15px;height:15px;color:var(--about-gold);margin-top:4px;flex-shrink:0;padding:0;stroke-width:2;}
+@media(max-width:900px){
+  /* tablet & phone: photo first (whole, at its own proportions), then the copy */
+  .about-grid{grid-template-columns:1fr;gap:36px;}
+  .about-art{max-width:560px;width:100%;}
 }
-.about-art img{width:100%;height:100%;object-fit:cover;display:block;}
-.about-grid h2{font-size:clamp(34px,4.2vw,54px);margin-bottom:0.5em;}
-.about-points{list-style:none;margin:34px 0 0;padding:28px 0 0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:18px 32px;}
-@media(max-width:500px){.about-points{grid-template-columns:1fr;gap:16px;}}
-.about-points li{display:flex;gap:14px;align-items:flex-start;font-size:14.5px;line-height:1.55;color:var(--text);}
-.about-points .icon{width:15px;height:15px;color:var(--emerald);margin-top:4px;flex-shrink:0;padding:0;stroke-width:2;}
-@media(max-width:900px){.about-art{max-width:460px;margin:0 14px 0 0;outline-offset:10px;width:calc(100% - 14px);}}
+@media(max-width:560px){
+  .about-br{display:none;}
+  .about-grid{gap:28px;}
+  .about-grid h2{font-size:clamp(28px,8vw,34px);}
+  .about-copy > p:not(.eyebrow){font-size:15px;line-height:1.7;}
+  .about-points{grid-template-columns:1fr;gap:14px;margin-top:26px;padding-top:22px;}
+  .about-points li{font-size:14.5px;}
+}
 
 /* ============ CONNECT ============ */
 .connect-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:0;border:1px solid var(--line);border-radius:0;overflow:hidden;box-shadow:var(--shadow-card);}
@@ -1223,21 +1238,20 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
   <!-- ABOUT -->
   <div class="section" id="about-section">
     <div class="container about-grid">
-      <div class="about-art" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1621274999488-c05dbc5a0f64?auto=format&fit=crop&w=900&q=80" alt="Antique-style jewellery pieces" loading="lazy" onerror="this.style.visibility='hidden'">
-        <span class="media-tint"></span>
+      <div class="about-art">
+        <img src="images/about-nisha-jewels.jpg" alt="NISHA JEWELS presentation box with an American Diamond necklace and matching drop earrings" width="780" height="900" loading="lazy" decoding="async">
       </div>
-      <div>
-        <p class="eyebrow">ABOUT NISHA ART JEWELLERY</p>
-        <h2>A wholesale partner built on craftsmanship &amp; trust</h2>
-        <p>For over a decade, Nisha Art Jewellery has designed and supplied artificial and imitation jewellery to retailers, boutiques and resellers across the country. Every collection is developed with wholesale buyers in mind — consistent quality, dependable stock and designs that move off retail shelves.</p>
+      <div class="about-copy">
+        <p class="eyebrow about-eyebrow">ABOUT US</p>
+        <h2>A wholesale partner built<br class="about-br"> on craftsmanship &amp; trust.</h2>
+        <p>For over a decade, Nisha Jewels has been a trusted name in the jewellery industry, offering premium-quality designs, exceptional craftsmanship, and a commitment to customer satisfaction. We specialize in modern and traditional jewellery, crafted with precision and care to bring your vision to life.</p>
         <ul class="about-points">
           <li><svg class="icon"><use href="#i-check"/></svg> Consistent quality across every batch</li>
           <li><svg class="icon"><use href="#i-check"/></svg> Elegant, trend-led designs</li>
-          <li><svg class="icon"><use href="#i-check"/></svg> Any Design • Any Colour • Made to Order</li>
+          <li><svg class="icon"><use href="#i-check"/></svg> Any Design, Any Colour – Made to Order</li>
           <li><svg class="icon"><use href="#i-check"/></svg> Dedicated retailer partnerships</li>
-          <li><svg class="icon"><use href="#i-check"/></svg> Personal, professional service</li>
-          <li><svg class="icon"><use href="#i-check"/></svg> Built for wholesale &amp; bulk business</li>
+          <li><svg class="icon"><use href="#i-check"/></svg> Personal professional service</li>
+          <li><svg class="icon"><use href="#i-check"/></svg> Bulk for wholesale &amp; trade business</li>
         </ul>
       </div>
     </div>
@@ -1260,15 +1274,15 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-phone"/></svg></div>
-            <div><b>Phone</b><span><a href="tel:+919321245814" aria-label="Call Nisha Art Jewellery at +91 93212 45814">+91 93212 45814</a></span></div>
+            <div><b>Phone</b><span><a href="tel:+919321245814" aria-label="Call Nisha Jewels at +91 93212 45814">+91 93212 45814</a></span></div>
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-whatsapp"/></svg></div>
-            <div><b>WhatsApp</b><span><a href="https://wa.me/919867808890?text=Hello%20Nisha%20Art%20Jewellery%2C%20I%E2%80%99m%20interested%20in%20your%20jewellery%20collection.%20Please%20share%20the%20B2B%20details." target="_blank" rel="noopener" aria-label="Chat with Nisha Art Jewellery on WhatsApp at +91 98678 08890">+91 98678 08890</a></span></div>
+            <div><b>WhatsApp</b><span><a href="https://wa.me/919867808890?text=Hello%20Nisha%20Jewels%2C%20I%E2%80%99m%20interested%20in%20your%20jewellery%20collection.%20Please%20share%20the%20B2B%20details." target="_blank" rel="noopener" aria-label="Chat with Nisha Jewels on WhatsApp at +91 98678 08890">+91 98678 08890</a></span></div>
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-mail"/></svg></div>
-            <div><b>Email</b><span><a href="mailto:nishaartjewellery@gmail.com" aria-label="Email Nisha Art Jewellery">nishaartjewellery@gmail.com</a></span></div>
+            <div><b>Email</b><span><a href="mailto:nishaartjewellery@gmail.com" aria-label="Email Nisha Jewels">nishaartjewellery@gmail.com</a></span></div>
           </div>
           <div class="connect-row">
             <div class="icon-circle"><svg class="icon"><use href="#i-clock"/></svg></div>
@@ -1283,11 +1297,11 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
       </div>
       <div class="map-card">
         <div class="map-embed">
-          <iframe src="https://www.google.com/maps?q=Nisha%20Art%20Jewellery%2C%20Shop%20No.%204%2C%20Chincholi%20Bandar%20Road%2C%20Morya%20Niwas%2C%20Opp.%20Kingston%20Complex%2C%20Malad%20West%2C%20Mumbai%20400064%2C%20India&output=embed" title="Map showing Nisha Art Jewellery location" aria-label="Map showing Nisha Art Jewellery at Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064, India" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+          <iframe src="https://www.google.com/maps?q=Shop%20No.%204%2C%20Chincholi%20Bandar%20Road%2C%20Morya%20Niwas%2C%20Opp.%20Kingston%20Complex%2C%20Malad%20West%2C%20Mumbai%20400064%2C%20India&output=embed" title="Map showing Nisha Jewels location" aria-label="Map showing Nisha Jewels at Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064, India" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
         </div>
         <div class="map-caption">
           <address>Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064, India</address>
-          <a class="btn btn-outline btn-sm" href="https://www.google.com/maps/dir/?api=1&destination=Nisha%20Art%20Jewellery%2C%20Shop%20No.%204%2C%20Chincholi%20Bandar%20Road%2C%20Morya%20Niwas%2C%20Opp.%20Kingston%20Complex%2C%20Malad%20West%2C%20Mumbai%20400064%2C%20India" target="_blank" rel="noopener" aria-label="Get directions to Nisha Art Jewellery on Google Maps"><svg class="icon" style="width:14px;height:14px;"><use href="#i-map-pin"/></svg> Get Directions</a>
+          <a class="btn btn-outline btn-sm" href="https://www.google.com/maps/dir/?api=1&destination=Shop%20No.%204%2C%20Chincholi%20Bandar%20Road%2C%20Morya%20Niwas%2C%20Opp.%20Kingston%20Complex%2C%20Malad%20West%2C%20Mumbai%20400064%2C%20India" target="_blank" rel="noopener" aria-label="Get directions to Nisha Jewels on Google Maps"><svg class="icon" style="width:14px;height:14px;"><use href="#i-map-pin"/></svg> Get Directions</a>
         </div>
       </div>
     </div>
@@ -1369,7 +1383,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
     <div class="container"><div class="auth-grid">
       <aside class="auth-brand">
         <p class="auth-brand-eyebrow">B2B Access</p>
-        <div class="auth-brand-name">Nisha Art <em>Jewellery</em></div>
+        <div class="auth-brand-name">Nisha <em>Jewels</em></div>
         <div class="auth-brand-tag">B2B Jewellery Manufacturer &amp; Wholesale Supplier</div>
         <ul class="auth-brand-points">
           <li>Wholesale prices across the catalogue</li>
@@ -1528,14 +1542,14 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
     <div>
       <h4>Contact</h4>
       <ul class="footer-links">
-        <li><a href="tel:+919321245814" aria-label="Call Nisha Art Jewellery">+91 93212 45814</a></li>
-        <li><a href="https://wa.me/919867808890?text=Hello%20Nisha%20Art%20Jewellery%2C%20I%E2%80%99m%20interested%20in%20your%20jewellery%20collection.%20Please%20share%20the%20B2B%20details." target="_blank" rel="noopener" aria-label="Chat with Nisha Art Jewellery on WhatsApp">+91 98678 08890 (WhatsApp)</a></li>
-        <li><a href="mailto:nishaartjewellery@gmail.com" aria-label="Email Nisha Art Jewellery">nishaartjewellery@gmail.com</a></li>
+        <li><a href="tel:+919321245814" aria-label="Call Nisha Jewels">+91 93212 45814</a></li>
+        <li><a href="https://wa.me/919867808890?text=Hello%20Nisha%20Jewels%2C%20I%E2%80%99m%20interested%20in%20your%20jewellery%20collection.%20Please%20share%20the%20B2B%20details." target="_blank" rel="noopener" aria-label="Chat with Nisha Jewels on WhatsApp">+91 98678 08890 (WhatsApp)</a></li>
+        <li><a href="mailto:nishaartjewellery@gmail.com" aria-label="Email Nisha Jewels">nishaartjewellery@gmail.com</a></li>
         <li><address style="display:inline;font-style:normal;">Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064</address></li>
       </ul>
     </div>
   </div>
-  <div class="container footer-bottom">© Nisha Art Jewellery. All Rights Reserved. · <a href="privacy.html" class="footer-legal">Privacy Policy</a></div>
+  <div class="container footer-bottom">© Nisha Jewels. All Rights Reserved. · <a href="privacy.html" class="footer-legal">Privacy Policy</a></div>
 </footer>
 
 <!-- ============ FLOATING BUTTONS ============ -->
@@ -3232,7 +3246,7 @@ function handleAuthRedirect(){
   }
   if(state.isLoggedIn && (oauth || info.hasToken)){
     toast(info.type==="signup"
-      ? "Email confirmed. Welcome to Nisha Art Jewellery, "+userFirstName(authUser)+"!"
+      ? "Email confirmed. Welcome to Nisha Jewels, "+userFirstName(authUser)+"!"
       : "Login successful. Welcome, "+userFirstName(authUser)+"!");
     if(ret) goToRoute(ret);
   } else if(oauth){
@@ -3366,12 +3380,12 @@ document.body.addEventListener("click", function(e){
         if(pp){
           /* include the chosen colour (name only — never stock numbers) */
           var wc = (pp.colors && pp.colors.length && state.currentProductId===pp.id) ? selectedColor(pp) : null;
-          openExternal(waLink("Hello Nisha Art Jewellery, I would like to enquire about "+pp.name+" ("+pp.code+")"+(wc ? ", Colour: "+wc.name : "")+"."));
+          openExternal(waLink("Hello Nisha Jewels, I would like to enquire about "+pp.name+" ("+pp.code+")"+(wc ? ", Colour: "+wc.name : "")+"."));
         }
         break;
       case "select-color": selectColor(actionBtn.dataset.color); break;
       case "whatsapp-generic":
-        openExternal(waLink("Hello Nisha Art Jewellery, I’m interested in your jewellery collection. Please share the B2B details."));
+        openExternal(waLink("Hello Nisha Jewels, I’m interested in your jewellery collection. Please share the B2B details."));
         break;
       case "request-video":
         toast("Video request sent — our team will share it shortly (demo).");
