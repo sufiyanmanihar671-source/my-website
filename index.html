@@ -616,83 +616,73 @@ footer :focus-visible{outline-color:var(--color-white);}
 .pd-save-btn.saved .icon-fill{display:block;}
 .pd-save-btn.saved .icon-line{display:none;}
 
-.pd-eyebrow{display:flex;gap:8px;align-items:center;margin-bottom:22px;flex-wrap:wrap;}
+.pd-eyebrow{display:flex;gap:8px;align-items:center;margin-bottom:18px;flex-wrap:wrap;}
 .pd-eyebrow .pill-stock-in,.pd-eyebrow .pill-stock-few,.pd-eyebrow .pill-stock-mto,.pd-eyebrow .pill-stock-out,
 .pd-color-avail .pill{background:var(--surface-card);}
 .pd-photo{transition:transform .9s var(--ease),opacity .35s var(--ease);}
-.pd-photo.is-swapping{opacity:0.0;}
 
-/* ---- colour options ---- */
-.pd-colors{padding:26px 0 28px;margin:0;border-bottom:1px solid var(--line);}
-.pd-colors-head{display:flex;align-items:baseline;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+/* ---- colour options: text pills (the colour name is the option) ---- */
+.pd-colors{padding:20px 0 22px;margin:0;border-bottom:1px solid var(--line);}
+.pd-colors-head{display:flex;align-items:baseline;gap:12px;margin:18px 0 12px;flex-wrap:wrap;}
 .pd-colors-label,.pd-avail-label{font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);}
-.pd-colors-current{font-family:var(--font-display);font-size:24px;line-height:1.1;color:var(--heading);}
-.pd-swatches{display:flex;flex-wrap:wrap;gap:6px 10px;margin:0 -4px;}
-.pd-swatch{
-  position:relative;display:flex;flex-direction:column;align-items:center;gap:9px;min-width:68px;padding:8px 6px 6px;
-  border-radius:2px;color:var(--text-muted);cursor:pointer;
-  transition:color .35s var(--ease),transform .35s var(--ease);
+.pd-color-pills{display:flex;flex-wrap:wrap;gap:8px;}
+.pd-color-pill{
+  display:inline-flex;align-items:center;justify-content:center;min-height:40px;max-width:100%;padding:8px 18px;
+  border:1px solid #CFC9BF;border-radius:999px;background:var(--color-white);color:var(--color-charcoal);
+  font-family:var(--font-body);font-size:13px;font-weight:500;line-height:1.2;letter-spacing:0.03em;text-align:center;overflow-wrap:anywhere;
+  cursor:pointer;transition:background-color .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease);
 }
-.pd-swatch-dot{
-  position:relative;display:block;width:40px;height:40px;border-radius:50%;overflow:hidden;
-  background:radial-gradient(circle at 30% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 46%), var(--swatch,#ccc);
-  box-shadow:inset 0 0 0 1px rgba(34,34,34,0.16), 0 0 0 3px var(--surface), 0 0 0 4px transparent;
-  transition:box-shadow .45s var(--ease),transform .45s var(--ease);
-}
-@media (hover:hover){
-  .pd-swatch:not(.is-unavailable):not(.is-selected):hover .pd-swatch-dot{transform:scale(1.07);box-shadow:inset 0 0 0 1px rgba(34,34,34,0.16), 0 0 0 3px var(--surface), 0 0 0 4px var(--line-strong);}
-  .pd-swatch:not(.is-unavailable):hover{color:var(--text);}
-}
-.pd-swatch.is-selected{color:var(--heading);}
-.pd-swatch.is-selected .pd-swatch-dot{box-shadow:inset 0 0 0 1px rgba(34,34,34,0.16), 0 0 0 3px var(--surface), 0 0 0 4.5px var(--emerald);}
-.pd-swatch-name{font-size:11.5px;letter-spacing:0.06em;line-height:1.25;text-align:center;max-width:84px;overflow-wrap:anywhere;}
-.pd-swatch.is-selected .pd-swatch-name{font-weight:500;}
-.pd-swatch-status{margin-top:-4px;font-size:9px;letter-spacing:0.12em;line-height:1.3;text-transform:uppercase;text-align:center;max-width:84px;color:var(--text-muted);}
-.pd-swatch-status.st-in_stock{color:var(--forest);}
-.pd-swatch-status.st-few_pieces_left{color:var(--color-warm-grey);}
-.pd-swatch-status.st-made_to_order{color:var(--emerald);}
-.pd-swatch-status.st-out_of_stock{color:var(--warm-gray);}
-.pd-swatch.is-unavailable{cursor:pointer;}
-.pd-swatch.is-unavailable .pd-swatch-dot{opacity:0.45;}
-.pd-swatch.is-unavailable .pd-swatch-name{opacity:0.6;}
-.pd-swatch.is-unavailable .pd-swatch-dot::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(to top right, transparent calc(50% - 0.75px), rgba(34,34,34,0.7) 50%, transparent calc(50% + 0.75px));
-}
-.pd-color-avail{display:flex;align-items:center;gap:14px;margin-top:18px;flex-wrap:wrap;}
+@media (hover:hover){.pd-color-pill:not(.is-selected):hover{border-color:var(--color-charcoal);}}
+.pd-color-pill:focus-visible{outline:2px solid var(--color-charcoal);outline-offset:2px;}
+.pd-color-pill.is-selected{background:var(--color-charcoal);border-color:var(--color-charcoal);color:var(--color-white);}
+/* out of stock (still selectable; the availability line below then says Out of Stock) */
+.pd-color-pill.is-unavailable{color:var(--color-warm-grey);text-decoration:line-through;text-decoration-thickness:1px;}
+.pd-color-pill.is-unavailable.is-selected{background:var(--color-warm-grey);border-color:var(--color-warm-grey);color:var(--color-white);}
+.pd-color-avail{display:flex;align-items:center;gap:12px;margin:0;flex-wrap:wrap;}
 .pd-avail-note{font-size:13px;line-height:1.45;color:var(--text-body);letter-spacing:0.01em;}
-.pd-avail-only{padding:22px 0;}
-.pd-avail-only .pd-color-avail{margin-top:0;}
-@media(max-width:480px){
-  .pd-swatch{min-width:60px;}
-  .pd-swatch-dot{width:38px;height:38px;}
-  .pd-colors-current{font-size:22px;}
-}
+.pd-avail-only{padding:18px 0;}
 .pd-info h1{font-size:clamp(38px,4.6vw,62px);line-height:1.02;letter-spacing:-0.015em;margin-bottom:14px;}
 .pd-code{font-size:11px;letter-spacing:0.24em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0;display:flex;align-items:center;gap:16px;}
 .pd-code::after{content:'';flex:0 0 44px;height:1px;background:var(--champagne);}
 .pd-price-block{
-  padding:26px 0;background:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  margin:32px 0 6px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
+  padding:0 0 22px;background:none;border-bottom:1px solid var(--line);
+  margin:24px 0 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
 }
-.pd-specs{margin:8px 0 34px;border-top:none;}
-.pd-spec-row{display:flex;justify-content:space-between;align-items:baseline;padding:17px 0;border-bottom:1px solid var(--line);font-size:15px;gap:20px;}
+.pd-login-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;max-width:100%;padding:0 22px;
+  border:1px solid var(--color-charcoal);border-radius:4px;background:var(--color-white);color:var(--color-charcoal);
+  font-family:var(--font-body);font-size:11.5px;font-weight:500;line-height:1;letter-spacing:0.16em;text-transform:uppercase;white-space:nowrap;
+  cursor:pointer;transition:background-color .35s var(--ease),color .35s var(--ease);
+}
+.pd-login-btn .icon{width:14px;height:14px;}
+@media (hover:hover){.pd-login-btn:hover{background:var(--color-charcoal);color:var(--color-white);}}
+.pd-login-btn:focus-visible{outline:2px solid var(--color-charcoal);outline-offset:2px;}
+.pd-specs{margin:0 0 24px;border-top:none;}
+.pd-spec-row{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;gap:20px;}
 .pd-spec-row span:first-child{color:var(--text-muted);font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;}
 .pd-spec-row span:last-child{color:var(--text);font-weight:400;text-align:right;}
 /* B2B order policy (site-wide, from store_settings): same small-caps + champagne rule language as the hero Made to Order note */
-.pd-policy{margin:-6px 0 30px;padding:18px 20px 16px 22px;background:var(--surface-alt);border-left:2px solid var(--champagne);}
-.pd-policy-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:10.5px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--emerald);}
+.pd-policy{margin:0 0 22px;padding:14px 18px 14px 20px;background:var(--surface-alt);border-left:2px solid var(--champagne);}
+.pd-policy-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;font-size:10.5px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--emerald);}
 .pd-policy-head::before{content:'';width:6px;height:6px;background:var(--champagne);transform:rotate(45deg);flex-shrink:0;}
-.pd-policy-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:9px 0;border-bottom:1px solid var(--line-strong);}
+.pd-policy-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:7px 0;border-bottom:1px solid var(--line-strong);}
 .pd-policy-row:last-of-type{border-bottom:none;}
 .pd-policy-row > span:first-child{font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);}
-.pd-policy-row > span:last-child{font-family:var(--font-display);font-size:21px;line-height:1.2;color:var(--heading);text-align:right;}
+.pd-policy-row > span:last-child{font-family:var(--font-display);font-size:20px;line-height:1.2;color:var(--heading);text-align:right;}
 .pd-policy-approx{display:block;font-family:var(--font-body);font-size:12px;color:var(--text-muted);}
-.pd-policy-note{margin:8px 0 0;max-width:none;font-size:13px;line-height:1.55;color:var(--text-body);}
-.pd-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0;}
-@media(max-width:480px){.pd-actions{grid-template-columns:1fr;}}
-.pd-actions .btn{width:100%;min-height:54px;}
-.pd-info > .link-cta{margin-top:28px !important;}
+.pd-policy-note{margin:6px 0 0;max-width:none;font-size:13px;line-height:1.5;color:var(--text-body);}
+.pd-actions{display:grid;grid-template-columns:1fr 1fr;margin:0;background:var(--color-charcoal);border:1px solid var(--color-charcoal);border-radius:4px;overflow:hidden;}
+.pd-action{
+  position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-width:0;min-height:54px;padding:0 12px;
+  background:var(--color-charcoal);color:var(--color-white);
+  font-family:var(--font-body);font-size:11.5px;font-weight:500;line-height:1;letter-spacing:0.16em;text-transform:uppercase;white-space:nowrap;
+  transition:background-color .35s var(--ease);
+}
+.pd-action + .pd-action::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:1px;background:rgba(255,255,255,0.32);}
+.pd-action .icon{width:15px;height:15px;}
+@media (hover:hover){.pd-action:hover{background:var(--color-charcoal-hover);}}
+.pd-action:focus-visible{outline:2px solid var(--color-white);outline-offset:-5px;}
+.pd-info > .link-cta{margin-top:20px !important;}
 .pd-note{display:flex;gap:12px;align-items:center;margin-top:26px;padding:0;background:none;font-size:12px;letter-spacing:0.04em;color:var(--text-muted);}
 .pd-note .icon{width:15px;height:15px;color:var(--champagne);flex-shrink:0;}
 @media(max-width:900px){
@@ -700,6 +690,30 @@ footer :focus-visible{outline-color:var(--color-white);}
   .pd-thumbs{margin:26px 7px 0;}
   .pd-note{margin:22px 7px 0;}
   .pd-info h1{font-size:clamp(36px,9.6vw,48px);}
+  .pd-grid{gap:26px;}
+}
+@media(max-width:560px){
+  .pd-eyebrow{margin-bottom:12px;}
+  .pd-info h1{font-size:clamp(30px,8.6vw,40px);margin-bottom:8px;}
+  .pd-price-block{margin:16px 0 0;padding:0 0 16px;}
+  .pd-login-btn{min-height:44px;padding:0 18px;font-size:11px;letter-spacing:0.14em;}
+  .pd-colors{padding:14px 0 16px;}
+  .pd-colors-head{margin:14px 0 10px;}
+  .pd-color-pill{min-height:40px;padding:8px 16px;}
+  .pd-color-avail{gap:10px;}
+  .pd-avail-only{padding:14px 0;}
+  .pd-specs{margin:0 0 16px;}
+  .pd-spec-row{padding:12px 0;font-size:14px;}
+  .pd-policy{margin:0 0 16px;padding:12px 14px 12px 16px;}
+  .pd-policy-row{padding:5px 0;}
+  .pd-policy-row > span:last-child{font-size:18px;}
+  .pd-policy-note{margin-top:4px;font-size:12.5px;}
+  .pd-action{min-height:52px;gap:8px;padding:0 8px;letter-spacing:0.12em;}
+  .pd-info > .link-cta{margin-top:16px !important;}
+}
+@media(max-width:360px){
+  .pd-action{font-size:10.5px;letter-spacing:0.07em;gap:6px;padding:0 6px;}
+  .pd-action .icon{width:14px;height:14px;}
 }
 
 /* ============ ABOUT ============ */
@@ -788,8 +802,11 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 .float-btn{
   position:fixed;z-index:70;display:flex;align-items:center;justify-content:center;
   width:56px;height:56px;border-radius:50%;box-shadow:0 14px 34px -10px rgba(36,35,33,0.55);
-  transition:transform .5s var(--ease),box-shadow .5s var(--ease);
+  transition:transform .5s var(--ease),box-shadow .5s var(--ease),opacity .25s var(--ease),visibility .25s;
 }
+/* product page: a floating button steps aside while product information passes behind it */
+.cur-select{transition:opacity .25s var(--ease),visibility .25s;}
+.float-btn.float-yield,.cur-select.float-yield{opacity:0;visibility:hidden;pointer-events:none;}
 .float-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 20px 40px -10px rgba(36,35,33,0.6);}
 .float-whatsapp{left:24px;bottom:28px;background:var(--whatsapp);color:#fff;border:1px solid rgba(221,217,209,0.55);}
 .float-whatsapp .icon{width:26px;height:26px;}
@@ -1770,15 +1787,15 @@ async function loadCatalog(){
 
 /* Colour options. Reads the storefront view, which never contains quantities.
    Any failure just means "no colour options" — products keep working. */
-var COLOR_COLUMNS = "id,product_id,color_name,color_hex,image_url,stock_status,sort_order";
+/* A colour option is its name (shown as a text pill); swatch hex values and colour photos are no longer used. */
+var COLOR_COLUMNS = "id,product_id,color_name,stock_status,sort_order";
 function colorMapFromRows(rows){
   var byProduct = {};
   (rows || []).forEach(function(c){
-    var hex = HEX_RE.test(c.color_hex||"") ? c.color_hex.toUpperCase() : null;
-    if(!hex || !c.color_name) return;
+    var name = String(c.color_name || "").trim();
+    if(!name) return;
     (byProduct[c.product_id] = byProduct[c.product_id] || []).push({
-      id: c.id, name: String(c.color_name), hex: hex,
-      image: /^https?:\/\//i.test(c.image_url||"") ? c.image_url : null,
+      id: c.id, name: name,
       status: normalizeStockKey(c.stock_status, true)
     });
   });
@@ -1928,7 +1945,6 @@ function updateCounts(){
    STOCK STATUS + COLOUR HELPERS
    The public site only ever shows one of four labels — never a quantity.
    ====================================================================== */
-var HEX_RE = /^#[0-9A-Fa-f]{6}$/;
 var STOCK_STATES = {
   in_stock:        { label:"In Stock",        cls:"pill-stock-in"  },
   few_pieces_left: { label:"Few Pieces Left", cls:"pill-stock-few" },
@@ -2125,21 +2141,15 @@ function renderDiscover(){
 /* ======================================================================
    RENDER: PRODUCT DETAIL
    ====================================================================== */
-/* Colour swatches — hex is validated on load and only ever used to paint a dot;
-   it is never printed. No quantities exist client-side to print either. */
-/* Every colour is selectable. One that is out of stock is dimmed and labelled "Out of Stock", and when it is
-   chosen the availability below says Out of Stock, so it can never be mistaken for an available one. On a
-   Made to Order product the per-colour labels are left out: every colour is Made to Order. */
-function swatchHtml(c, selectedId, p){
+/* Colour options are text pills: the name is the option. No quantities exist client-side to print.
+   Every colour is selectable. One that is out of stock is struck through, and when it is chosen the
+   availability below says Out of Stock, so it can never be mistaken for an available one. On a Made to
+   Order product every colour is Made to Order, so no per-colour status is given. */
+function colorPillHtml(c, selectedId, p){
   var on = c.id === selectedId, off = !colorAvailable(c, p), mto = isMadeToOrder(p);
-  var status = STOCK_STATES[c.status].label;
-  var label = mto ? c.name : c.name + " — " + status;
-  return '<button type="button" class="pd-swatch'+(on?" is-selected":"")+(off?" is-unavailable":"")+'" role="radio" aria-checked="'+(on?"true":"false")+'"' +
-    ' data-action="select-color" data-color="'+esc(c.id)+'" aria-label="'+esc(label)+'" title="'+esc(label)+'">' +
-      '<span class="pd-swatch-dot" style="--swatch:'+c.hex+'"></span>' +
-      '<span class="pd-swatch-name">'+esc(c.name)+'</span>' +
-      (mto ? '' : '<span class="pd-swatch-status st-'+c.status+'">'+status+'</span>') +
-    '</button>';
+  var label = mto ? c.name : c.name + " — " + STOCK_STATES[c.status].label;
+  return '<button type="button" class="pd-color-pill'+(on?" is-selected":"")+(off?" is-unavailable":"")+'" role="radio" aria-checked="'+(on?"true":"false")+'"' +
+    ' data-action="select-color" data-color="'+esc(c.id)+'" aria-label="'+esc(label)+'" title="'+esc(label)+'">'+esc(c.name)+'</button>';
 }
 function availabilityBlockHtml(p){
   var key = detailStockKey(p);
@@ -2149,9 +2159,9 @@ function availabilityBlockHtml(p){
 function colorSelectorHtml(p, initial){
   if(!(p.colors && p.colors.length)) return '<div class="pd-colors pd-avail-only" id="pd-colors">' + availabilityBlockHtml(p) + '</div>';
   return '<div class="pd-colors" id="pd-colors">' +
-    '<div class="pd-colors-head"><span class="pd-colors-label">Available Colours</span><span class="pd-colors-current" id="pd-color-current">'+(initial?esc(initial.name):"")+'</span></div>' +
-    '<div class="pd-swatches" role="radiogroup" aria-label="Colour">' + p.colors.map(function(c){ return swatchHtml(c, initial ? initial.id : null, p); }).join("") + '</div>' +
     availabilityBlockHtml(p) +
+    '<div class="pd-colors-head"><span class="pd-colors-label" id="pd-colors-label">Product Colour</span></div>' +
+    '<div class="pd-color-pills" role="radiogroup" aria-labelledby="pd-colors-label">' + p.colors.map(function(c){ return colorPillHtml(c, initial ? initial.id : null, p); }).join("") + '</div>' +
   '</div>';
 }
 /* keeps every availability element on the page in step with the selected colour */
@@ -2163,34 +2173,18 @@ function updateAvailabilityUI(p){
   var note = qs("#pd-avail-note"); if(note) note.hidden = key !== "made_to_order";
   var spec = qs("#pd-spec-stock"); if(spec) spec.textContent = s.label;
 }
-function swapProductImage(src){
-  var img = qs("#pd-gallery-main img.pd-photo");
-  if(!img || !src || img.getAttribute("src") === src) return;
-  img.classList.add("is-swapping");
-  var done = function(){ img.classList.remove("is-swapping"); };
-  img.onload = done;
-  img.onerror = function(){                       /* colour photo failed: fall back to the product photo */
-    img.onerror = function(){ img.style.visibility = "hidden"; done(); };
-    img.src = state.pdDefaultPhoto;
-  };
-  img.style.visibility = "visible";
-  img.src = src;
-  setTimeout(done, 700);
-}
 function selectColor(id){
   var p = productById(state.currentProductId);
   var c = p ? colorById(p, id) : null;
   if(!c) return;
   state.selectedColorId = c.id;
   state.colorUserPicked = true;                               /* the customer chose this one: keep it when data refreshes */
-  qsa(".pd-swatch").forEach(function(sw){
-    var on = sw.dataset.color === c.id;
-    sw.classList.toggle("is-selected", on);
-    sw.setAttribute("aria-checked", on ? "true" : "false");
+  qsa(".pd-color-pill").forEach(function(pill){
+    var on = pill.dataset.color === c.id;
+    pill.classList.toggle("is-selected", on);
+    pill.setAttribute("aria-checked", on ? "true" : "false");
   });
-  var nameEl = qs("#pd-color-current"); if(nameEl) nameEl.textContent = c.name;
   updateAvailabilityUI(p);
-  swapProductImage(c.image || state.pdDefaultPhoto);
 }
 
 
@@ -2204,15 +2198,13 @@ function renderProductDetail(p, keepColorId){
   var isSaved = state.watchlist.indexOf(p.id) > -1;
   var priceHtml = state.isLoggedIn
     ? '<div><div style="font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Wholesale Price</div><div style="font-family:var(--font-display);font-size:30px;font-weight:600;">'+formatPrice(p.price)+'</div></div>'
-    : '<button class="price-lock" style="font-size:13px;" data-action="open-login"><svg class="icon"><use href="#i-lock"/></svg> Login to See Price</button>';
+    : '<button type="button" class="pd-login-btn" data-action="open-login"><svg class="icon"><use href="#i-lock"/></svg>Login to See Price</button>';
 
   var pdPhoto = productPhoto(p, 1000);
   /* colour options: preselect the first colour that can be ordered */
   if(!keepColorId) state.colorUserPicked = false;             /* a fresh open starts from the default colour */
   var initialColor = (keepColorId && colorById(p, keepColorId)) || defaultColor(p);
   state.selectedColorId = initialColor ? initialColor.id : null;
-  state.pdDefaultPhoto = pdPhoto;
-  var mainPhoto = (initialColor && initialColor.image) ? initialColor.image : pdPhoto;
   var hasRealImages = p.images && p.images.length > 0;
   var thumbSrcs = hasRealImages ? p.images.slice(0,3) : [pdPhoto,pdPhoto,pdPhoto];
   var thumbsHtml = thumbSrcs.map(function(url, idx){
@@ -2225,7 +2217,7 @@ function renderProductDetail(p, keepColorId){
       '<button class="pd-save-btn'+(isSaved?" saved":"")+'" id="pd-save-btn" data-action="toggle-watchlist" data-id="'+p.id+'" aria-label="Save to watch list">' +
         '<svg class="icon icon-line"><use href="#i-heart"/></svg><svg class="icon icon-fill"><use href="#i-heart"/></svg>' +
       '</button>' +
-      imgTag(mainPhoto, p.name, 1000, "pd-photo") + '<span class="media-tint"></span>' +
+      imgTag(pdPhoto, p.name, 1000, "pd-photo") + '<span class="media-tint"></span>' +
     '</div>' +
     '<div class="pd-thumbs">' + thumbsHtml + '</div>' +
     '<div class="pd-note"><svg class="icon"><use href="#i-zoom"/></svg> Tap the image to zoom in.</div>' +
@@ -2243,14 +2235,42 @@ function renderProductDetail(p, keepColorId){
       '<div class="pd-spec-row"><span>Stock Status</span><span id="pd-spec-stock">'+STOCK_STATES[detailStockKey(p)].label+'</span></div>' +
     '</div>' +
     orderPolicyHtml() +
-    '<div class="pd-actions">' +
-      '<button class="btn btn-primary" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon" style="width:14px;height:14px;"><use href="#i-whatsapp"/></svg> Chat With Us</button>' +
-      '<button class="btn btn-outline" data-action="call-us"><svg class="icon" style="width:14px;height:14px;"><use href="#i-phone"/></svg> Call Us</button>' +
+    '<div class="pd-actions" role="group" aria-label="Enquire about this product">' +
+      '<button type="button" class="pd-action" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon"><use href="#i-whatsapp"/></svg>Chat With Us</button>' +
+      '<button type="button" class="pd-action" data-action="call-us"><svg class="icon"><use href="#i-phone"/></svg>Call Us</button>' +
     '</div>' +
-    '<button class="link-cta" style="margin-top:22px;" data-nav="contact"><svg class="icon"><use href="#i-phone"/></svg> Contact Us</button>' +
+    '<button class="link-cta" data-nav="contact"><svg class="icon"><use href="#i-phone"/></svg> Contact Us</button>' +
   '</div>';
   qs("#pd-root").innerHTML = html;
+  queueFloatCheck();
 }
+
+/* Product page: a floating button (WhatsApp, Video Call, currency) fades out while any block of the product
+   information (price, colours, details, B2B policy, Chat / Call bar) is behind it, and comes back as soon as
+   that block has scrolled past. Nothing changes on other pages. */
+var floatCheckQueued = false;
+function syncFloatsWithProductInfo(){
+  floatCheckQueued = false;
+  var blocks = state.view === "product" ? qsa("#pd-root .pd-info > *").map(function(el){ return el.getBoundingClientRect(); }) : [];
+  [qs(".float-whatsapp"), qs(".float-video"), qs("#cur-select")].forEach(function(f){
+    if(!f) return;
+    var hit = false;
+    if(blocks.length && !(f.id === "cur-select" && currencyMenuOpen())){
+      var b = (f.id === "cur-select" ? qs("#currency-pill") : f).getBoundingClientRect();
+      hit = b.height > 0 && blocks.some(function(r){
+        return r.height > 0 && b.left < r.right + 8 && b.right > r.left - 8 && b.top < r.bottom + 8 && b.bottom > r.top - 8;
+      });
+    }
+    f.classList.toggle("float-yield", hit);
+  });
+}
+function queueFloatCheck(){
+  if(floatCheckQueued) return;
+  floatCheckQueued = true;
+  requestAnimationFrame(syncFloatsWithProductInfo);
+}
+window.addEventListener("scroll", queueFloatCheck, { passive:true });
+window.addEventListener("resize", queueFloatCheck);
 
 /* ======================================================================
    RENDER: WATCHLIST
@@ -2688,6 +2708,7 @@ function showView(name, opts){
   window.scrollTo({top:0, behavior:"instant" in window ? "instant":"auto"});
   renderCurrentView();
   syncMobileNav();
+  queueFloatCheck();
 }
 /* mobile bottom bar on the home page: "Contact Us" is active while the contact section crosses
    the middle of the screen, "Home" otherwise (the desktop nav is left as it was) */
@@ -2730,7 +2751,7 @@ function viewProduct(id){
 var lastAvailabilityFetch = Date.now();
 function availabilitySignature(){
   return PRODUCTS.map(function(p){
-    return p.id + ":" + p.stockState + ":" + (p.colors||[]).map(function(c){ return c.id+"/"+c.status+"/"+c.name+"/"+c.hex+"/"+(c.image||""); }).join(",");
+    return p.id + ":" + p.stockState + ":" + (p.colors||[]).map(function(c){ return c.id+"/"+c.status+"/"+c.name; }).join(",");
   }).join("|");
 }
 async function refreshAvailability(onlyId){
