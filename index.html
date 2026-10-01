@@ -657,12 +657,12 @@ footer :focus-visible{outline-color:var(--color-white);}
 .pd-login-btn .icon{width:14px;height:14px;}
 @media (hover:hover){.pd-login-btn:hover{background:var(--color-charcoal);color:var(--color-white);}}
 .pd-login-btn:focus-visible{outline:2px solid var(--color-charcoal);outline-offset:2px;}
-.pd-specs{margin:0 0 24px;border-top:none;}
+.pd-specs{margin:0 0 16px;border-top:none;}
 .pd-spec-row{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;gap:20px;}
 .pd-spec-row span:first-child{color:var(--text-muted);font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;}
 .pd-spec-row span:last-child{color:var(--text);font-weight:400;text-align:right;}
 /* B2B order policy (site-wide, from store_settings): same small-caps + champagne rule language as the hero Made to Order note */
-.pd-policy{margin:0 0 16px;padding:14px 18px 14px 20px;background:var(--surface-alt);border-left:2px solid var(--champagne);}
+.pd-policy{margin:0;padding:14px 18px 14px 20px;background:var(--surface-alt);border-left:2px solid var(--champagne);}
 .pd-policy-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;font-size:10.5px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:var(--emerald);}
 .pd-policy-head::before{content:'';width:6px;height:6px;background:var(--champagne);transform:rotate(45deg);flex-shrink:0;}
 .pd-policy-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:7px 0;border-bottom:1px solid var(--line-strong);}
@@ -672,7 +672,7 @@ footer :focus-visible{outline-color:var(--color-white);}
 .pd-policy-approx{display:block;font-family:var(--font-body);font-size:12px;color:var(--text-muted);}
 .pd-policy-note{margin:6px 0 0;max-width:none;font-size:13px;line-height:1.5;color:var(--text-body);}
 /* Chat With Us + Call Us: one row of two equal buttons with a clear gap between them */
-.pd-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0;}
+.pd-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 20px;}
 .pd-action{
   position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-width:0;min-height:54px;padding:0 16px;
   background:var(--color-charcoal);color:var(--color-white);border:1px solid var(--color-charcoal);border-radius:4px;
@@ -709,13 +709,13 @@ footer :focus-visible{outline-color:var(--color-white);}
   .pd-color-pill{min-height:40px;padding:8px 16px;}
   .pd-color-avail{gap:10px;}
   .pd-avail-only{padding:14px 0;}
-  .pd-specs{margin:0 0 16px;}
+  .pd-specs{margin:0 0 14px;}
   .pd-spec-row{padding:12px 0;font-size:14px;}
-  .pd-policy{margin:0 0 12px;padding:12px 14px 12px 16px;}
+  .pd-policy{margin:0;padding:12px 14px 12px 16px;}
   .pd-policy-row{padding:5px 0;}
   .pd-policy-row > span:last-child{font-size:18px;}
   .pd-policy-note{margin-top:4px;font-size:12.5px;}
-  .pd-actions{gap:10px;}
+  .pd-actions{gap:12px;margin-bottom:16px;}
   .pd-action{min-height:52px;gap:8px;padding:0 10px;letter-spacing:0.12em;}
   .pd-info > .link-cta{margin-top:16px !important;}
 }
@@ -2242,11 +2242,11 @@ function renderProductDetail(p, keepColorId){
       '<div class="pd-spec-row"><span>Product Code</span><span>'+esc(p.code)+'</span></div>' +
       '<div class="pd-spec-row"><span>Stock Status</span><span id="pd-spec-stock">'+STOCK_STATES[detailStockKey(p)].label+'</span></div>' +
     '</div>' +
-    orderPolicyHtml() +
     '<div class="pd-actions" role="group" aria-label="Enquire about this product">' +
       '<button type="button" class="pd-action" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon"><use href="#i-whatsapp"/></svg>Chat With Us</button>' +
       '<button type="button" class="pd-action" data-action="call-us"><svg class="icon"><use href="#i-phone"/></svg>Call Us</button>' +
     '</div>' +
+    orderPolicyHtml() +
     '<button class="link-cta" data-nav="contact"><svg class="icon"><use href="#i-phone"/></svg> Contact Us</button>' +
   '</div>';
   qs("#pd-root").innerHTML = html;
