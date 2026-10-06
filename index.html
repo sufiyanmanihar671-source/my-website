@@ -442,12 +442,14 @@ footer :focus-visible{outline-color:var(--color-white);}
 /* (class name kept from the earlier round design; the photo frame is a true 1:1 square) */
 .cat-circle{display:block;position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--cat-card);}
 .cat-circle img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .9s var(--ease-soft);}
-/* No photo yet: one consistent ivory tile for every category (a fine inset frame and a serif monogram).
-   It is replaced automatically by the owner's category photo or a real product photo. */
-.cat-ph{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;height:100%;background:#F1ECE3;}
-.cat-ph::before{content:'';position:absolute;inset:10px;border:1px solid rgba(36,35,33,0.10);pointer-events:none;}
-.cat-ph-mono{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:clamp(44px,5vw,68px);line-height:1;letter-spacing:0.02em;color:#4A4640;}
-.cat-ph-rule{width:22px;height:1px;background:rgba(36,35,33,0.30);}
+/* No photo yet: one quiet ivory tile (fine inset frame + a small line diamond), used for categories,
+   subcategories and products alike. The real photo replaces it automatically once it is uploaded. */
+.cat-ph,.media-ph{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;height:100%;background:#F1ECE3;color:#9A948A;}
+.cat-ph::before,.media-ph::before{content:'';position:absolute;inset:10px;border:1px solid rgba(36,35,33,0.08);pointer-events:none;}
+.cat-ph .icon,.media-ph .icon{width:30px;height:30px;stroke-width:1;}
+.media-ph-text{font-size:9.5px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:#8F897F;}
+.list-item-media .media-ph::before{inset:5px;}
+.list-item-media .media-ph .icon{width:22px;height:22px;}
 .cat-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-top:1px solid var(--cat-border);}
 .cat-label{display:block;min-width:0;font-family:var(--font-display);font-size:clamp(17px,1.4vw,20px);font-weight:500;line-height:1.2;color:var(--cat-dark);letter-spacing:0.005em;overflow-wrap:anywhere;}
 .cat-arrow{width:16px;height:16px;color:var(--cat-accent);flex-shrink:0;transition:transform .35s var(--ease);}
@@ -479,9 +481,8 @@ footer :focus-visible{outline-color:var(--color-white);}
   /* phones: two cards per row */
   .cat-card{border-radius:8px;}
   .cat-foot{padding:10px 11px;gap:6px;}
-  .cat-ph{gap:9px;}
-  .cat-ph::before{inset:8px;}
-  .cat-ph-mono{font-size:clamp(38px,12vw,52px);}
+  .cat-ph::before,.media-ph::before{inset:8px;}
+  .cat-ph .icon,.media-ph .icon{width:26px;height:26px;}
   .cat-label{font-size:15.5px;}
   .cat-arrow{width:14px;height:14px;}
 
@@ -586,7 +587,8 @@ footer :focus-visible{outline-color:var(--color-white);}
 
 .empty-state{text-align:center;padding:clamp(56px,9vw,110px) 20px;color:var(--text-muted);}
 .empty-state p{margin-left:auto;margin-right:auto;}
-.empty-state .icon{width:44px;height:44px;margin:0 auto 20px;color:var(--champagne);stroke-width:1.2;}
+.empty-state .icon{width:36px;height:36px;margin:0 auto 16px;color:#9A948A;stroke-width:1;}
+.empty-state p{font-size:15px;color:var(--text-body);}
 
 /* Inner-page headings */
 .page-top h2{font-size:clamp(32px,4.4vw,52px);}
@@ -608,8 +610,6 @@ footer :focus-visible{outline-color:var(--color-white);}
 .pd-thumb{width:76px;height:76px;border-radius:0;border:1px solid var(--line);background:var(--surface-alt);overflow:hidden;opacity:0.62;transition:opacity .4s var(--ease),border-color .4s var(--ease);}
 .pd-thumb:hover{opacity:1;}
 .pd-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.pd-thumb img.thumb-pos-2{object-position:30% 70%;}
-.pd-thumb img.thumb-pos-3{object-position:70% 30%;}
 .pd-thumb.active{border-color:var(--emerald);opacity:1;}
 .pd-save-btn{
   position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;
@@ -626,14 +626,21 @@ footer :focus-visible{outline-color:var(--color-white);}
 .pd-save-btn.saved .icon-fill{display:block;}
 .pd-save-btn.saved .icon-line{display:none;}
 
-.pd-eyebrow{display:flex;gap:8px;align-items:center;margin-bottom:18px;flex-wrap:wrap;}
+.pd-eyebrow{display:flex;gap:8px 12px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.pd-eyebrow .pd-avail-note{font-size:12.5px;line-height:1.4;}
+.pd-eyebrow .pd-avail-note[hidden]{display:none;}
 .pd-eyebrow .pill-stock-in,.pd-eyebrow .pill-stock-few,.pd-eyebrow .pill-stock-mto,.pd-eyebrow .pill-stock-out,
 .pd-color-avail .pill{background:var(--surface-card);}
 .pd-photo{transition:transform .9s var(--ease),opacity .35s var(--ease);}
 
 /* ---- colour options: text pills (the colour name is the option) ---- */
 .pd-colors{padding:20px 0 22px;margin:0;border-bottom:1px solid var(--line);}
-.pd-colors-head{display:flex;align-items:baseline;gap:12px;margin:18px 0 12px;flex-wrap:wrap;}
+.pd-colors-head{display:flex;align-items:baseline;gap:12px;margin:0 0 12px;flex-wrap:wrap;}
+/* product description (only when the product has one) */
+.pd-desc{margin:16px 0 0;max-width:62ch;font-size:15px;line-height:1.65;color:var(--text-body);}
+/* gallery without a photo yet, and clickable thumbnails */
+.pd-gallery-main.is-empty{cursor:default;}
+.pd-thumb{cursor:pointer;padding:0;}
 .pd-colors-label,.pd-avail-label{font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);}
 .pd-color-pills{display:flex;flex-wrap:wrap;gap:8px;}
 .pd-color-pill{
@@ -715,7 +722,8 @@ footer :focus-visible{outline-color:var(--color-white);}
   .pd-price-block{margin:16px 0 0;padding:0 0 16px;}
   .pd-login-btn{min-height:44px;padding:0 18px;font-size:11px;letter-spacing:0.14em;}
   .pd-colors{padding:12px 0 14px;}
-  .pd-colors-head{margin:12px 0 10px;}
+  .pd-colors-head{margin:0 0 10px;}
+  .pd-desc{margin-top:12px;font-size:14.5px;}
   .pd-color-pill{min-height:40px;padding:8px 16px;}
   .pd-color-avail{gap:10px;}
   .pd-avail-only{padding:14px 0;}
@@ -851,8 +859,9 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 /* product page: the floating button steps aside while product information passes behind it */
 .float-btn.float-yield{opacity:0;visibility:hidden;pointer-events:none;}
 .float-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 20px 40px -10px rgba(36,35,33,0.6);}
-.float-whatsapp{right:24px;bottom:28px;background:var(--whatsapp);color:#fff;border:1px solid rgba(255,255,255,0.6);width:52px;height:52px;box-shadow:0 10px 24px -10px rgba(36,35,33,0.45);}
-.float-whatsapp .icon{width:24px;height:24px;}
+.float-whatsapp{right:24px;bottom:28px;background:#FFFFFF;color:#1E9E50;border:1px solid var(--line-strong);width:52px;height:52px;box-shadow:0 10px 26px -14px rgba(36,35,33,0.45);}
+.float-whatsapp .icon{width:25px;height:25px;stroke-width:1.7;}
+.float-whatsapp:hover{border-color:#1E9E50;}
 @media(max-width:1000px){
   .float-whatsapp{right:16px;bottom:calc(var(--mnav-h) + 14px + env(safe-area-inset-bottom));width:48px;height:48px;}
   .float-whatsapp .icon{width:23px;height:23px;}
@@ -1147,6 +1156,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 <symbol id="i-facebook" viewBox="0 0 24 24"><path d="M14.5 3.5h-1.8A3.7 3.7 0 0 0 9 7.2V10H6.8v3.3H9v7.2h3.3v-7.2h2.5l.5-3.3h-3V7.6c0-.6.4-1 1-1h1.2Z"/></symbol>
 <symbol id="i-pinterest" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M11.2 12.6 9.7 20.6"/><path d="M9.5 14.1c-.9-2.6.5-6.2 3.4-6.3 2.3-.1 3.7 1.5 3.4 3.7-.3 2.3-1.7 3.8-3.2 3.7-1-.1-1.5-.8-1.3-1.7"/></symbol>
 <symbol id="i-youtube" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="m10.2 9.3 4.4 2.7-4.4 2.7Z"/></symbol>
+<symbol id="i-diamond" viewBox="0 0 24 24"><path d="M6.2 3.5h11.6L22 9.2 12 21 2 9.2Z"/><path d="M2 9.2h20"/><path d="m8.6 3.5 3.4 5.7 3.4-5.7"/><path d="M7.4 9.2 12 21l4.6-11.8"/></symbol>
 <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4" ry="9.5"/><line x1="2.5" y1="12" x2="21.5" y2="12"/></symbol>
 <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.4 7-11.5A7 7 0 0 0 5 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></symbol>
 <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6 3h3l1.5 4.5-2 1.7a12 12 0 0 0 6.3 6.3l1.7-2L21 15v3a2 2 0 0 1-2 2C10.5 20 4 13.5 4 5a2 2 0 0 1 2-2z"/></symbol>
@@ -1398,7 +1408,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
     <div id="discover-product-area" hidden>
       <div class="product-grid" id="discover-product-grid"></div>
       <div class="empty-state" id="discover-empty" hidden>
-        <svg class="icon"><use href="#i-search"/></svg>
+        <svg class="icon"><use href="#i-diamond"/></svg>
         <p>No products available in this collection yet.</p>
       </div>
     </div>
@@ -1487,7 +1497,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
           <form id="auth-signup-form" novalidate>
             <div class="field">
               <label for="auth-signup-name">Full Name</label>
-              <input type="text" id="auth-signup-name" autocomplete="name" placeholder="Priya Shah" maxlength="80" required>
+              <input type="text" id="auth-signup-name" autocomplete="name" placeholder="Your full name" maxlength="80" required>
             </div>
             <div class="field">
               <label for="auth-signup-email">Email</label>
@@ -1613,7 +1623,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 
 <!-- ============ FLOATING BUTTONS ============ -->
 <button class="float-btn float-whatsapp" data-action="whatsapp-generic" aria-label="Chat on WhatsApp">
-  <svg class="icon" style="stroke:none;fill:currentColor;"><use href="#i-whatsapp"/></svg>
+  <svg class="icon"><use href="#i-whatsapp"/></svg>
 </button>
 <!-- currency list: opened from the header control (desktop) or the menu (phones); not a floating button -->
 <div class="cur-select" id="cur-select">
@@ -1643,8 +1653,8 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
       <div id="videocall-form-pane">
         <p style="font-size:12.5px;margin-bottom:20px;">Tell us a little about your business and preferred time — our team will confirm on WhatsApp or email.</p>
         <div class="field-row">
-          <div class="field"><label>Full Name</label><input type="text" id="vc-name" placeholder="Priya Shah"></div>
-          <div class="field"><label>Business Name</label><input type="text" id="vc-business" placeholder="Shah Jewellers Pvt. Ltd."></div>
+          <div class="field"><label>Full Name</label><input type="text" id="vc-name" placeholder="Your full name"></div>
+          <div class="field"><label>Business Name</label><input type="text" id="vc-business" placeholder="Your business name"></div>
         </div>
         <div class="field-row">
           <div class="field"><label>WhatsApp Number</label><input type="tel" id="vc-whatsapp" placeholder="+91 98765 43210"></div>
@@ -1796,24 +1806,32 @@ async function loadProducts(){
   });
 }
 
-function productPhoto(p, w){
-  if(p.images && p.images.length) return p.images[0];
-  return photoUrl(categoryPhotoKey(p.cat), w, p.code || p.id);
+/* a product's own photo, or null (then a neutral placeholder is shown — never a borrowed stock photo) */
+function productPhoto(p){
+  var imgs = realImages(p);
+  return imgs.length ? imgs[0] : null;
+}
+function realImages(p){ return (p.images || []).filter(function(u){ return u && !isStockPhoto(u); }); }
+function mediaPlaceholderHtml(withText){
+  return '<span class="media-ph" aria-hidden="true"><svg class="icon"><use href="#i-diamond"/></svg>' +
+    (withText ? '<span class="media-ph-text">Image coming soon</span>' : '') + '</span>';
 }
 
 /* ---------- site-wide B2B order policy (admin: Order Policy) ----------
    The minimum is for the whole order (mix & match), never per product. */
 var ORDER_POLICY_KEY = "naj_order_policy";
-var ORDER_POLICY = { mov:5000, mix:true };
+var ORDER_POLICY = { mov:5000, mix:true, moq:null };
 function setOrderPolicy(row){
   var mov = Number(row && row.min_order_value);
   if(!isFinite(mov) || mov < 0) return false;
-  ORDER_POLICY = { mov:mov, mix: row.mix_and_match !== false };
+  var moq = Number(row.min_order_qty);
+  ORDER_POLICY = { mov:mov, mix: row.mix_and_match !== false,
+                   moq: (row.min_order_qty != null && isFinite(moq) && moq >= 1) ? Math.round(moq) : null };   /* MOQ: shown only when set in admin */
   return true;
 }
 async function loadOrderPolicy(){
   try{
-    var res = await sb.from("store_settings").select("min_order_value,mix_and_match").eq("id", true).maybeSingle();
+    var res = await sb.from("store_settings").select("min_order_value,mix_and_match,min_order_qty").eq("id", true).maybeSingle();
     if(res.error) throw res.error;
     if(setOrderPolicy(res.data)) safeSet(ORDER_POLICY_KEY, res.data);
   }catch(e){
@@ -1828,11 +1846,15 @@ function orderPolicyHtml(){
   var mov = ORDER_POLICY.mov;
   var movText = mov > 0 ? formatOrderValue(mov) : "No minimum";
   var approx = (mov > 0 && state.currency !== "INR") ? '<span class="pd-policy-approx">≈ '+esc(formatPrice(mov))+'</span>' : "";
-  var note = mov > 0
-    ? movText + " minimum applies to the total order value, not to individual products."
-    : "There is no minimum order value.";
+  var moq = ORDER_POLICY.moq;
+  /* MOQ = pieces in the whole order; Minimum Order Value = rupee total of the whole order */
+  var note = moq && mov > 0 ? "The MOQ and the " + movText + " minimum apply to the total order, not to individual products."
+           : moq            ? "The MOQ applies to the total order, not to individual products."
+           : mov > 0        ? movText + " minimum applies to the total order value, not to individual products."
+           :                  "There is no minimum order value.";
   return '<div class="pd-policy" role="note" aria-label="B2B order policy">' +
     '<div class="pd-policy-head">B2B Order Policy</div>' +
+    (moq ? '<div class="pd-policy-row"><span title="Minimum Order Quantity">MOQ</span><span>'+moq.toLocaleString("en-IN")+(moq===1?" piece":" pieces")+'</span></div>' : '') +
     '<div class="pd-policy-row"><span>Minimum Order Value</span><span>'+esc(movText)+approx+'</span></div>' +
     '<div class="pd-policy-row"><span>Mix &amp; Match</span><span>'+(ORDER_POLICY.mix ? "Allowed" : "Not allowed")+'</span></div>' +
     '<p class="pd-policy-note">'+esc(note)+'</p>' +
@@ -1876,41 +1898,6 @@ async function loadColors(){
 var SEARCH_PHRASES = ["Search Necklace...","Search Earrings...","Search Bracelets...","Search Bangles...","Search Kundan...","Search Rings..."];
 var WHATSAPP_NUMBER = "919867808890";
 
-/* NOTE: these pools are now only the fallback picture for PRODUCTS that have no uploaded photo.
-   Category pictures come from Supabase (categories.image_url, managed in Admin → Categories).
-   Real jewellery photography (Unsplash, free license). Each category type has a
-   small pool of distinct shots — products in the same category cycle through
-   the pool (by product id) instead of all repeating one image — tied together
-   with a subtle neutral vignette (see .media-tint) so they read as one shoot. */
-var PHOTO_POOLS = {
-  necklace: ["1611107683227-e9060eccd846","1722410180687-b05b50922362","1705326454924-f6777522b030","1601121141461-9d6647bca1ed","1600862754152-80a263dd564f","1601121141499-17ae80afc03a"],
-  earrings: ["1619203451989-53f6d2ca0e57","1653227907864-560dce4c252d","1701777892740-88419a701472","1708220040828-9ab1673681d3","1727990865600-91f8cb8b0168"],
-  bracelet: ["1709295208567-ce817387e977","1728381031272-ba3f537feadd","1690175867343-2af70ea57537","1679156272446-30738eb5c4e7","1611598935678-c88dca238fce"],
-  bangle:   ["1758995116383-f51775896add","1768359666502-306694fa6fcf","1679156271456-d6068c543ee7","1626784215013-13322cb0e471"],
-  ring:     ["1611955167811-4711904bb9f8","1617038260897-41a1f14a8ca0","1626784215021-2e39ccf971cd","1723802205505-2f88b2227718","1608508644127-ba99d7732fee"],
-  pendant:  ["1761211106346-939cb32005d7","1569397288884-4d43d6738fbd"],
-  antique:  ["1621274999488-c05dbc5a0f64","1721103418312-b0057a8c31c2","1685970731194-e27b477e87ba"]
-};
-function seedIndex(str, mod){
-  var h = 0;
-  for(var i=0;i<str.length;i++){ h = ((h<<5)-h) + str.charCodeAt(i); h |= 0; }
-  return Math.abs(h) % mod;
-}
-function photoUrl(key, w, seed){
-  var pool = PHOTO_POOLS[key] || PHOTO_POOLS.necklace;
-  var id = seed!=null ? pool[seedIndex(String(seed), pool.length)] : pool[0];
-  return "https://images.unsplash.com/photo-"+id+"?auto=format&fit=crop&w="+(w||800)+"&q=80";
-}
-var CATEGORY_PHOTO = {
-  "necklace-sets":"necklace","necklaces":"necklace","jewellery-sets":"necklace","kundan":"necklace",
-  "earrings":"earrings","party-wear":"earrings","ad-cz":"earrings",
-  "bracelets":"bracelet","daily-wear":"bracelet",
-  "bangles":"bangle",
-  "rings":"ring","polki":"ring",
-  "pendant-sets":"pendant","hair-accessories":"pendant",
-  "bridal-jewellery":"antique","antique":"antique","kemp":"antique","temple-jewellery":"antique"
-};
-function categoryPhotoKey(catId){ return CATEGORY_PHOTO[catId] || "necklace"; }
 function imgTag(url, alt, w, extraClass){
   return '<img src="'+esc(url)+'" alt="'+esc(alt)+'" loading="lazy" width="'+(w||800)+'" height="'+(w||800)+'" class="'+(extraClass||"")+'" onerror="this.style.visibility=\'hidden\'">';
 }
@@ -2083,18 +2070,11 @@ function firstRealPhoto(list){
   }
   return null;
 }
-/* "Necklace Sets" -> NS, "Bangles" -> B, "AD/CZ" -> AD */
-function monogram(name){
-  name = String(name || "").trim();
-  if(/^[A-Za-z]{1,3}\//.test(name)) return name.split("/")[0].toUpperCase();
-  var words = name.split(/\s+/).filter(Boolean);
-  return words.slice(0, 2).map(function(w){ return w.charAt(0).toUpperCase(); }).join("");
-}
-function placeholderTileHtml(name){
-  return '<span class="cat-ph" aria-hidden="true"><span class="cat-ph-mono">'+esc(monogram(name))+'</span><span class="cat-ph-rule"></span></span>';
+function placeholderTileHtml(){
+  return '<span class="cat-ph" aria-hidden="true"><svg class="icon"><use href="#i-diamond"/></svg></span>';
 }
 function browseCardHtml(name, image, attrs, active){
-  var pic = image ? imgTag(image, name, 600) + '<span class="media-tint"></span>' : placeholderTileHtml(name);
+  var pic = image ? imgTag(image, name, 600) + '<span class="media-tint"></span>' : placeholderTileHtml();
   return '<button type="button" class="cat-card'+(active?" active":"")+'" '+attrs+'>'+
     '<span class="cat-circle">'+pic+'</span>'+
     '<span class="cat-foot"><span class="cat-label">'+esc(name)+'</span><svg class="icon cat-arrow" aria-hidden="true"><use href="#i-chevron-right"/></svg></span></button>';
@@ -2119,7 +2099,7 @@ document.addEventListener("error", function(e){
   var t = e.target;
   if(t && t.tagName==="IMG" && t.closest && t.closest(".cat-circle")){
     var box = t.closest(".cat-circle");
-    box.innerHTML = placeholderTileHtml(t.alt || "");
+    box.innerHTML = placeholderTileHtml();
   }
 }, true);
 /* home shows the first eight categories (two rows on desktop, four on phones) and one link to all of them */
@@ -2173,14 +2153,14 @@ function cardAvailabilityHtml(p){
   return '<div class="card-avail">' + stockPillHtml(key) + (key === "made_to_order" ? '<span class="card-avail-note">' + MTO_NOTE + '</span>' : '') + '</div>';
 }
 function productCardHtml(p){
-  var photo = productPhoto(p, 640);
+  var photo = productPhoto(p);
   return '' +
   '<div class="product-card">' +
-    '<div class="card-media">'+imgTag(photo,p.name,640)+'<span class="media-tint"></span></div>' +
+    '<div class="card-media">'+(photo ? imgTag(photo,p.name,640)+'<span class="media-tint"></span>' : mediaPlaceholderHtml(false))+'</div>' +
     '<div class="card-body">' +
       '<div class="card-name">'+esc(p.name)+'</div>' +
-      '<div class="card-code">'+esc(p.code)+'</div>' +
-      '<div class="card-desc">'+esc(p.desc)+'</div>' +
+      (p.code ? '<div class="card-code">'+esc(p.code)+'</div>' : '') +
+      (p.desc ? '<div class="card-desc">'+esc(p.desc)+'</div>' : '') +
       cardAvailabilityHtml(p) +
       '<div class="card-foot">' +
         priceBlockHtml(p,"card") +
@@ -2265,15 +2245,10 @@ function colorPillHtml(c, selectedId, p){
   return '<button type="button" class="pd-color-pill'+(on?" is-selected":"")+(off?" is-unavailable":"")+'" role="radio" aria-checked="'+(on?"true":"false")+'"' +
     ' data-action="select-color" data-color="'+esc(c.id)+'" aria-label="'+esc(label)+'" title="'+esc(label)+'">'+esc(c.name)+'</button>';
 }
-function availabilityBlockHtml(p){
-  var key = detailStockKey(p);
-  return '<div class="pd-color-avail" id="pd-avail"><span class="pd-avail-label">Availability</span>' + stockPillHtml(key, "pd-color-status") +
-    '<span class="pd-avail-note" id="pd-avail-note"'+(key==="made_to_order"?"":" hidden")+'>'+MTO_NOTE+'</span></div>';
-}
+/* availability is shown once, at the top of the details (it follows the selected colour) */
 function colorSelectorHtml(p, initial){
-  if(!(p.colors && p.colors.length)) return '<div class="pd-colors pd-avail-only" id="pd-colors">' + availabilityBlockHtml(p) + '</div>';
+  if(!(p.colors && p.colors.length)) return '';
   return '<div class="pd-colors" id="pd-colors">' +
-    availabilityBlockHtml(p) +
     '<div class="pd-colors-head"><span class="pd-colors-label" id="pd-colors-label">Product Colour</span></div>' +
     '<div class="pd-color-pills" role="radiogroup" aria-labelledby="pd-colors-label">' + p.colors.map(function(c){ return colorPillHtml(c, initial ? initial.id : null, p); }).join("") + '</div>' +
   '</div>';
@@ -2281,11 +2256,10 @@ function colorSelectorHtml(p, initial){
 /* keeps every availability element on the page in step with the selected colour */
 function updateAvailabilityUI(p){
   var key = detailStockKey(p), s = STOCK_STATES[key];
-  ["#pd-color-status", "#pd-stock-pill"].forEach(function(sel){
+  ["#pd-stock-pill"].forEach(function(sel){
     var el = qs(sel); if(el){ el.className = "pill "+s.cls; el.textContent = s.label; }
   });
   var note = qs("#pd-avail-note"); if(note) note.hidden = key !== "made_to_order";
-  var spec = qs("#pd-spec-stock"); if(spec) spec.textContent = s.label;
 }
 function selectColor(id){
   var p = productById(state.currentProductId);
@@ -2314,40 +2288,40 @@ function renderProductDetail(p, keepColorId){
     ? '<div><div style="font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Wholesale Price</div><div style="font-family:var(--font-display);font-size:30px;font-weight:600;">'+formatPrice(p.price)+'</div></div>'
     : '<button type="button" class="pd-login-btn" data-action="open-login"><svg class="icon"><use href="#i-lock"/></svg>Login to See Price</button>';
 
-  var pdPhoto = productPhoto(p, 1000);
+  var gallery = realImages(p);
+  var pdPhoto = gallery.length ? gallery[0] : null;
   /* colour options: preselect the first colour that can be ordered */
   if(!keepColorId) state.colorUserPicked = false;             /* a fresh open starts from the default colour */
   var initialColor = (keepColorId && colorById(p, keepColorId)) || defaultColor(p);
   state.selectedColorId = initialColor ? initialColor.id : null;
-  var hasRealImages = p.images && p.images.length > 0;
-  var thumbSrcs = hasRealImages ? p.images.slice(0,3) : [pdPhoto,pdPhoto,pdPhoto];
-  var thumbsHtml = thumbSrcs.map(function(url, idx){
-    var posClass = hasRealImages ? "" : (idx===0?"":(idx===1?"thumb-pos-2":"thumb-pos-3"));
-    return '<div class="pd-thumb'+(idx===0?" active":"")+'">'+imgTag(url,p.name,140,posClass)+'</div>';
-  }).join("");
+  /* thumbnails only when there is more than one real photo; tapping one shows it large */
+  var thumbsHtml = gallery.length > 1 ? gallery.slice(0,4).map(function(url, idx){
+    return '<button type="button" class="pd-thumb'+(idx===0?" active":"")+'" data-action="select-thumb" data-src="'+esc(url)+'" aria-label="Show photo '+(idx+1)+'">'+imgTag(url,p.name,140)+'</button>';
+  }).join("") : "";
+  var specRows = (p.material ? '<div class="pd-spec-row"><span>Material</span><span>'+esc(p.material)+'</span></div>' : '');
+  var stockKey = detailStockKey(p);
   var html = '' +
   '<div>' +
-    '<div class="pd-gallery-main" id="pd-gallery-main" data-action="toggle-zoom">' +
+    '<div class="pd-gallery-main'+(pdPhoto?'':' is-empty')+'" id="pd-gallery-main"'+(pdPhoto?' data-action="toggle-zoom"':'')+'>' +
       '<button class="pd-save-btn'+(isSaved?" saved":"")+'" id="pd-save-btn" data-action="toggle-watchlist" data-id="'+p.id+'" aria-label="Save to watch list">' +
         '<svg class="icon icon-line"><use href="#i-heart"/></svg><svg class="icon icon-fill"><use href="#i-heart"/></svg>' +
       '</button>' +
-      imgTag(pdPhoto, p.name, 1000, "pd-photo") + '<span class="media-tint"></span>' +
+      (pdPhoto ? imgTag(pdPhoto, p.name, 1000, "pd-photo") + '<span class="media-tint"></span>' : mediaPlaceholderHtml(true)) +
     '</div>' +
-    '<div class="pd-thumbs">' + thumbsHtml + '</div>' +
-    '<div class="pd-note"><svg class="icon"><use href="#i-zoom"/></svg> Tap the image to zoom in.</div>' +
+    (thumbsHtml ? '<div class="pd-thumbs">' + thumbsHtml + '</div>' : '') +
+    (pdPhoto ? '<div class="pd-note"><svg class="icon"><use href="#i-zoom"/></svg> Tap the image to zoom in.</div>' : '') +
   '</div>' +
   '<div class="pd-info">' +
     '<div class="pd-eyebrow">' +
-      stockPillHtml(detailStockKey(p), "pd-stock-pill") + '</div>' +
+      stockPillHtml(stockKey, "pd-stock-pill") +
+      '<span class="pd-avail-note" id="pd-avail-note"'+(stockKey==="made_to_order"?"":" hidden")+'>'+MTO_NOTE+'</span>' +
+    '</div>' +
     '<h1>'+esc(p.name)+'</h1>' +
-    '<div class="pd-code">'+esc(p.code)+'</div>' +
+    (p.code ? '<div class="pd-code">'+esc(p.code)+'</div>' : '') +
     '<div class="pd-price-block">'+priceHtml+'</div>' +
     colorSelectorHtml(p, initialColor) +
-    '<div class="pd-specs">' +
-      '<div class="pd-spec-row"><span>Material</span><span>'+esc(p.material)+'</span></div>' +
-      '<div class="pd-spec-row"><span>Product Code</span><span>'+esc(p.code)+'</span></div>' +
-      '<div class="pd-spec-row"><span>Stock Status</span><span id="pd-spec-stock">'+STOCK_STATES[detailStockKey(p)].label+'</span></div>' +
-    '</div>' +
+    (specRows ? '<div class="pd-specs">' + specRows + '</div>' : '') +
+    (p.desc ? '<p class="pd-desc">'+esc(p.desc)+'</p>' : '') +
     '<div class="pd-actions" role="group" aria-label="Enquire about this product">' +
       '<button type="button" class="pd-action" data-action="whatsapp-product" data-id="'+p.id+'"><svg class="icon"><use href="#i-whatsapp"/></svg>Chat With Us</button>' +
       '<button type="button" class="pd-action" data-action="call-us"><svg class="icon"><use href="#i-phone"/></svg>Call Us</button>' +
@@ -2355,7 +2329,7 @@ function renderProductDetail(p, keepColorId){
     orderPolicyHtml() +
     '<div class="pd-links">' +
       '<button class="link-cta" data-nav="contact"><svg class="icon"><use href="#i-phone"/></svg> Contact Us</button>' +
-      '<button class="link-cta" data-action="open-videocall" data-collection="'+esc(p.name+" ("+p.code+")")+'"><svg class="icon"><use href="#i-video"/></svg> Book a Video Call</button>' +
+      '<button class="link-cta" data-action="open-videocall" data-collection="'+esc(p.name+(p.code ? " ("+p.code+")" : ""))+'"><svg class="icon"><use href="#i-video"/></svg> Book a Video Call</button>' +
     '</div>' +
   '</div>';
   qs("#pd-root").innerHTML = html;
@@ -2398,10 +2372,10 @@ window.addEventListener("resize", queueFloatCheck);
 function listItemHtml(p){
   return '' +
   '<div class="list-item">' +
-    '<div class="list-item-media">'+imgTag(productPhoto(p,160),p.name,160)+'<span class="media-tint"></span></div>' +
+    '<div class="list-item-media">'+(productPhoto(p) ? imgTag(productPhoto(p),p.name,160)+'<span class="media-tint"></span>' : mediaPlaceholderHtml(false))+'</div>' +
     '<div class="list-item-info">' +
       '<div class="card-name">'+esc(p.name)+'</div>' +
-      '<div class="card-code">'+esc(p.code)+'</div>' +
+      (p.code ? '<div class="card-code">'+esc(p.code)+'</div>' : '') +
     '</div>' +
     '<div class="list-item-actions">' +
       '<button class="icon-text-btn" data-action="view-product" data-id="'+p.id+'">View Details <svg class="icon"><use href="#i-chevron-right"/></svg></button>' +
@@ -2424,15 +2398,17 @@ function renderWatchlist(){
 function searchMatches(query){
   query = (query||"").trim().toLowerCase();
   if(!query) return {cats:[], prods:[]};
-  var cats = CATEGORIES.filter(function(c){
-    return c.name.toLowerCase().indexOf(query)>-1 || c.subs.some(function(s){ return s.toLowerCase().indexOf(query)>-1; });
-  }).slice(0,4);
+  var has = function(v){ return String(v || "").toLowerCase().indexOf(query) > -1; };   /* empty fields are fine */
+  /* a category whose name matches, else the matching subcategories (shown with their category) */
+  var cats = [];
+  CATEGORIES.forEach(function(c){
+    if(has(c.name)) cats.push({ cat:c, sub:null });
+    else (c.subList || []).forEach(function(s){ if(has(s.name)) cats.push({ cat:c, sub:s }); });
+  });
+  cats = cats.slice(0,4);
   var prods = PRODUCTS.filter(function(p){
-    return p.name.toLowerCase().indexOf(query)>-1 ||
-           p.code.toLowerCase().indexOf(query)>-1 ||
-           p.sub.toLowerCase().indexOf(query)>-1 ||
-           p.desc.toLowerCase().indexOf(query)>-1 ||
-           cat(p.cat).name.toLowerCase().indexOf(query)>-1;
+    var c = cat(p.cat);
+    return has(p.name) || has(p.code) || has(p.sub) || has(p.desc) || has(c && c.name);
   }).slice(0,6);
   return {cats:cats, prods:prods};
 }
@@ -2446,11 +2422,13 @@ function renderSuggestInto(el, query){
     return;
   }
   var html = "";
-  m.cats.forEach(function(c){
-    html += '<div class="suggest-item" data-action="go-category" data-cat="'+c.id+'"><svg class="icon"><use href="#i-compass"/></svg>'+esc(c.name)+'<span class="suggest-tag">Category</span></div>';
+  m.cats.forEach(function(x){
+    html += x.sub
+      ? '<div class="suggest-item" data-action="go-subcategory" data-cat="'+esc(x.cat.id)+'" data-sub="'+esc(x.sub.id)+'"><svg class="icon"><use href="#i-grid"/></svg>'+esc(x.sub.name)+'<span class="suggest-tag">'+esc(x.cat.name)+'</span></div>'
+      : '<div class="suggest-item" data-action="go-category" data-cat="'+esc(x.cat.id)+'"><svg class="icon"><use href="#i-grid"/></svg>'+esc(x.cat.name)+'<span class="suggest-tag">Category</span></div>';
   });
   m.prods.forEach(function(p){
-    html += '<div class="suggest-item" data-action="view-product" data-id="'+p.id+'"><svg class="icon"><use href="#i-search"/></svg>'+esc(p.name)+'<span class="suggest-tag">'+esc(p.code)+'</span></div>';
+    html += '<div class="suggest-item" data-action="view-product" data-id="'+p.id+'"><svg class="icon"><use href="#i-search"/></svg>'+esc(p.name)+'<span class="suggest-tag">'+esc(p.code || "")+'</span></div>';
   });
   el.innerHTML = html;
   el.classList.add("open");
@@ -3556,10 +3534,17 @@ document.body.addEventListener("click", function(e){
         if(pp){
           /* include the chosen colour (name only — never stock numbers) */
           var wc = (pp.colors && pp.colors.length && state.currentProductId===pp.id) ? selectedColor(pp) : null;
-          openExternal(waLink("Hello Nisha Art Jewellery, I would like to enquire about "+pp.name+" ("+pp.code+")"+(wc ? ", Colour: "+wc.name : "")+"."));
+          openExternal(waLink("Hello Nisha Art Jewellery, I would like to enquire about "+pp.name+(pp.code ? " ("+pp.code+")" : "")+(wc ? ", Colour: "+wc.name : "")+"."));
         }
         break;
       case "select-color": selectColor(actionBtn.dataset.color); break;
+      case "select-thumb":
+        var mainImg = qs("#pd-gallery-main img.pd-photo");
+        if(mainImg && actionBtn.dataset.src){
+          mainImg.style.visibility = "visible"; mainImg.src = actionBtn.dataset.src;
+          qsa(".pd-thumb").forEach(function(t){ t.classList.toggle("active", t === actionBtn); });
+        }
+        break;
       case "whatsapp-generic":
         openExternal(waLink("Hello Nisha Art Jewellery, I’m interested in your jewellery collection. Please share the B2B details."));
         break;

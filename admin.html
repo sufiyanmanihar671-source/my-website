@@ -2351,10 +2351,11 @@ qs("#videocall-save-btn").addEventListener("click", async function(){
    ORDER POLICY (store_settings: one row, read by the storefront product page)
    ====================================================================== */
 var MOV_MAX = 10000000;
+var MOQ_MAX = 100000;
 async function loadOrderPolicy(){
   var box = qs("#op-body");
   box.innerHTML = '<div class="empty-note">Loading…</div>';
-  var res = await sb.from("store_settings").select("min_order_value,mix_and_match,updated_at").eq("id", true).maybeSingle();
+  var res = await sb.from("store_settings").select("min_order_value,mix_and_match,min_order_qty,updated_at").eq("id", true).maybeSingle();
   if(res.error || !res.data){
     box.innerHTML = '<div class="empty-note err-note">Could not load the order policy: ' + esc(friendlyError(res.error, "setting not found")) +
       ' <button type="button" class="btn btn-outline btn-sm" id="op-retry">Retry</button></div>';
@@ -2366,6 +2367,9 @@ async function loadOrderPolicy(){
     '<div class="field"><label for="op-mov">Minimum Order Value (₹) <span class="req">*</span></label>' +
       '<input type="number" id="op-mov" min="0" max="' + MOV_MAX + '" step="1" inputmode="numeric" value="' + esc(String(mov % 1 ? mov : Math.round(mov))) + '"></div>' +
     '<p class="hint">Total value of a complete order, in rupees. Enter 0 for no minimum.</p>' +
+    '<div class="field"><label for="op-moq">MOQ — Minimum Order Quantity (pieces) <span class="opt">(optional)</span></label>' +
+      '<input type="number" id="op-moq" min="1" max="' + MOQ_MAX + '" step="1" inputmode="numeric" placeholder="Not set" value="' + (d.min_order_qty != null ? esc(String(d.min_order_qty)) : "") + '"></div>' +
+    '<p class="hint">Total number of pieces in a complete order (mix &amp; match). Leave empty to hide MOQ on the website.</p>' +
     '<div class="field"><label class="switch"><input type="checkbox" id="op-mix"' + (d.mix_and_match ? " checked" : "") + '><span class="track"></span>Mix &amp; Match allowed</label></div>' +
     '<p class="hint">When on, product pages show "Mix &amp; Match: Allowed".</p>' +
     '<div class="field-error" id="op-err"></div>' +
@@ -2376,27 +2380,36 @@ async function loadOrderPolicy(){
   qs("#op-save").addEventListener("click", saveOrderPolicy);
 }
 async function saveOrderPolicy(){
-  var input = qs("#op-mov"), err = qs("#op-err"), btn = qs("#op-save");
+  var input = qs("#op-mov"), moqInput = qs("#op-moq"), err = qs("#op-err"), btn = qs("#op-save");
   var raw = input.value.trim(), mov = Number(raw);
-  input.classList.remove("invalid"); err.textContent = "";
+  var rawMoq = moqInput.value.trim(), moq = rawMoq === "" ? null : Number(rawMoq);
+  input.classList.remove("invalid"); moqInput.classList.remove("invalid"); err.textContent = "";
   if(!/^\d+(\.\d{1,2})?$/.test(raw) || mov > MOV_MAX){
     input.classList.add("invalid");
     err.textContent = "Enter an amount between ₹0 and ₹" + MOV_MAX.toLocaleString("en-IN") + " (up to 2 decimals).";
     input.focus();
     return;
   }
+  if(moq !== null && (!/^d+$/.test(rawMoq) || moq < 1 || moq > MOQ_MAX)){
+    moqInput.classList.add("invalid");
+    err.textContent = "MOQ must be a whole number of pieces between 1 and " + MOQ_MAX.toLocaleString("en-IN") + ", or empty.";
+    moqInput.focus();
+    return;
+  }
   if(!(await ensureStaffSession())) return;
   btn.disabled = true; btn.textContent = "Saving…";
   try{
     var res = await sb.from("store_settings")
-      .update({ min_order_value: mov, mix_and_match: qs("#op-mix").checked })
+      .update({ min_order_value: mov, mix_and_match: qs("#op-mix").checked, min_order_qty: moq })
       .eq("id", true)
-      .select("min_order_value,mix_and_match,updated_at");
+      .select("min_order_value,mix_and_match,min_order_qty,updated_at");
     if(res.error) throw res.error;
     /* RLS turns a non-staff update into "0 rows changed", not an error */
     if(!res.data || !res.data.length) throw { code:"42501", message:"permission denied" };
     qs("#op-updated").textContent = "Last updated " + fmtDateTime(res.data[0].updated_at);
-    toast("Order policy saved. Product pages now show ₹" + Number(res.data[0].min_order_value).toLocaleString("en-IN") + " minimum.");
+    var saved = res.data[0];
+    toast("Order policy saved. Product pages now show ₹" + Number(saved.min_order_value).toLocaleString("en-IN") + " minimum" +
+          (saved.min_order_qty != null ? " and MOQ " + saved.min_order_qty + " pieces." : " (MOQ not shown)."));
   }catch(e){
     err.textContent = friendlyError(e, "Could not save the order policy.");
   }finally{
