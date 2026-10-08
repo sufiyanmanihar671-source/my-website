@@ -21,6 +21,8 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"JewelryStore","name":"NISA JEWELLERS","description":"B2B jewellery manufacturer and wholesale supplier of imitation and American Diamond jewellery for retailers. Made to order, bulk orders welcome, worldwide shipping.","url":"https://nisajewellers.com/","logo":"https://nisajewellers.com/images/apple-touch-icon.png","image":"https://nisajewellers.com/images/hero-necklace.jpg","telephone":"+91 93212 45814","email":"info@nisajewellers.com","address":{"@type":"PostalAddress","streetAddress":"Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West)","addressLocality":"Mumbai","addressRegion":"Maharashtra","postalCode":"400064","addressCountry":"IN"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"09:00","closes":"22:00"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://qmgbmcxzqmcyupakpejw.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
@@ -1397,7 +1399,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
       </div>
       <div class="map-card">
         <div class="map-embed">
-          <iframe src="https://www.google.com/maps?q=Shop%20No.%204%2C%20Chincholi%20Bandar%20Road%2C%20Morya%20Niwas%2C%20Opp.%20Kingston%20Complex%2C%20Malad%20West%2C%20Mumbai%20400064%2C%20India&output=embed" title="Map showing NISA JEWELLERS location" aria-label="Map showing NISA JEWELLERS at Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064, India" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+          <iframe data-src="https://www.google.com/maps?q=Shop%20No.%204%2C%20Chincholi%20Bandar%20Road%2C%20Morya%20Niwas%2C%20Opp.%20Kingston%20Complex%2C%20Malad%20West%2C%20Mumbai%20400064%2C%20India&output=embed" title="Map showing NISA JEWELLERS location" aria-label="Map showing NISA JEWELLERS at Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064, India" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
         </div>
         <div class="map-caption">
           <address>Shop No. 4, Chincholi Bandar Road, Morya Niwas, Opp. Kingston Complex, Malad (West), Mumbai – 400064, India</address>
@@ -1814,8 +1816,14 @@ async function readRows(build){
 }
 
 async function loadCategories(){
-  var cats = await readRows(function(){ return sb.from("categories").select("id,name,motif,description,sort_order,image_url").eq("active", true).order("sort_order"); });
-  var subs = await readRows(function(){ return sb.from("subcategories").select("id,category_id,name,sort_order").eq("active", true).order("sort_order"); });
+  var both = await Promise.all([
+    readRows(function(){ return sb.from("categories").select("id,name,motif,description,sort_order,image_url").eq("active", true).order("sort_order"); }),
+    readRows(function(){ return sb.from("subcategories").select("id,category_id,name,sort_order").eq("active", true).order("sort_order"); })
+  ]);
+  buildCategories(both[0], both[1]);
+  return { cats: both[0], subs: both[1] };
+}
+function buildCategories(cats, subs){
   CATEGORIES.length = 0;
   SUBCAT_ID_LOOKUP = {};
   cats.forEach(function(c){
@@ -1833,6 +1841,10 @@ async function loadProducts(){
       .select("id,code,name,category_id,subcategory_id,material,description,stock_status,stock_state,motif,tint,subcategories(name),product_images(url,sort_order,is_primary)")
       .eq("active", true);
   });
+  buildProducts(rows);
+  return rows;
+}
+function buildProducts(rows){
   PRODUCTS.length = 0;
   rows.forEach(function(p, i){
     var imgs = (p.product_images || []).slice().sort(function(a,b){
@@ -1927,12 +1939,38 @@ function orderPolicyHtml(){
   '</div>';
 }
 
+/* Catalogue cache: the last catalogue this browser loaded (categories, subcategories, products; never
+   prices) so a returning visitor sees the categories immediately. Fresh data replaces it moments later. */
+var CATALOG_CACHE_KEY = "naj_catalog_cache_v1";
+var CATALOG_CACHE_MAX_AGE = 7 * 24 * 3600 * 1000;
+function showCachedCatalog(){
+  var c = safeGet(CATALOG_CACHE_KEY, null);
+  if(!c || !(Date.now() - c.ts < CATALOG_CACHE_MAX_AGE) || !Array.isArray(c.cats) || !Array.isArray(c.subs) || !Array.isArray(c.products)) return false;
+  try{ buildCategories(c.cats, c.subs); buildProducts(c.products); }
+  catch(e){ CATEGORIES.length = 0; PRODUCTS.length = 0; return false; }
+  renderCategoryRails(); renderMenuCategories();
+  return true;
+}
 async function loadCatalog(){
-  /* every part finishes (or fails) before rendering, so one failed read cannot leave the others half-loaded */
-  var results = await Promise.allSettled([loadCategories(), loadCurrencies(), loadProducts(), loadOrderPolicy()]);
+  var hadCache = showCachedCatalog();
+  var extras = Promise.allSettled([loadCurrencies(), loadOrderPolicy()]);
+  /* categories + products are all the first screen needs: paint them as soon as they arrive */
+  var core = await Promise.allSettled([loadCategories(), loadProducts()]);
+  var coreOk = core[0].status === "fulfilled" && core[1].status === "fulfilled";
+  if(coreOk){
+    renderCategoryRails(); renderMenuCategories();
+    if(hadCache && state.view !== "home") renderCurrentView();        /* visitor already browsing the cached copy */
+    var snap = { ts: Date.now(), cats: core[0].value.cats, subs: core[0].value.subs, products: core[1].value };
+    try{ if(JSON.stringify(snap).length < 1500000) safeSet(CATALOG_CACHE_KEY, snap); }catch(e){ /* storage full: no cache */ }
+  }
+  await extras;
   await loadColors();
-  var failed = results.filter(function(r){ return r.status === "rejected"; });
-  if(failed.length) throw failed[0].reason;
+  if(state.view === "product") renderCurrentView();               /* colour options arrived after the product opened */
+  if(!coreOk){
+    var reason = core[0].status === "rejected" ? core[0].reason : core[1].reason;
+    if(!hadCache) throw reason;
+    console.warn("Showing the last saved catalogue; fresh data could not be loaded:", reason && (reason.message || reason));
+  }
 }
 
 /* Colour options. Reads the storefront view, which never contains quantities.
@@ -3708,6 +3746,18 @@ function renderHeroSparkles(){
 /* ======================================================================
    INIT
    ====================================================================== */
+/* The map embed is heavy: it is loaded only when the contact section is about to scroll into view,
+   so it never competes with the catalogue for bandwidth while the page is opening. */
+function setupLazyMap(){
+  var f = qs("#contact-section iframe[data-src]");
+  if(!f) return;
+  var load = function(){ if(!f.getAttribute("src")) f.setAttribute("src", f.getAttribute("data-src")); };
+  if(!("IntersectionObserver" in window)){ load(); return; }
+  var io = new IntersectionObserver(function(entries){
+    if(entries.some(function(e){ return e.isIntersecting; })){ io.disconnect(); load(); }
+  }, { rootMargin:"400px 0px" });
+  io.observe(f);
+}
 async function init(){
   /* Country detection runs alongside the catalogue load; it never blocks the page for more than 2.5s.
      If it is slower than that, the page renders first and the currency updates when it arrives. */
@@ -3726,6 +3776,7 @@ async function init(){
   resolveCurrency();
   renderCategoryRails();
   renderMenuCategories();
+  setupLazyMap();
   updateCounts();
   refreshCurrencyUI();
   updateAccountUI();
