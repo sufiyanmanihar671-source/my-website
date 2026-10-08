@@ -489,7 +489,8 @@ footer :focus-visible{outline-color:var(--color-white);}
 .browse-head h2{margin-bottom:0.2em;}
 #discover-cat-desc{margin:6px 0 0;max-width:60ch;}
 #discover-cat-desc[hidden]{display:none;}
-#discover-cat-rail[hidden],#discover-product-area[hidden],#discover-empty[hidden]{display:none;}
+#discover-cat-rail[hidden],#discover-product-area[hidden],#discover-empty[hidden],#discover-retry[hidden]{display:none;}
+#discover-retry{margin-top:18px;}
 /* each level change fades the new cards in */
 .browse-in{animation:browseIn .4s var(--ease) both;}
 @keyframes browseIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
@@ -1425,7 +1426,8 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
       <div class="product-grid" id="discover-product-grid"></div>
       <div class="empty-state" id="discover-empty" hidden>
         <svg class="icon"><use href="#i-diamond"/></svg>
-        <p>No products available in this collection yet.</p>
+        <p id="discover-empty-text">No products available in this collection yet.</p>
+        <button type="button" class="btn btn-outline btn-sm" id="discover-retry" data-action="reload-page" hidden>Try Again</button>
       </div>
     </div>
   </div>
@@ -1727,7 +1729,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" integrity="sha384-BWcjm9OdFth9TbhCxZPdm+gAOUMAzQy9nmTs12ioXdCcbVnJaPMn+fMUoQCLt60R" crossorigin="anonymous"></script>
 <script>
 (function(){
 "use strict";
@@ -1784,11 +1786,36 @@ function cat(id){ for(var i=0;i<CATEGORIES.length;i++){ if(CATEGORIES[i].id===id
 
 var PRODUCTS = [];
 
+/* Catalogue reads must never turn a failed request into "no products". A stale or expired saved login
+   makes every read fail with 401 (PostgREST rejects the token even though the catalogue is public),
+   so on an auth error the session is refreshed, or dropped locally if it cannot be, and the read is
+   retried once; a network/server error is retried once after a short pause. A second failure throws,
+   and the storefront then says the catalogue could not load instead of showing empty collections. */
+var CATALOG_FAILED = false;
+function isAuthTokenError(res){
+  var e = res.error || {};
+  return res.status === 401 || e.code === "PGRST301" || e.code === "PGRST303" || /jwt/i.test(e.message || "");
+}
+async function readRows(build){
+  var res = await build();
+  if(!res.error) return res.data || [];
+  if(isAuthTokenError(res)){
+    var rs = null;
+    try{ rs = await sb.auth.refreshSession(); }catch(e){ rs = null; }
+    if(!rs || rs.error || !rs.data || !rs.data.session){
+      try{ await sb.auth.signOut({ scope:"local" }); }catch(e){ /* already gone */ }
+    }
+  } else {
+    await new Promise(function(r){ setTimeout(r, 800); });
+  }
+  res = await build();
+  if(res.error) throw res.error;
+  return res.data || [];
+}
+
 async function loadCategories(){
-  var catRes = await sb.from("categories").select("id,name,motif,description,sort_order,image_url").eq("active", true).order("sort_order");
-  var subRes = await sb.from("subcategories").select("id,category_id,name,sort_order").eq("active", true).order("sort_order");
-  var cats = catRes.data || [];
-  var subs = subRes.data || [];
+  var cats = await readRows(function(){ return sb.from("categories").select("id,name,motif,description,sort_order,image_url").eq("active", true).order("sort_order"); });
+  var subs = await readRows(function(){ return sb.from("subcategories").select("id,category_id,name,sort_order").eq("active", true).order("sort_order"); });
   CATEGORIES.length = 0;
   SUBCAT_ID_LOOKUP = {};
   cats.forEach(function(c){
@@ -1801,10 +1828,11 @@ async function loadCategories(){
 }
 
 async function loadProducts(){
-  var res = await sb.from("products")
-    .select("id,code,name,category_id,subcategory_id,material,description,price,stock_status,stock_state,motif,tint,subcategories(name),product_images(url,sort_order,is_primary)")
-    .eq("active", true);
-  var rows = res.data || [];
+  var rows = await readRows(function(){
+    return sb.from("products")
+      .select("id,code,name,category_id,subcategory_id,material,description,stock_status,stock_state,motif,tint,subcategories(name),product_images(url,sort_order,is_primary)")
+      .eq("active", true);
+  });
   PRODUCTS.length = 0;
   rows.forEach(function(p, i){
     var imgs = (p.product_images || []).slice().sort(function(a,b){
@@ -1814,12 +1842,34 @@ async function loadProducts(){
     PRODUCTS.push({
       id: p.id, code: p.code, name: p.name, cat: p.category_id,
       sub: p.subcategories ? p.subcategories.name : null, subId: p.subcategory_id || null,
-      material: p.material, desc: p.description, price: Number(p.price),
+      material: p.material, desc: p.description, price: null,
       stock: !!p.stock_status, stockState: normalizeStockKey(p.stock_state, !!p.stock_status),
       colors: [],
       motif: p.motif, tint: p.tint || TINTS[i % TINTS.length], images: imgs
     });
   });
+  applyPrices();
+}
+
+/* Wholesale prices are not part of the public catalogue: the database only lets signed-in accounts read
+   products.price, so they are fetched separately once someone is logged in and dropped on logout. */
+var PRICE_BY_ID = {};
+function applyPrices(){
+  PRODUCTS.forEach(function(p){ p.price = Object.prototype.hasOwnProperty.call(PRICE_BY_ID, p.id) ? PRICE_BY_ID[p.id] : null; });
+}
+async function loadPrices(uid){
+  var next = {};
+  if(uid){
+    try{
+      var rows = await readRows(function(){ return sb.from("products").select("id,price").eq("active", true); });
+      rows.forEach(function(r){ next[r.id] = Number(r.price); });
+    }catch(e){
+      console.warn("Prices could not be loaded:", e && (e.message || e));     /* cards then say Price on request */
+    }
+  }
+  if(state.userId !== uid) return;                                            /* account changed meanwhile */
+  PRICE_BY_ID = next;
+  applyPrices();
 }
 
 /* a product's own photo, or null (then a neutral placeholder is shown — never a borrowed stock photo) */
@@ -1878,8 +1928,11 @@ function orderPolicyHtml(){
 }
 
 async function loadCatalog(){
-  await Promise.all([loadCategories(), loadCurrencies(), loadProducts(), loadOrderPolicy()]);
+  /* every part finishes (or fails) before rendering, so one failed read cannot leave the others half-loaded */
+  var results = await Promise.allSettled([loadCategories(), loadCurrencies(), loadProducts(), loadOrderPolicy()]);
   await loadColors();
+  var failed = results.filter(function(r){ return r.status === "rejected"; });
+  if(failed.length) throw failed[0].reason;
 }
 
 /* Colour options. Reads the storefront view, which never contains quantities.
@@ -2243,7 +2296,13 @@ function renderDiscover(){
   show(rail, false); show(prodArea, true);
   var list = PRODUCTS.filter(function(p){ return p.cat===c.id && (!s || p.subId===s.id); });
   var grid = qs("#discover-product-grid"), empty = qs("#discover-empty");
-  if(list.length===0){ grid.style.display="none"; show(empty, true); }
+  if(list.length===0){
+    grid.style.display="none"; show(empty, true);
+    qs("#discover-empty-text").textContent = CATALOG_FAILED
+      ? "We couldn’t load the products right now. Please check your connection and try again."
+      : "No products available in this collection yet.";
+    show(qs("#discover-retry"), CATALOG_FAILED);
+  }
   else { grid.style.display="grid"; show(empty, false); renderGrid(grid, list); }
   fadeIn(prodArea);
 }
@@ -3001,7 +3060,7 @@ async function applySession(session){
     state.isLoggedIn = !!user;
     state.userId = uid;
     state.watchlist = [];
-    watchlistLoad = uid ? loadWatchlist(uid) : Promise.resolve();
+    watchlistLoad = Promise.all([uid ? loadWatchlist(uid) : null, loadPrices(uid)]);
     updateAccountUI();
     await watchlistLoad;
     if(appReady){
@@ -3510,6 +3569,7 @@ document.body.addEventListener("click", function(e){
             if(res.error){
               var em = String(res.error.message || "");
               toast(/Preferred date/.test(em) ? "Please choose a date within the next year."
+                  : /too many/i.test(em) ? "We already have your recent request and will contact you soon. You can also chat with us on WhatsApp."
                   : /failed to fetch|network|load failed/i.test(em) ? "Could not reach the server. Check your connection and try again."
                   : "Could not submit request. Please try again.");
               return;
@@ -3589,6 +3649,7 @@ document.body.addEventListener("click", function(e){
         renderWatchlist(); updateCounts();
         break;
       case "call-us": window.location.href = "tel:+919321245814"; break;
+      case "reload-page": location.reload(); break;
       case "email-us": window.location.href = "mailto:info@nisajewellers.com"; break;
       case "social": e.preventDefault(); toast("Social links are for demonstration only."); break;
       case "toggle-zoom": qs("#pd-gallery-main").classList.toggle("zoomed"); break;
@@ -3654,7 +3715,11 @@ async function init(){
   var geoBudget = Promise.race([geoPromise, new Promise(function(r){ setTimeout(function(){ r(null); }, 2500); })]);
   try{
     await loadCatalog();
-  }catch(e){ toast("Could not load catalogue. Please refresh."); }
+  }catch(e){
+    CATALOG_FAILED = true;
+    console.error("Catalogue could not be loaded:", e && (e.message || e));
+    toast("Could not load catalogue. Please refresh.");
+  }
   await loadState();
   var early = await geoBudget;
   if(early) applyGeo(early);
