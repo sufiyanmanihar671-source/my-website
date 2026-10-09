@@ -588,6 +588,18 @@ footer :focus-visible{outline-color:var(--color-white);}
 .view-details-btn .icon{width:13px;height:13px;transition:transform .45s var(--ease);}
 .view-details-btn:hover{color:var(--accent);}
 .view-details-btn:hover .icon{transform:translateX(5px);}
+/* The whole card (and each watch-list row) opens its product: the existing View Details button's hit area is
+   stretched over the card, so there are no nested controls and keyboard focus stays on that one button.
+   Independent actions (Login to See Price, Remove) sit above the stretched area and keep their own behaviour. */
+.list-item{position:relative;}
+.product-card .view-details-btn::after,
+.list-item [data-action="view-product"]::after{content:'';position:absolute;inset:0;z-index:1;cursor:pointer;}
+.product-card .price-lock,
+.list-item [data-action="remove-watchlist"]{position:relative;z-index:2;}
+.product-card .view-details-btn:focus-visible::after,
+.list-item [data-action="view-product"]:focus-visible::after{outline:2px solid var(--accent);outline-offset:-2px;}
+.product-card .view-details-btn:focus-visible,
+.list-item [data-action="view-product"]:focus-visible{outline:none;}
 @media(max-width:760px){
   .card-body{padding:14px 14px 4px;}
   .card-name{font-size:18px;}
