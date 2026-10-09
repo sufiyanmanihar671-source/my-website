@@ -1,11 +1,12 @@
 # Security headers for Cloudflare Pages (applied to every page and file on all domains of this project).
 # CSP notes: inline <script>/<style> and inline event handlers are part of the site, so 'unsafe-inline' is
 # required; every external origin is listed explicitly and the only external script is the pinned,
-# integrity-checked supabase-js build. Images may come from any HTTPS host (product/category photos).
+# integrity-checked supabase-js build, plus Cloudflare Web Analytics (cookie-free visit counts, injected by
+# Cloudflare Pages). Images may come from any HTTPS host (product/category photos).
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://qmgbmcxzqmcyupakpejw.supabase.co wss://qmgbmcxzqmcyupakpejw.supabase.co https://www.cloudflare.com https://ipwho.is https://get.geojs.io https://api.country.is; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/ https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://cloudflareinsights.com https://qmgbmcxzqmcyupakpejw.supabase.co wss://qmgbmcxzqmcyupakpejw.supabase.co https://www.cloudflare.com https://ipwho.is https://get.geojs.io https://api.country.is; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
