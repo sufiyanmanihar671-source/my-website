@@ -8,6 +8,7 @@
 <meta name="description" content="NISA JEWELLERS: B2B manufacturer and wholesale supplier of premium artificial, imitation and American Diamond jewellery in Malad (West), Mumbai. Made to order, bulk orders welcome, worldwide shipping.">
 <link rel="canonical" href="https://nisajewellers.com/">
 <link rel="icon" href="images/favicon.png" type="image/png" sizes="96x96">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NISA JEWELLERS">
@@ -233,11 +234,11 @@ footer :focus-visible{outline-color:var(--color-white);}
 .logo-img{height:44px;width:auto;display:block;border-radius:2px;}
 .logo-mark{font-family:var(--font-display);font-size:26px;font-weight:500;letter-spacing:0.02em;color:var(--text);}
 .logo-sub{font-size:8.5px;letter-spacing:0.34em;color:var(--eyebrow);margin-top:6px;font-weight:500;}
-/* official NISA JEWELLERS logo (provided artwork in platinum, deep charcoal and ivory): the charcoal horizontal
+/* official NISA JEWELLERS logo (provided artwork, traced to vector SVG, in platinum, deep charcoal and ivory): the charcoal horizontal
    lockup in the ivory header, the stacked charcoal version on the smallest phones, the stacked ivory/platinum
    version in the charcoal footer. Sizes only; the artwork is never stretched. */
 .logo picture,footer picture{display:block;line-height:0;}
-#site-header .logo-img{height:54px;width:auto;aspect-ratio:587/180;object-fit:contain;border-radius:0;}
+#site-header .logo-img{height:54px;width:auto;aspect-ratio:1360/414;object-fit:contain;border-radius:0;}
 .desktop-nav{display:flex;gap:clamp(22px,2.8vw,44px);list-style:none;margin:0;padding:0;}
 .desktop-nav button{
   font-size:11.5px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;
@@ -316,7 +317,7 @@ footer :focus-visible{outline-color:var(--color-white);}
 /* smallest phones: the stacked logo keeps the header centred between the menu and the search/account icons */
 /* tablets: a little more presence for the lockup in the same 68px header */
 @media(min-width:600px) and (max-width:1000px){#site-header .logo-img{height:46px;}}
-@media(max-width:374px){#site-header .logo-img{height:46px;aspect-ratio:600/478;}}
+@media(max-width:374px){#site-header .logo-img{height:46px;aspect-ratio:883/702;}}
 
 /* Search */
 .search-wrap{position:relative;flex:1;max-width:300px;}
@@ -852,7 +853,7 @@ footer::before{content:'';position:absolute;top:0;left:50%;transform:translateX(
 .footer-grid > div{min-width:0;}
 footer h4{color:var(--color-white);font-size:10.5px;letter-spacing:0.26em;text-transform:uppercase;font-family:var(--font-body);font-weight:500;margin-bottom:24px;}
 footer .logo-mark{color:var(--color-white);}
-footer .logo-img{display:block;height:120px;width:auto;max-width:100%;aspect-ratio:600/478;object-fit:contain;object-position:left center;border-radius:0;}
+footer .logo-img{display:block;height:120px;width:auto;max-width:100%;aspect-ratio:883/702;object-fit:contain;object-position:left center;border-radius:0;}
 footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 .footer-links{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;}
 .footer-links li{color:var(--color-ivory);font-size:14.5px;line-height:1.5;}
@@ -1210,10 +1211,8 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 
     <button class="logo" data-action="go-home" aria-label="NISA JEWELLERS — Home">
       <picture>
-        <source media="(max-width:374px)" type="image/webp" srcset="images/nisa-jewellers-logo-charcoal.webp" width="600" height="478">
-        <source media="(max-width:374px)" srcset="images/nisa-jewellers-logo-charcoal.png" width="600" height="478">
-        <source type="image/webp" srcset="images/nisa-jewellers-logo-horizontal-charcoal.webp" width="587" height="180">
-        <img class="logo-img" src="images/nisa-jewellers-logo-horizontal-charcoal.png" width="587" height="180" alt="NISA JEWELLERS" fetchpriority="high">
+        <source media="(max-width:374px)" srcset="images/nisa-jewellers-logo-charcoal.svg" width="883" height="702">
+        <img class="logo-img" src="images/nisa-jewellers-logo-horizontal-charcoal.svg" width="1360" height="414" alt="NISA JEWELLERS" fetchpriority="high">
       </picture>
     </button>
 
@@ -1618,10 +1617,7 @@ footer p{color:var(--color-ivory);font-size:14.5px;line-height:1.7;}
 <footer>
   <div class="container footer-grid">
     <div>
-      <picture>
-        <source type="image/webp" srcset="images/nisa-jewellers-logo-ivory.webp" width="600" height="478">
-        <img class="logo-img" src="images/nisa-jewellers-logo-ivory.png" width="600" height="478" alt="NISA JEWELLERS" loading="lazy">
-      </picture>
+      <img class="logo-img" src="images/nisa-jewellers-logo-ivory.svg" width="883" height="702" alt="NISA JEWELLERS" loading="lazy">
       <p style="margin-top:20px;max-width:32ch;">Premium artificial &amp; imitation jewellery, wholesaled to retailers and boutiques worldwide.</p>
       <div class="footer-social">
         <a href="#" class="social-btn" data-action="social" aria-label="Instagram"><svg class="icon"><use href="#i-instagram"/></svg></a>
